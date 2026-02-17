@@ -144,7 +144,7 @@ function SkillAutosuggest({ inputRef, title, setTitle, onSubmit, skills }) {
   )
 }
 
-export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onDelete, onRun }) {
+export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onDelete, onRun, onToggleSchedule }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id })
   const [adding, setAdding] = useState(false)
   const [title, setTitle] = useState('')
@@ -191,7 +191,7 @@ export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onDel
       <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[120px]">
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           {tasks.map(task => (
-            <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onRun={onRun} />
+            <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onRun={onRun} onToggleSchedule={onToggleSchedule} />
           ))}
         </SortableContext>
       </div>
