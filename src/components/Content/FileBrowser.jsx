@@ -1,12 +1,33 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Folder, File, ChevronRight, ArrowLeft, Download, Eye } from 'lucide-react'
 import FilePreview from './FilePreview'
 import { cn } from '@/lib/utils'
+import { useNavigation } from '../NavigationContext'
 
 export default function FileBrowser() {
   const [currentPath, setCurrentPath] = useState('')
   const [entries, setEntries] = useState([])
   const [preview, setPreview] = useState(null)
+  const { fileBrowserPath, setFileBrowserPath } = useNavigation()
+  const consumedPath = useRef(null)
+
+  // Handle navigation from task artifacts
+  useEffect(() => {
+    if (fileBrowserPath && fileBrowserPath !== consumedPath.current) {
+      consumedPath.current = fileBrowserPath
+      const isFile = /\.\w+$/.test(fileBrowserPath.split('/').pop())
+      if (isFile) {
+        const parts = fileBrowserPath.split('/')
+        parts.pop()
+        setCurrentPath(parts.join('/'))
+        setPreview(fileBrowserPath)
+      } else {
+        setCurrentPath(fileBrowserPath)
+        setPreview(null)
+      }
+      setFileBrowserPath(null)
+    }
+  }, [fileBrowserPath, setFileBrowserPath])
 
   useEffect(() => {
     fetch(`/api/files?path=${encodeURIComponent(currentPath)}`)

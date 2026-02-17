@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { X, Bot, User, Activity } from 'lucide-react'
+import { X, Bot, User, Activity, FileText, FolderOpen } from 'lucide-react'
+import { extractFilePaths } from './TaskCard'
+import { useNavigation } from '../NavigationContext'
 
 function formatTime(iso) {
   if (!iso) return ''
@@ -155,9 +157,43 @@ function SkillPicker({ selectedSkills, onChange, allSkills }) {
   )
 }
 
+function ArtifactsPanel({ task, onNavigate }) {
+  const artifacts = extractFilePaths(task?.result)
+
+  if (!task || task.status !== 'done') {
+    return <div className="text-xs text-muted-foreground p-4">Artifacts appear here when a task completes.</div>
+  }
+
+  if (!artifacts.length) {
+    return <div className="text-xs text-muted-foreground p-4">No file artifacts found in task result.</div>
+  }
+
+  return (
+    <div className="p-2 space-y-1">
+      {artifacts.map((fp, i) => (
+        <button
+          key={i}
+          onClick={() => onNavigate(fp)}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-blue-400 hover:bg-secondary/80 hover:text-blue-300 transition-colors text-left font-mono group"
+          title={`Open ${fp} in file browser`}
+        >
+          <FileText size={14} className="shrink-0 text-blue-400/70 group-hover:text-blue-300" />
+          <span className="truncate">{fp}</span>
+          <FolderOpen size={12} className="shrink-0 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function TaskDialog({ open, onClose, onSave, task }) {
   const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog' })
   const [skills, setSkills] = useState([])
+  const [activeTab, setActiveTab] = useState('activity')
+  const { navigateToFile } = useNavigation()
+
+  const artifacts = extractFilePaths(task?.result)
+  const hasArtifacts = artifacts.length > 0
 
   useEffect(() => {
     fetch('/api/skills').then(r => r.json()).then(setSkills).catch(() => {})
@@ -170,6 +206,7 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
     } else {
       setForm({ title: '', description: '', skills: [], status: 'backlog' })
     }
+    setActiveTab('activity')
   }, [task, open])
 
   if (!open) return null
@@ -239,13 +276,36 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
             </div>
           </div>
 
-          {/* Activity Log — right 1/3 */}
-          <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-border overflow-y-auto">
-            <div className="flex items-center gap-1.5 px-4 py-3 text-sm font-medium text-muted-foreground border-b border-border">
-              <Activity size={14} />
-              Activity Log
+          {/* Right panel — Activity / Artifacts tabs */}
+          <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-border overflow-y-auto flex flex-col">
+            <div className="flex border-b border-border shrink-0">
+              <button
+                onClick={() => setActiveTab('activity')}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-3 text-xs font-medium transition-colors ${
+                  activeTab === 'activity' ? 'text-foreground border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Activity size={12} />
+                Activity
+              </button>
+              <button
+                onClick={() => setActiveTab('artifacts')}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-3 text-xs font-medium transition-colors ${
+                  activeTab === 'artifacts' ? 'text-foreground border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <FileText size={12} />
+                Artifacts
+                {hasArtifacts && (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400">{artifacts.length}</span>
+                )}
+              </button>
             </div>
-            <ActivityLog taskId={task?.id} />
+            {activeTab === 'activity' ? (
+              <ActivityLog taskId={task?.id} />
+            ) : (
+              <ArtifactsPanel task={task} onNavigate={(fp) => { onClose(); navigateToFile(fp) }} />
+            )}
           </div>
         </div>
 
