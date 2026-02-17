@@ -21,14 +21,16 @@ const ACTION_LABELS = {
   task_deleted: 'Deleted task',
 }
 
-function ActivityLog() {
+function ActivityLog({ taskId }) {
   const [activities, setActivities] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let mounted = true
+    const params = new URLSearchParams({ limit: '50' })
+    if (taskId) params.set('taskId', taskId)
     const load = () => {
-      fetch('/api/activity?limit=50')
+      fetch(`/api/activity?${params}`)
         .then(r => r.json())
         .then(data => { if (mounted) { setActivities(data); setLoading(false) } })
         .catch(() => { if (mounted) setLoading(false) })
@@ -181,11 +183,9 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch justify-end bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="bg-card border-l border-border w-full max-w-2xl flex flex-col shadow-2xl
-          max-sm:border-l-0 max-sm:border-t max-sm:mt-auto max-sm:max-h-[85vh] max-sm:rounded-t-xl
-          sm:h-full"
+        className="bg-card border border-border w-full max-w-2xl flex flex-col shadow-2xl rounded-xl max-h-[85vh]"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
@@ -256,7 +256,7 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
               </div>
             </div>
           ) : (
-            <ActivityLog />
+            <ActivityLog taskId={task?.id} />
           )}
         </div>
 

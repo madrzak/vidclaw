@@ -42,7 +42,9 @@ function logActivity(actor, action, details = {}) {
 app.get('/api/activity', (req, res) => {
   const log = readActivity();
   const limit = parseInt(req.query.limit) || 50;
-  res.json(log.slice(-limit).reverse());
+  const taskId = req.query.taskId;
+  const filtered = taskId ? log.filter(a => a.details?.taskId === taskId) : log;
+  res.json(filtered.slice(-limit).reverse());
 });
 
 // --- Tasks API ---
