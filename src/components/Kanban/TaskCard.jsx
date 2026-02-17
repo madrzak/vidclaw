@@ -45,7 +45,7 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
       style={style}
       className={cn(
         'group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing transition-shadow',
-        dragging && 'shadow-xl opacity-90 rotate-2 z-50',
+        dragging && 'opacity-0',
         isInProgress && 'border-amber-500/50 animate-pulse-subtle',
         hasError && 'border-red-500/50'
       )}
