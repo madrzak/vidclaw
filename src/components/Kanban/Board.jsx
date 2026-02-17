@@ -171,6 +171,15 @@ export default function Board() {
     fetchTasks()
   }
 
+  async function handleToggleSchedule(id, enabled) {
+    await fetch(`/api/tasks/${id}/schedule-toggle`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled }),
+    })
+    fetchTasks()
+  }
+
   async function handleQuickAdd(status, title, skills = []) {
     await fetch('/api/tasks', {
       method: 'POST',
@@ -204,6 +213,7 @@ export default function Board() {
               onEdit={openEdit}
               onDelete={handleDelete}
               onRun={handleRun}
+              onToggleSchedule={handleToggleSchedule}
             />
           ))}
         </div>

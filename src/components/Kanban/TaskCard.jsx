@@ -3,7 +3,8 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
-import { GripVertical, Pencil, Trash2, Play, AlertCircle, ChevronDown, ChevronUp, Loader2, FileText } from 'lucide-react'
+import { useNavigation } from '../NavigationContext'
+import { GripVertical, Pencil, Trash2, Play, AlertCircle, ChevronDown, ChevronUp, Loader2, FileText, Clock, Pause, RotateCcw } from 'lucide-react'
 
 function formatTime(iso, tz) {
   if (!iso) return ''
@@ -12,7 +13,7 @@ function formatTime(iso, tz) {
 }
 
 // Extract file paths from task result text
-function extractFilePaths(text) {
+export function extractFilePaths(text) {
   if (!text) return []
   const pathRegex = /(?:\/[\w.\-]+)+(?:\.[\w]+)?/g
   const matches = text.match(pathRegex) || []
@@ -23,6 +24,7 @@ function extractFilePaths(text) {
 export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: isDraggingProp }) {
   const [expanded, setExpanded] = useState(false)
   const { timezone } = useTimezone()
+  const { navigateToFile } = useNavigation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
 
   const style = {
@@ -36,6 +38,7 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
   const canRun = task.status === 'backlog' || task.status === 'todo'
 
   const skillsList = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
+  const artifacts = extractFilePaths(task.result)
 
   return (
     <div
@@ -120,14 +123,19 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
                   )}>
                     {task.error || task.result}
                   </pre>
-                  {extractFilePaths(task.result).length > 0 && (
+                  {artifacts.length > 0 && (
                     <div className="mt-1.5 space-y-0.5">
-                      <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Files</span>
-                      {extractFilePaths(task.result).map((fp, i) => (
-                        <div key={i} className="flex items-center gap-1 text-[10px] text-blue-400 font-mono">
+                      <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Artifacts</span>
+                      {artifacts.map((fp, i) => (
+                        <button
+                          key={i}
+                          onClick={() => navigateToFile(fp)}
+                          className="flex items-center gap-1 text-[10px] text-blue-400 hover:text-blue-300 font-mono transition-colors w-full text-left"
+                          title={`Open ${fp} in file browser`}
+                        >
                           <FileText size={9} className="shrink-0" />
-                          <span className="truncate" title={fp}>{fp}</span>
-                        </div>
+                          <span className="truncate">{fp}</span>
+                        </button>
                       ))}
                     </div>
                   )}

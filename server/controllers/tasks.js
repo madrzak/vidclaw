@@ -23,7 +23,9 @@ export function createTask(req, res) {
     updatedAt: new Date().toISOString(),
     completedAt: null,
     schedule: req.body.schedule || null,
-    scheduledAt: req.body.scheduledAt || null,
+    scheduledAt: req.body.schedule ? (req.body.scheduledAt || computeNextRun(req.body.schedule)) : (req.body.scheduledAt || null),
+    scheduleEnabled: req.body.schedule ? true : false,
+    runHistory: [],
     result: null,
     startedAt: null,
     error: null,
@@ -41,10 +43,20 @@ export function updateTask(req, res) {
   const idx = tasks.findIndex(t => t.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
   const wasNotDone = tasks[idx].status !== 'done';
-  const allowedFields = ['title', 'description', 'priority', 'skill', 'skills', 'status', 'schedule', 'scheduledAt', 'result', 'startedAt', 'completedAt', 'error', 'order'];
+  const allowedFields = ['title', 'description', 'priority', 'skill', 'skills', 'status', 'schedule', 'scheduledAt', 'scheduleEnabled', 'result', 'startedAt', 'completedAt', 'error', 'order'];
   const updates = {};
   for (const k of allowedFields) { if (req.body[k] !== undefined) updates[k] = req.body[k]; }
   tasks[idx] = { ...tasks[idx], ...updates, updatedAt: new Date().toISOString() };
+  // Recompute scheduledAt when schedule changes
+  if (updates.schedule !== undefined) {
+    if (updates.schedule) {
+      tasks[idx].scheduledAt = computeNextRun(updates.schedule);
+      if (tasks[idx].scheduleEnabled === undefined) tasks[idx].scheduleEnabled = true;
+    } else {
+      tasks[idx].scheduledAt = null;
+      tasks[idx].scheduleEnabled = false;
+    }
+  }
   if (wasNotDone && tasks[idx].status === 'done') tasks[idx].completedAt = new Date().toISOString();
   if (tasks[idx].status !== 'done') tasks[idx].completedAt = null;
   writeTasks(tasks);
@@ -86,8 +98,12 @@ export function getTaskQueue(req, res) {
   const queue = tasks.filter(t => {
     if (t.status === 'in-progress' && !t.pickedUp) return true;
     if (t.status !== 'todo') return false;
+    // Paused recurring tasks shouldn't enter queue
+    if (t.schedule && t.scheduleEnabled === false) return false;
     if (!t.schedule) return true;
     if (t.schedule === 'asap' || t.schedule === 'next-heartbeat') return true;
+    // Check scheduledAt for recurring tasks
+    if (t.scheduledAt) return new Date(t.scheduledAt) <= now;
     if (t.schedule !== 'asap' && t.schedule !== 'next-heartbeat') {
       return new Date(t.schedule) <= now;
     }
