@@ -3,7 +3,8 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
-import { GripVertical, Pencil, Trash2, Play, AlertCircle, ChevronDown, ChevronUp, Loader2, FileText } from 'lucide-react'
+import { useNavigation } from '../NavigationContext'
+import { GripVertical, Pencil, Trash2, Play, AlertCircle, ChevronDown, ChevronUp, Loader2, FileText, Clock, Pause, RotateCcw, CheckCircle2 } from 'lucide-react'
 
 function formatTime(iso, tz) {
   if (!iso) return ''
@@ -11,18 +12,37 @@ function formatTime(iso, tz) {
   return d.toLocaleDateString('en-US', { timeZone: tz, month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', second: '2-digit' })
 }
 
+function formatDuration(startIso, endIso) {
+  if (!startIso || !endIso) return null
+  const ms = new Date(endIso) - new Date(startIso)
+  if (ms < 0) return null
+  const secs = Math.floor(ms / 1000)
+  if (secs < 60) return `${secs}s`
+  const mins = Math.floor(secs / 60)
+  if (mins < 60) return `${mins}m ${secs % 60}s`
+  const hrs = Math.floor(mins / 60)
+  return `${hrs}h ${mins % 60}m`
+}
+
+function truncateResult(text, maxLen = 120) {
+  if (!text) return ''
+  const oneLine = text.replace(/\n/g, ' ').trim()
+  if (oneLine.length <= maxLen) return oneLine
+  return oneLine.slice(0, maxLen) + '…'
+}
+
 // Extract file paths from task result text
-function extractFilePaths(text) {
+export function extractFilePaths(text) {
   if (!text) return []
   const pathRegex = /(?:\/[\w.\-]+)+(?:\.[\w]+)?/g
   const matches = text.match(pathRegex) || []
-  // Filter to likely file paths (must have an extension or be in a known directory)
   return [...new Set(matches.filter(p => /\.\w+$/.test(p) || p.includes('/workspace/')))]
 }
 
 export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: isDraggingProp }) {
   const [expanded, setExpanded] = useState(false)
   const { timezone } = useTimezone()
+  const { navigateToFile } = useNavigation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
 
   const style = {
@@ -36,6 +56,9 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
   const canRun = task.status === 'backlog' || task.status === 'todo'
 
   const skillsList = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
+  const artifacts = extractFilePaths(task.result)
+  const duration = isDone ? formatDuration(task.startedAt || task.createdAt, task.completedAt) : null
+  const resultSummary = isDone && !hasError ? truncateResult(task.result) : null
 
   return (
     <div
@@ -45,7 +68,8 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
         'group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing transition-shadow',
         dragging && !isDraggingProp && 'opacity-30',
         isInProgress && 'border-amber-500/50 animate-pulse-subtle',
-        hasError && 'border-red-500/50'
+        hasError && 'border-red-500/50',
+        isDone && !hasError && 'opacity-70 border-border/50 bg-card/60'
       )}
       {...attributes}
       {...listeners}
@@ -55,10 +79,23 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
           <div className="flex items-center gap-1.5">
             <GripVertical size={12} className="text-muted-foreground shrink-0 opacity-50 group-hover:opacity-100" />
             {isInProgress && <Loader2 size={12} className="text-amber-400 animate-spin shrink-0" />}
-            <p className="text-sm font-medium truncate">{task.title}</p>
+            {isDone && !hasError && <CheckCircle2 size={12} className="text-green-500/70 shrink-0" />}
+            <p className={cn(
+              'text-sm font-medium truncate',
+              isDone && !hasError && 'text-muted-foreground'
+            )}>{task.title}</p>
           </div>
-          {task.description && (
+          {/* Show description for non-done tasks */}
+          {task.description && !isDone && (
             <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{task.description}</p>
+          )}
+          {/* Show result summary inline for done tasks */}
+          {isDone && resultSummary && !expanded && (
+            <p className="text-[11px] text-muted-foreground/80 mt-1 line-clamp-2 italic">{resultSummary}</p>
+          )}
+          {/* Show error summary inline for errored done tasks */}
+          {isDone && hasError && !expanded && (
+            <p className="text-[11px] text-red-400/80 mt-1 line-clamp-1 italic">{truncateResult(task.error, 80)}</p>
           )}
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
@@ -85,9 +122,13 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
         </div>
       </div>
 
+      {/* Skills and error badges - always show */}
       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
         {skillsList.map(sk => (
-          <span key={sk} className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400">{sk}</span>
+          <span key={sk} className={cn(
+            'text-[10px] px-1.5 py-0.5 rounded-full',
+            isDone && !hasError ? 'bg-orange-500/10 text-orange-400/60' : 'bg-orange-500/20 text-orange-400'
+          )}>{sk}</span>
         ))}
         {hasError && (
           <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400">
@@ -102,7 +143,20 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
 
       {isDone && (
         <div className="mt-1.5 space-y-1">
-          {task.completedAt && <p className="text-[10px] text-muted-foreground">Completed {formatTime(task.completedAt, timezone)}</p>}
+          {/* Completion time and duration on one line */}
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground/70">
+            {task.completedAt && (
+              <span className="flex items-center gap-0.5">
+                <Clock size={9} className="shrink-0" />
+                {formatTime(task.completedAt, timezone)}
+              </span>
+            )}
+            {duration && (
+              <span className="text-muted-foreground/50">({duration})</span>
+            )}
+          </div>
+
+          {/* Expandable result/error details */}
           {(task.result || task.error) && (
             <div onPointerDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}>
               <button
@@ -110,24 +164,29 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
                 className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
               >
                 {expanded ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
-                {task.error ? 'Error Details' : 'Result'}
+                {expanded ? 'Collapse' : (task.error ? 'Error Details' : 'Full Result')}
               </button>
               {expanded && (
                 <>
                   <pre className={cn(
-                    'mt-1 text-[10px] font-mono p-2 rounded-md max-h-32 overflow-auto',
-                    task.error ? 'bg-red-500/10 text-red-300' : 'bg-secondary text-muted-foreground'
+                    'mt-1 text-[10px] font-mono p-2 rounded-md max-h-32 overflow-auto whitespace-pre-wrap break-words',
+                    task.error ? 'bg-red-500/10 text-red-300' : 'bg-secondary/50 text-muted-foreground'
                   )}>
                     {task.error || task.result}
                   </pre>
-                  {extractFilePaths(task.result).length > 0 && (
+                  {artifacts.length > 0 && (
                     <div className="mt-1.5 space-y-0.5">
-                      <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Files</span>
-                      {extractFilePaths(task.result).map((fp, i) => (
-                        <div key={i} className="flex items-center gap-1 text-[10px] text-blue-400 font-mono">
+                      <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Artifacts</span>
+                      {artifacts.map((fp, i) => (
+                        <button
+                          key={i}
+                          onClick={() => navigateToFile(fp)}
+                          className="flex items-center gap-1 text-[10px] text-blue-400 hover:text-blue-300 font-mono transition-colors w-full text-left"
+                          title={`Open ${fp} in file browser`}
+                        >
                           <FileText size={9} className="shrink-0" />
-                          <span className="truncate" title={fp}>{fp}</span>
-                        </div>
+                          <span className="truncate">{fp}</span>
+                        </button>
                       ))}
                     </div>
                   )}
