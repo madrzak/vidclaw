@@ -6,12 +6,14 @@ A secure, self-hosted command center for managing your OpenClaw AI agent.
 
 ## Features
 
-- Kanban task board with drag/drop, priority, skills, and scheduling
-- Usage and cost tracking from OpenClaw session data
-- Model switching from dashboard settings
-- Calendar activity view from memory + completed tasks
-- Workspace file browser with markdown preview
-- Skills manager and Soul/Workspace editors
+- **🗂️ Kanban Task Board** — Backlog → Todo → In Progress → Done. Drag & drop, priorities, skill assignment. Your agent picks up tasks automatically via heartbeat or cron.
+- **📊 Usage Tracking** — Real-time token usage and cost estimates parsed from session transcripts. Progress bars matching Anthropic's rate limit windows.
+- **🔄 Model Switching** — Switch between Claude models directly from the dashboard. Hot-reloads via OpenClaw's config watcher.
+- **📅 Activity Calendar** — Monthly view of agent activity, parsed from memory files and task history.
+- **📁 Content Browser** — Browse workspace files with markdown preview, syntax highlighting, and download.
+- **🧩 Skills Manager** — View all bundled/workspace skills, enable/disable them, create custom skills.
+- **💜 Soul Editor** — Edit SOUL.md, IDENTITY.md, USER.md, AGENTS.md with version history and persona templates.
+- **⚡ Task Execution** — Tasks execute automatically via cron (every 2 min) or heartbeat (every 30 min). Hit "Run Now" for immediate execution.
 
 ## Security Model
 
@@ -164,3 +166,7 @@ See [API.md](API.md) for endpoint reference.
 ## License
 
 MIT
+
+---
+
+Copyright (c) 2026 [woocassh](https://x.com/woocassh) · [GitHub](https://github.com/madrzak/vidclaw) · MIT License
