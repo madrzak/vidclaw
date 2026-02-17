@@ -41,14 +41,14 @@ while [[ $# -gt 0 ]]; do
       FOLLOW=0
       ;;
     --dry-run)
-      DRY_RUN=1
+      enable_dry_run
       ;;
     --interactive)
-      ALLOW_INTERACTIVE=1
+      enable_interactive_sudo
       ;;
     --service-mode)
       [[ $# -gt 1 ]] || die "Missing value for --service-mode" "Use auto, systemd, launchd, direct, or none."
-      SERVICE_MODE="$2"
+      set_service_mode "$2"
       shift
       ;;
     -h|--help)
@@ -62,7 +62,7 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-[[ "${LINES}" =~ ^[0-9]+$ ]] || die "Invalid --lines value: ${LINES}" "Use a positive integer."
+[[ "${LINES}" =~ ^[1-9][0-9]*$ ]] || die "Invalid --lines value: ${LINES}" "Use an integer greater than 0."
 
 init_os
 assert_repo_layout

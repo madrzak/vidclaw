@@ -23,14 +23,14 @@ HELP
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --dry-run)
-      DRY_RUN=1
+      enable_dry_run
       ;;
     --interactive)
-      ALLOW_INTERACTIVE=1
+      enable_interactive_sudo
       ;;
     --service-mode)
       [[ $# -gt 1 ]] || die "Missing value for --service-mode" "Use auto, systemd, launchd, direct, or none."
-      SERVICE_MODE="$2"
+      set_service_mode "$2"
       shift
       ;;
     -h|--help)
@@ -184,8 +184,20 @@ SCRIPT_FILES=(
   "${REPO_ROOT}/scripts/lib/service.sh"
 )
 
+EXECUTABLE_SCRIPTS=(
+  "${REPO_ROOT}/setup.sh"
+  "${REPO_ROOT}/update.sh"
+  "${REPO_ROOT}/start.sh"
+  "${REPO_ROOT}/stop.sh"
+  "${REPO_ROOT}/status.sh"
+  "${REPO_ROOT}/logs.sh"
+  "${REPO_ROOT}/uninstall.sh"
+  "${REPO_ROOT}/remove-service.sh"
+  "${REPO_ROOT}/doctor.sh"
+)
+
 MISSING_EXEC=0
-for file in "${SCRIPT_FILES[@]}"; do
+for file in "${EXECUTABLE_SCRIPTS[@]}"; do
   if [[ ! -x "${file}" ]]; then
     warn_diag "Script is not executable: ${file}"
     MISSING_EXEC=1
@@ -193,10 +205,10 @@ for file in "${SCRIPT_FILES[@]}"; do
 done
 
 if [[ "${MISSING_EXEC}" == "0" ]]; then
-  pass "All operational scripts are executable"
+  pass "All command entrypoint scripts are executable"
 fi
 
-if LC_ALL=C grep -n $'\r' "${SCRIPT_FILES[@]}" >/dev/null 2>&1; then
+if LC_ALL=C grep -n $'\r$' "${SCRIPT_FILES[@]}" >/dev/null 2>&1; then
   warn_diag "Detected CRLF line endings in one or more shell scripts"
 else
   pass "Shell scripts use LF line endings"

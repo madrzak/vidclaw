@@ -37,6 +37,25 @@ has_systemd() {
   systemctl list-unit-files >/dev/null 2>&1
 }
 
+is_valid_service_mode() {
+  case "${1:-}" in
+    auto|systemd|launchd|direct|none)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+set_service_mode() {
+  local mode="${1:-}"
+  is_valid_service_mode "${mode}" || die \
+    "Invalid --service-mode value: ${mode}" \
+    "Use one of: auto, systemd, launchd, direct, none."
+  SERVICE_MODE="${mode}"
+}
+
 service_mode() {
   case "${SERVICE_MODE}" in
     systemd|launchd|direct|none)
@@ -60,13 +79,30 @@ service_mode() {
       return 0
       ;;
     *)
-      die "Unsupported VIDCLAW_SERVICE_MODE value: ${SERVICE_MODE}" "Use one of: auto, systemd, launchd, direct, none."
+      die "Unsupported VIDCLAW_SERVICE_MODE value: ${SERVICE_MODE}" \
+        "Use one of: auto, systemd, launchd, direct, none."
       ;;
   esac
 }
 
+systemd_escape_exec_arg() {
+  local value="$1"
+  value="${value//\\/\\\\}"
+  value="${value// /\\x20}"
+  value="${value//$'\t'/\\x09}"
+  value="${value//%/%%}"
+  printf '%s\n' "${value}"
+}
+
+systemd_default_path() {
+  printf '%s\n' '/usr/local/bin:/usr/bin:/bin'
+}
+
 write_systemd_unit_file() {
   local tmp_file="$1"
+  local escaped_node escaped_entrypoint
+  escaped_node="$(systemd_escape_exec_arg "${NODE_BIN}")"
+  escaped_entrypoint="$(systemd_escape_exec_arg "${REPO_ROOT}/server.js")"
   cat > "${tmp_file}" <<EOF
 [Unit]
 Description=VidClaw Dashboard
@@ -76,12 +112,12 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=${REPO_ROOT}
-ExecStart="${NODE_BIN}" "${REPO_ROOT}/server.js"
+ExecStart=${escaped_node} ${escaped_entrypoint}
 Restart=always
 RestartSec=3
 Environment=NODE_ENV=production
 Environment=PORT=${VIDCLAW_PORT}
-Environment=PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PATH=$(systemd_default_path)
 
 [Install]
 WantedBy=multi-user.target
@@ -215,18 +251,42 @@ direct_pid() {
   printf '%s\n' "${pid}"
 }
 
-direct_is_running() {
+direct_pid_matches_process() {
+  local pid="$1"
+  if ! command -v ps >/dev/null 2>&1; then
+    return 0
+  fi
+
+  local command
+  command="$(ps -p "${pid}" -o args= 2>/dev/null || true)"
+  [[ -n "${command}" ]] || return 1
+  [[ "${command}" == *"${REPO_ROOT}/server.js"* ]]
+}
+
+direct_running_pid() {
   local pid
   pid="$(direct_pid)" || return 1
-  kill -0 "${pid}" >/dev/null 2>&1
+  kill -0 "${pid}" >/dev/null 2>&1 || return 1
+  direct_pid_matches_process "${pid}" || return 1
+  printf '%s\n' "${pid}"
+}
+
+direct_is_running() {
+  direct_running_pid >/dev/null
 }
 
 start_direct_service() {
   ensure_node_for_service
   ensure_data_dir
+  local pid
   if direct_is_running; then
-    log_info "Direct process mode already running with PID $(direct_pid)."
+    log_info "Direct process mode already running with PID $(direct_running_pid)."
     return 0
+  fi
+
+  if pid="$(direct_pid)"; then
+    log_warn "Removing stale direct-mode PID file (${DIRECT_PID_FILE}, PID ${pid})."
+    run_cmd rm -f "${DIRECT_PID_FILE}"
   fi
 
   if is_dry_run; then
@@ -234,15 +294,13 @@ start_direct_service() {
     return 0
   fi
 
-  (
-    cd "${REPO_ROOT}"
-    nohup "${NODE_BIN}" "${REPO_ROOT}/server.js" >>"${DIRECT_STDOUT_LOG}" 2>>"${DIRECT_STDERR_LOG}" &
-    echo "$!" > "${DIRECT_PID_FILE}"
-  )
+  nohup "${NODE_BIN}" "${REPO_ROOT}/server.js" >>"${DIRECT_STDOUT_LOG}" 2>>"${DIRECT_STDERR_LOG}" &
+  pid="$!"
+  echo "${pid}" > "${DIRECT_PID_FILE}"
 
   sleep 1
   if direct_is_running; then
-    log_ok "Direct process started with PID $(direct_pid)."
+    log_ok "Direct process started with PID $(direct_running_pid)."
     return 0
   fi
 
@@ -256,6 +314,12 @@ stop_direct_service() {
     run_cmd rm -f "${DIRECT_PID_FILE}"
     return 0
   }
+
+  if ! pid="$(direct_running_pid)"; then
+    log_warn "PID file exists but process is not a VidClaw direct-mode server; removing stale PID file."
+    run_cmd rm -f "${DIRECT_PID_FILE}"
+    return 0
+  fi
 
   if is_dry_run; then
     log_info "[dry-run] $(command_display kill "${pid}")"
@@ -280,8 +344,10 @@ stop_direct_service() {
 }
 
 status_direct_service() {
+  local pid
   if direct_is_running; then
-    log_ok "Direct process running (PID $(direct_pid))."
+    pid="$(direct_running_pid)"
+    log_ok "Direct process running (PID ${pid})."
     return 0
   fi
 

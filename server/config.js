@@ -34,7 +34,14 @@ function resolvePathExecutable(name) {
 function inferOpenclawInstallRoot(executablePath) {
   if (!executablePath) return null;
   let current = path.dirname(executablePath);
+  const visited = new Set();
+  let depth = 0;
   while (true) {
+    const normalized = path.resolve(current);
+    if (visited.has(normalized) || depth > 1024) break;
+    visited.add(normalized);
+    depth += 1;
+
     const base = path.basename(current);
     const parent = path.dirname(current);
     if (base === 'openclaw' && path.basename(parent) === 'node_modules') {

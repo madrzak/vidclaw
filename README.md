@@ -25,6 +25,8 @@ ssh -L 3333:localhost:3333 <user>@<server-host>
 
 Then open `http://localhost:3333`.
 
+You can override the bind address with `HOST` (for example `HOST=0.0.0.0`), but that exposes the dashboard on your network interfaces. Only use non-localhost binds when you explicitly control network access (firewall, private subnet, reverse proxy auth).
+
 ## Prerequisites
 
 - OpenClaw installed and running

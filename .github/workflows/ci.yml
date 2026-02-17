@@ -2,7 +2,13 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
+      - master
   pull_request:
+    branches:
+      - main
+      - master
 
 jobs:
   build:
@@ -11,6 +17,19 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      SCRIPT_FILES: |
+        setup.sh
+        update.sh
+        start.sh
+        stop.sh
+        status.sh
+        logs.sh
+        uninstall.sh
+        remove-service.sh
+        doctor.sh
+        scripts/lib/common.sh
+        scripts/lib/service.sh
 
     steps:
       - name: Checkout
@@ -39,19 +58,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          files=(
-            setup.sh
-            update.sh
-            start.sh
-            stop.sh
-            status.sh
-            logs.sh
-            uninstall.sh
-            remove-service.sh
-            doctor.sh
-            scripts/lib/common.sh
-            scripts/lib/service.sh
-          )
+          files=()
+          while IFS= read -r file; do
+            [[ -n "${file}" ]] && files+=("${file}")
+          done <<< "${SCRIPT_FILES}"
           for file in "${files[@]}"; do
             bash -n "${file}"
           done
@@ -60,19 +70,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          files=(
-            setup.sh
-            update.sh
-            start.sh
-            stop.sh
-            status.sh
-            logs.sh
-            uninstall.sh
-            remove-service.sh
-            doctor.sh
-            scripts/lib/common.sh
-            scripts/lib/service.sh
-          )
+          files=()
+          while IFS= read -r file; do
+            [[ -n "${file}" ]] && files+=("${file}")
+          done <<< "${SCRIPT_FILES}"
           if command -v shellcheck >/dev/null 2>&1; then
             shellcheck "${files[@]}"
           else

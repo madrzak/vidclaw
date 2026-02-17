@@ -29,14 +29,14 @@ while [[ $# -gt 0 ]]; do
       MODE="dev"
       ;;
     --dry-run)
-      DRY_RUN=1
+      enable_dry_run
       ;;
     --interactive)
-      ALLOW_INTERACTIVE=1
+      enable_interactive_sudo
       ;;
     --service-mode)
       [[ $# -gt 1 ]] || die "Missing value for --service-mode" "Use auto, systemd, launchd, direct, or none."
-      SERVICE_MODE="$2"
+      set_service_mode "$2"
       shift
       ;;
     -h|--help)

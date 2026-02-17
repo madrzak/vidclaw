@@ -38,10 +38,10 @@ ALLOW_MERGE_PULL="${ALLOW_MERGE_PULL:-0}"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --dry-run)
-      DRY_RUN=1
+      enable_dry_run
       ;;
     --interactive)
-      ALLOW_INTERACTIVE=1
+      enable_interactive_sudo
       ;;
     --skip-git)
       SKIP_GIT=1
@@ -57,7 +57,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --service-mode)
       [[ $# -gt 1 ]] || die "Missing value for --service-mode" "Use auto, systemd, launchd, direct, or none."
-      SERVICE_MODE="$2"
+      set_service_mode "$2"
       shift
       ;;
     -h|--help)
@@ -98,7 +98,7 @@ print_runtime_summary
 
 if [[ "${SKIP_GIT}" == "0" ]]; then
   if [[ -n "$(git status --porcelain)" ]]; then
-    log_warn "Repository has local changes; git pull may fail if branches diverged."
+    log_warn "Repository has local changes; update will continue, but git pull may fail or conflict. Commit/stash first if unsure."
   fi
   log_info "Fetching latest code..."
   update_git

@@ -29,14 +29,14 @@ while [[ $# -gt 0 ]]; do
       PURGE_DATA=1
       ;;
     --dry-run)
-      DRY_RUN=1
+      enable_dry_run
       ;;
     --interactive)
-      ALLOW_INTERACTIVE=1
+      enable_interactive_sudo
       ;;
     --service-mode)
       [[ $# -gt 1 ]] || die "Missing value for --service-mode" "Use auto, systemd, launchd, direct, or none."
-      SERVICE_MODE="$2"
+      set_service_mode "$2"
       shift
       ;;
     -h|--help)
@@ -58,7 +58,9 @@ uninstall_service
 
 if [[ "${PURGE_DATA}" == "1" ]]; then
   log_warn "Purging runtime data files from ${DATA_DIR}"
-  run_cmd rm -f "${DATA_DIR}/"*.json "${DATA_DIR}/"vidclaw*.log "${DATA_DIR}/"vidclaw*.err.log "${DATA_DIR}/"vidclaw*.out.log "${DATA_DIR}/vidclaw.pid"
+  run_cmd find "${DATA_DIR}" -maxdepth 1 -type f \
+    \( -name '*.json' -o -name 'vidclaw*.log' -o -name 'vidclaw*.err.log' -o -name 'vidclaw*.out.log' -o -name 'vidclaw.pid' \) \
+    -exec rm -f {} +
   log_ok "Runtime data purged."
 else
   log_info "Runtime data preserved. Use --purge-data to remove data files."

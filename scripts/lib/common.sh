@@ -49,7 +49,19 @@ log_ok() {
 
 die() {
   local code=1
-  if [[ $# -gt 0 && "$1" =~ ^[0-9]+$ ]]; then
+  if [[ "${1:-}" == "--code" ]]; then
+    [[ $# -ge 2 ]] || {
+      log_error "Missing exit code after --code."
+      exit 1
+    }
+    [[ "$2" =~ ^[0-9]+$ ]] || {
+      log_error "Invalid exit code: $2"
+      exit 1
+    }
+    code="$2"
+    shift 2
+  elif [[ $# -gt 0 && "$1" =~ ^[0-9]+$ ]]; then
+    # Backward compatibility for callers using: die <code> <message> [hint]
     code="$1"
     shift
   fi
@@ -60,6 +72,14 @@ die() {
     printf '[HINT] %s\n' "$hint" >&2
   fi
   exit "$code"
+}
+
+enable_dry_run() {
+  DRY_RUN=1
+}
+
+enable_interactive_sudo() {
+  ALLOW_INTERACTIVE=1
 }
 
 is_dry_run() {
