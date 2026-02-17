@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { Settings, Clock, Globe, Save, Check, Loader2, Search, ChevronDown } from 'lucide-react'
+import { Settings, Clock, Globe, Save, Check, Loader2, Search, ChevronDown, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
 
@@ -113,6 +113,11 @@ export default function SettingsPage() {
   const [error, setError] = useState(null)
   const { setTimezone: setGlobalTimezone } = useTimezone()
 
+  const [versionInfo, setVersionInfo] = useState(null)
+  const [versionLoading, setVersionLoading] = useState(true)
+  const [updating, setUpdating] = useState(false)
+  const [updateResult, setUpdateResult] = useState(null)
+
   const isDirty = heartbeat !== savedHeartbeat || timezone !== savedTimezone
 
   useEffect(() => {
@@ -127,7 +132,27 @@ export default function SettingsPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
+    fetch('/api/openclaw/version')
+      .then(r => r.json())
+      .then(d => { setVersionInfo(d); setVersionLoading(false) })
+      .catch(() => setVersionLoading(false))
   }, [])
+
+  const handleUpdate = async () => {
+    setUpdating(true)
+    setUpdateResult(null)
+    try {
+      const r = await fetch('/api/openclaw/update', { method: 'POST' })
+      const data = await r.json()
+      if (!r.ok) throw new Error(data.error || 'Update failed')
+      setUpdateResult({ success: true, version: data.version })
+      setVersionInfo(v => ({ ...v, current: data.version, outdated: false }))
+    } catch (e) {
+      setUpdateResult({ success: false, error: e.message })
+    } finally {
+      setUpdating(false)
+    }
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -208,6 +233,60 @@ export default function SettingsPage() {
           Used for the clock display, calendar dates, and task timestamps. No restart needed.
         </p>
         <TimezoneCombobox value={timezone} onChange={setTimezoneLocal} />
+      </div>
+
+      {/* OpenClaw Version */}
+      <div className="rounded-lg border border-border bg-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <Package size={16} className="text-green-400" />
+          <h3 className="font-medium text-sm">OpenClaw Version</h3>
+        </div>
+        {versionLoading ? (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Loader2 className="animate-spin" size={14} /> Checking version…
+          </div>
+        ) : !versionInfo || (!versionInfo.current && !versionInfo.latest) ? (
+          <p className="text-xs text-muted-foreground">Could not check version</p>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 text-sm">
+              <span className="text-muted-foreground">Installed:</span>
+              <span className="font-mono">{versionInfo.current || 'unknown'}</span>
+              {versionInfo.latest && (
+                <>
+                  <span className="text-muted-foreground">Latest:</span>
+                  <span className="font-mono">{versionInfo.latest}</span>
+                </>
+              )}
+              {versionInfo.outdated === true && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  Update available
+                </span>
+              )}
+              {versionInfo.outdated === false && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
+                  Up to date
+                </span>
+              )}
+            </div>
+            {versionInfo.outdated && (
+              <button
+                onClick={handleUpdate}
+                disabled={updating}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                {updating ? <Loader2 className="animate-spin" size={14} /> : <Package size={14} />}
+                {updating ? 'Updating…' : `Update to v${versionInfo.latest}`}
+              </button>
+            )}
+            {updateResult?.success && (
+              <p className="text-xs text-green-400">Updated to v{updateResult.version}. OpenClaw is restarting…</p>
+            )}
+            {updateResult && !updateResult.success && (
+              <p className="text-xs text-red-400">Update failed: {updateResult.error}</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Save */}
