@@ -173,11 +173,11 @@ export default function Board() {
     fetchTasks()
   }
 
-  async function handleQuickAdd(status, title) {
+  async function handleQuickAdd(status, title, skills = []) {
     await fetch('/api/tasks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, status }),
+      body: JSON.stringify({ title, status, skills, skill: skills[0] || '' }),
     })
     fetchTasks()
   }

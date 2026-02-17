@@ -1,13 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { X, Clock, Bot, User, Activity } from 'lucide-react'
-
-function getDefaultScheduleTime() {
-  const d = new Date()
-  d.setDate(d.getDate() + 1)
-  d.setHours(9, 0, 0, 0)
-  const pad = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
+import React, { useState, useEffect, useRef } from 'react'
+import { X, Bot, User, Activity } from 'lucide-react'
 
 function formatTime(iso) {
   if (!iso) return ''
@@ -76,10 +68,93 @@ function ActivityLog() {
   )
 }
 
+function SkillPicker({ selectedSkills, onChange, allSkills }) {
+  const [query, setQuery] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const inputRef = useRef(null)
+  const containerRef = useRef(null)
+
+  const filtered = allSkills.filter(s => {
+    const id = typeof s === 'string' ? s : s.id || s.name
+    return !selectedSkills.includes(id) && id.toLowerCase().includes(query.toLowerCase())
+  })
+
+  function addSkill(skillId) {
+    onChange([...selectedSkills, skillId])
+    setQuery('')
+    setShowDropdown(false)
+    inputRef.current?.focus()
+  }
+
+  function removeSkill(skillId) {
+    onChange(selectedSkills.filter(s => s !== skillId))
+  }
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className="flex flex-wrap gap-1.5 bg-secondary border border-border rounded-md px-2 py-1.5 min-h-[36px] items-center cursor-text" onClick={() => inputRef.current?.focus()}>
+        {selectedSkills.map(sk => (
+          <span key={sk} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
+            {sk}
+            <button type="button" onClick={(e) => { e.stopPropagation(); removeSkill(sk) }} className="hover:text-orange-200">
+              <X size={10} />
+            </button>
+          </span>
+        ))}
+        <input
+          ref={inputRef}
+          className="flex-1 min-w-[80px] bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          value={query}
+          onChange={e => { setQuery(e.target.value); setShowDropdown(true) }}
+          onFocus={() => setShowDropdown(true)}
+          onKeyDown={e => {
+            if (e.key === 'Backspace' && !query && selectedSkills.length) {
+              removeSkill(selectedSkills[selectedSkills.length - 1])
+            }
+            if (e.key === 'Escape') setShowDropdown(false)
+            if (e.key === 'Enter' && filtered.length > 0) {
+              e.preventDefault()
+              const id = typeof filtered[0] === 'string' ? filtered[0] : filtered[0].id || filtered[0].name
+              addSkill(id)
+            }
+          }}
+          placeholder={selectedSkills.length ? '' : 'Search skills...'}
+        />
+      </div>
+      {showDropdown && filtered.length > 0 && (
+        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-card border border-border rounded-md shadow-lg">
+          {filtered.slice(0, 20).map(s => {
+            const id = typeof s === 'string' ? s : s.id || s.name
+            const label = typeof s === 'string' ? s : s.name || s.id
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => addSkill(id)}
+                className="w-full text-left px-3 py-1.5 text-sm hover:bg-secondary/80 transition-colors text-foreground"
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function TaskDialog({ open, onClose, onSave, task }) {
-  const [form, setForm] = useState({ title: '', description: '', skill: '', status: 'backlog', schedule: null })
-  const [scheduleType, setScheduleType] = useState('none')
-  const [scheduleTime, setScheduleTime] = useState(getDefaultScheduleTime())
+  const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog' })
   const [skills, setSkills] = useState([])
   const [activeTab, setActiveTab] = useState('form')
 
@@ -89,15 +164,10 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
 
   useEffect(() => {
     if (task) {
-      setForm({ title: task.title, description: task.description, skill: task.skill || '', status: task.status, schedule: task.schedule || null })
-      if (!task.schedule) { setScheduleType('none') }
-      else if (task.schedule === 'asap') { setScheduleType('asap') }
-      else if (task.schedule === 'next-heartbeat') { setScheduleType('next-heartbeat') }
-      else { setScheduleType('specific'); setScheduleTime(task.schedule.slice(0, 16)) }
+      const taskSkills = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
+      setForm({ title: task.title, description: task.description, skills: taskSkills, status: task.status })
     } else {
-      setForm({ title: '', description: '', skill: '', status: 'backlog', schedule: null })
-      setScheduleType('none')
-      setScheduleTime(getDefaultScheduleTime())
+      setForm({ title: '', description: '', skills: [], status: 'backlog' })
     }
     setActiveTab('form')
   }, [task, open])
@@ -106,38 +176,23 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
 
   function handleSave() {
     if (!form.title) return
-    let schedule = null
-    if (scheduleType === 'asap') schedule = 'asap'
-    else if (scheduleType === 'next-heartbeat') schedule = 'next-heartbeat'
-    else if (scheduleType === 'specific') schedule = new Date(scheduleTime).toISOString()
-    const data = { ...form, schedule }
-    if (schedule) data.scheduledAt = new Date().toISOString()
+    const data = { ...form, skill: form.skills[0] || '', schedule: null }
     onSave(data)
   }
 
-  const scheduleOptions = [
-    { value: 'none', label: 'No Schedule' },
-    { value: 'asap', label: 'ASAP' },
-    { value: 'next-heartbeat', label: 'Next Heartbeat' },
-    { value: 'specific', label: 'Specific Time' },
-  ]
-
   return (
     <div className="fixed inset-0 z-50 flex items-stretch justify-end bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      {/* Desktop: right side panel, Mobile: bottom sheet */}
       <div
         className="bg-card border-l border-border w-full max-w-2xl flex flex-col shadow-2xl
           max-sm:border-l-0 max-sm:border-t max-sm:mt-auto max-sm:max-h-[85vh] max-sm:rounded-t-xl
           sm:h-full"
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
           <h2 className="text-lg font-semibold">{task ? 'Edit Task' : 'New Task'}</h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={18} /></button>
         </div>
 
-        {/* Tabs */}
         <div className="flex border-b border-border shrink-0">
           <button
             onClick={() => setActiveTab('form')}
@@ -153,7 +208,6 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
           </button>
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto">
           {activeTab === 'form' ? (
             <div className="p-5 space-y-4">
@@ -178,66 +232,27 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Status</label>
-                  <select
-                    className="w-full bg-secondary border border-border rounded-md px-3 py-2 text-sm outline-none"
-                    value={form.status}
-                    onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                  >
-                    <option value="backlog">Backlog</option>
-                    <option value="todo">Todo</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="done">Done</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Skill</label>
-                  <select
-                    className="w-full bg-secondary border border-border rounded-md px-3 py-2 text-sm outline-none"
-                    value={form.skill}
-                    onChange={e => setForm(f => ({ ...f, skill: e.target.value }))}
-                  >
-                    <option value="">None</option>
-                    {skills.map(s => {
-                      const id = typeof s === 'string' ? s : s.id || s.name
-                      const label = typeof s === 'string' ? s : s.name || s.id
-                      return <option key={id} value={id}>{label}</option>
-                    })}
-                  </select>
-                </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">Status</label>
+                <select
+                  className="w-full bg-secondary border border-border rounded-md px-3 py-2 text-sm outline-none"
+                  value={form.status}
+                  onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
+                >
+                  <option value="backlog">Backlog</option>
+                  <option value="todo">Todo</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="done">Done</option>
+                </select>
               </div>
 
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block flex items-center gap-1">
-                  <Clock size={12} className="text-orange-500" /> Schedule
-                </label>
-                <div className="flex flex-wrap gap-1.5">
-                  {scheduleOptions.map(opt => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setScheduleType(opt.value)}
-                      className={`px-2.5 py-1 text-xs rounded-md border transition-colors ${
-                        scheduleType === opt.value
-                          ? 'bg-orange-500/20 border-orange-500/50 text-orange-400'
-                          : 'bg-secondary border-border text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-                {scheduleType === 'specific' && (
-                  <input
-                    type="datetime-local"
-                    className="mt-2 w-full bg-secondary border border-border rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-orange-500"
-                    value={scheduleTime}
-                    onChange={e => setScheduleTime(e.target.value)}
-                  />
-                )}
+                <label className="text-xs text-muted-foreground mb-1 block">Skills</label>
+                <SkillPicker
+                  selectedSkills={form.skills}
+                  onChange={skills => setForm(f => ({ ...f, skills }))}
+                  allSkills={skills}
+                />
               </div>
             </div>
           ) : (
@@ -245,7 +260,6 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
           )}
         </div>
 
-        {/* Footer */}
         {activeTab === 'form' && (
           <div className="flex justify-end gap-2 px-5 py-4 border-t border-border shrink-0">
             <button onClick={onClose} className="px-4 py-2 text-sm rounded-md bg-secondary hover:bg-accent transition-colors">Cancel</button>

@@ -2,27 +2,12 @@ import React, { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
-import { GripVertical, Pencil, Trash2, Clock, Play, AlertCircle, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, Play, AlertCircle, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
 
 function formatTime(iso) {
   if (!iso) return ''
   const d = new Date(iso)
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })
-}
-
-function ScheduleBadge({ schedule }) {
-  if (!schedule) return null
-  let label = ''
-  if (schedule === 'asap') label = 'ASAP'
-  else if (schedule === 'next-heartbeat') label = 'Next Heartbeat'
-  else label = formatTime(schedule)
-
-  return (
-    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400">
-      <Clock size={10} />
-      {label}
-    </span>
-  )
 }
 
 export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: isDraggingProp }) {
@@ -38,6 +23,8 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
   const isDone = task.status === 'done'
   const hasError = !!task.error
   const canRun = task.status === 'backlog' || task.status === 'todo'
+
+  const skillsList = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
 
   return (
     <div
@@ -87,11 +74,10 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mt-2 flex-wrap">
-        {task.skill && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400">{task.skill}</span>
-        )}
-        <ScheduleBadge schedule={task.schedule} />
+      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+        {skillsList.map(sk => (
+          <span key={sk} className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400">{sk}</span>
+        ))}
         {hasError && (
           <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400">
             <AlertCircle size={10} /> Error

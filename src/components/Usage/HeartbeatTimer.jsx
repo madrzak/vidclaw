@@ -42,7 +42,8 @@ export default function HeartbeatTimer() {
         const res = await fetch('/api/settings')
         if (res.ok) {
           const data = await res.json()
-          if (data.heartbeatInterval) setIntervalMs(parseInterval(data.heartbeatInterval))
+          const val = data.heartbeatInterval || data.heartbeatEvery
+          if (val) setIntervalMs(parseInterval(val))
         }
       } catch {}
     }
