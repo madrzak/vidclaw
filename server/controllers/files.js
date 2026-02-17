@@ -14,7 +14,16 @@ export function listFiles(req, res) {
         if (reqPath === 'dashboard' && e.name === 'node_modules') return false;
         return true;
       })
-      .map(e => ({ name: e.name, isDirectory: e.isDirectory(), path: path.join(reqPath, e.name) }))
+      .map(e => {
+        const entryPath = path.join(fullPath, e.name);
+        let size = 0, mtime = null;
+        try {
+          const stat = fs.statSync(entryPath);
+          size = stat.size;
+          mtime = stat.mtime.toISOString();
+        } catch {}
+        return { name: e.name, isDirectory: e.isDirectory(), path: path.join(reqPath, e.name), size, mtime };
+      })
       .sort((a, b) => b.isDirectory - a.isDirectory || a.name.localeCompare(b.name));
     res.json(entries);
   } catch { res.json([]); }
