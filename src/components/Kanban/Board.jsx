@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners } from '@dnd-kit/core'
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, pointerWithin, rectIntersection } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './Column'
 import TaskCard from './TaskCard'
@@ -19,6 +19,13 @@ export default function Board() {
   const [editTask, setEditTask] = useState(null)
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
+
+  // Custom collision detection: prefer pointerWithin (accurate to cursor position), fall back to rectIntersection
+  const collisionDetection = useCallback((args) => {
+    const pw = pointerWithin(args)
+    if (pw.length > 0) return pw
+    return rectIntersection(args)
+  }, [])
 
   const fetchTasks = useCallback(async () => {
     const res = await fetch('/api/tasks')
@@ -97,13 +104,38 @@ export default function Board() {
         fetchTasks()
       }
     } else {
-      // Move to different column
-      setTasks(prev => prev.map(t => t.id === active.id ? { ...t, status: targetColumn } : t))
+      // Move to different column — calculate insertion order
+      const targetTasks = getColumnTasks(targetColumn)
+      let newOrder
+      if (overTaskId) {
+        const overIndex = targetTasks.findIndex(t => t.id === overTaskId)
+        const overTask = targetTasks[overIndex]
+        newOrder = (overTask?.order ?? overIndex) + 1
+        // Shift tasks at or after the insertion point
+        setTasks(prev => prev.map(t => {
+          if (t.id === active.id) return { ...t, status: targetColumn, order: newOrder }
+          if (t.status === targetColumn && (t.order ?? 999999) >= newOrder) return { ...t, order: (t.order ?? 999999) + 1 }
+          return t
+        }))
+      } else {
+        // Dropped on empty column area — append at end
+        newOrder = targetTasks.length
+        setTasks(prev => prev.map(t => t.id === active.id ? { ...t, status: targetColumn, order: newOrder } : t))
+      }
       try {
         await fetch(`/api/tasks/${active.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: targetColumn }),
+          body: JSON.stringify({ status: targetColumn, order: newOrder }),
+        })
+        // Reorder entire target column to clean up
+        const updatedTargetTasks = [...targetTasks.filter(t => t.id !== active.id)]
+        const insertAt = overTaskId ? updatedTargetTasks.findIndex(t => t.id === overTaskId) + 1 : updatedTargetTasks.length
+        updatedTargetTasks.splice(insertAt, 0, { id: active.id })
+        await fetch('/api/tasks/reorder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: targetColumn, order: updatedTargetTasks.map(t => t.id) }),
         })
         fetchTasks()
       } catch {
@@ -162,7 +194,7 @@ export default function Board() {
 
   return (
     <>
-      <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
         <div className="flex gap-4 h-full overflow-x-auto pb-2">
           {COLUMNS.map(col => (
             <Column

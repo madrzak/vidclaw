@@ -65,6 +65,7 @@ app.post('/api/tasks', (req, res) => {
     description: req.body.description || '',
     priority: req.body.priority || 'medium',
     skill: req.body.skill || '',
+    skills: Array.isArray(req.body.skills) ? req.body.skills : (req.body.skill ? [req.body.skill] : []),
     status: req.body.status || 'backlog',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -87,7 +88,7 @@ app.put('/api/tasks/:id', (req, res) => {
   const idx = tasks.findIndex(t => t.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
   const wasNotDone = tasks[idx].status !== 'done';
-  const allowedFields = ['title', 'description', 'priority', 'skill', 'status', 'schedule', 'scheduledAt', 'result', 'startedAt', 'completedAt', 'error', 'order'];
+  const allowedFields = ['title', 'description', 'priority', 'skill', 'skills', 'status', 'schedule', 'scheduledAt', 'result', 'startedAt', 'completedAt', 'error', 'order'];
   const updates = {};
   for (const k of allowedFields) { if (req.body[k] !== undefined) updates[k] = req.body[k]; }
   tasks[idx] = { ...tasks[idx], ...updates, updatedAt: new Date().toISOString() };

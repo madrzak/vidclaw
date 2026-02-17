@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { HeartPulse } from 'lucide-react'
 
-const INTERVAL_MS = 30 * 60 * 1000 // 30 minutes (heartbeat interval)
+const DEFAULT_INTERVAL_MS = 30 * 60 * 1000
+
+function parseInterval(str) {
+  if (!str) return DEFAULT_INTERVAL_MS
+  const m = str.match(/^(\d+)\s*(m|h)$/i)
+  if (!m) return DEFAULT_INTERVAL_MS
+  const val = parseInt(m[1])
+  return m[2].toLowerCase() === 'h' ? val * 60 * 60 * 1000 : val * 60 * 1000
+}
 
 export default function HeartbeatTimer() {
   const [lastBeat, setLastBeat] = useState(null)
+  const [intervalMs, setIntervalMs] = useState(DEFAULT_INTERVAL_MS)
   const [now, setNow] = useState(Date.now())
 
   useEffect(() => {
@@ -28,14 +37,24 @@ export default function HeartbeatTimer() {
         }
       } catch {}
     }
+    async function fetchInterval() {
+      try {
+        const res = await fetch('/api/settings')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.heartbeatInterval) setIntervalMs(parseInterval(data.heartbeatInterval))
+        }
+      } catch {}
+    }
     checkBeat()
+    fetchInterval()
     const iv = setInterval(checkBeat, 30000)
     return () => clearInterval(iv)
   }, [])
 
   if (!lastBeat) return null
 
-  const nextBeat = lastBeat + INTERVAL_MS
+  const nextBeat = lastBeat + intervalMs
   const remaining = Math.max(0, nextBeat - now)
   const minutes = Math.floor(remaining / 60000)
   const seconds = Math.floor((remaining % 60000) / 1000)
