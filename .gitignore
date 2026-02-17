@@ -7,3 +7,4 @@ data/*-history.json
 *.log
 settings.local.json
 /LOCAL.md
+CLAUDE.md

@@ -71,8 +71,10 @@ export default function HeartbeatTimer() {
   const minutes = Math.floor(remaining / 60000)
   const seconds = Math.floor((remaining % 60000) / 1000)
 
+  const overdue = remaining === 0
   let label
-  if (minutes < 1) label = '<1m'
+  if (overdue) label = 'due'
+  else if (minutes < 1) label = '<1m'
   else label = `${minutes}m`
 
   const isImminent = minutes < 1
@@ -82,7 +84,7 @@ export default function HeartbeatTimer() {
       <HeartPulse size={11} className={isImminent ? 'text-orange-400 animate-pulse' : ''} />
       <span>{label}</span>
       <div className="absolute top-full right-0 mt-1.5 px-2 py-1 bg-popover border border-border rounded text-[10px] text-popover-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg z-[9999]">
-        Next execution window in {minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`}
+        {overdue ? 'Execution window overdue — waiting for next heartbeat' : `Next execution window in ${minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`}`}
       </div>
     </div>
   )
