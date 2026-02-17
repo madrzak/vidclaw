@@ -68,10 +68,17 @@ export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onDel
             <textarea
               ref={inputRef}
               value={title}
-              onChange={e => setTitle(e.target.value)}
+              onChange={e => {
+                setTitle(e.target.value)
+                const el = e.target
+                el.style.height = 'auto'
+                el.style.height = Math.min(el.scrollHeight, 140) + 'px'
+                el.style.overflowY = el.scrollHeight > 140 ? 'auto' : 'hidden'
+              }}
               onKeyDown={handleKeyDown}
               placeholder="Enter a title..."
-              rows={2}
+              rows={1}
+              style={{ overflow: 'hidden' }}
               className="w-full bg-secondary/80 border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25"
             />
             <div className="flex items-center gap-2">
