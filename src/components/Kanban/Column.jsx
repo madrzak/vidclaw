@@ -54,7 +54,7 @@ export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onDel
         </SortableContext>
       </div>
 
-      {column.id === 'backlog' && <div className="p-2 border-t border-border/50">
+      {(column.id === 'backlog' || column.id === 'todo') && <div className="p-2 border-t border-border/50">
         {!adding ? (
           <button
             onClick={() => setAdding(true)}
