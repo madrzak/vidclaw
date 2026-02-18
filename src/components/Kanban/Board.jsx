@@ -4,6 +4,7 @@ import { arrayMove } from '@dnd-kit/sortable'
 import Column from './Column'
 import TaskCard from './TaskCard'
 import TaskDialog from './TaskDialog'
+import TaskDetailDialog from './TaskDetailDialog'
 import { useSocket } from '../../hooks/useSocket.jsx'
 
 const COLUMNS = [
@@ -18,6 +19,7 @@ export default function Board() {
   const [activeId, setActiveId] = useState(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editTask, setEditTask] = useState(null)
+  const [viewTask, setViewTask] = useState(null)
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -199,6 +201,11 @@ export default function Board() {
     setDialogOpen(true)
   }
 
+  function openView(task) {
+    setViewTask(task)
+  }
+
+
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
@@ -211,6 +218,7 @@ export default function Board() {
               onAdd={() => openNew(col.id)}
               onQuickAdd={handleQuickAdd}
               onEdit={openEdit}
+              onView={openView}
               onDelete={handleDelete}
               onRun={handleRun}
               onToggleSchedule={handleToggleSchedule}
@@ -226,6 +234,11 @@ export default function Board() {
         onClose={() => { setDialogOpen(false); setEditTask(null) }}
         onSave={handleSave}
         task={editTask}
+      />
+      <TaskDetailDialog
+        open={!!viewTask}
+        onClose={() => setViewTask(null)}
+        task={viewTask}
       />
     </>
   )

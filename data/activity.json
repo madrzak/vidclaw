@@ -1,154 +1,222 @@
 [
   {
-    "id": "mlpz88vh9bl2",
-    "actor": "bot",
-    "action": "task_completed",
-    "details": {
-      "taskId": "mlpz4j8m73mk",
-      "title": "make the modal larger and on rhs (desktop) and below (mobile) show activity log - what should be tracked is any actions by bot and actions by user",
-      "hasError": false
-    },
-    "timestamp": "2026-02-17T02:21:04.877Z"
-  },
-  {
-    "id": "mlpz99coes48",
+    "id": "mlresdq2ep87",
     "actor": "user",
-    "action": "task_updated",
+    "action": "task_created",
     "details": {
-      "taskId": "mlpyf9chmnrp",
-      "title": "we should have the ability to add multiple skills when editing a task card, also should be able to @skills (with nice autosuggest dropdown inside the quick add card input boxes, also remove the schedule part for now",
-      "changes": [
-        "title",
-        "description",
-        "skill",
-        "status",
-        "schedule"
-      ]
+      "taskId": "mlresdq1eneh",
+      "title": "Add dark/light mode toggle"
     },
-    "timestamp": "2026-02-17T02:21:52.152Z"
+    "timestamp": "2026-02-15T02:24:24.697Z"
   },
   {
-    "id": "mlpzccfy4jz5",
+    "id": "mlresdq2gw2k",
     "actor": "user",
-    "action": "task_updated",
+    "action": "task_created",
     "details": {
-      "taskId": "mlpypdfg6afq",
-      "title": "drag and dropping tasks is a inaccurate, drop area doesnt seem to match the ui columns, and when dropping tasks below the task already in the column it should land below that task, rather than on top of the column and messing up the order",
-      "changes": [
-        "title",
-        "description",
-        "skill",
-        "status",
-        "schedule"
-      ]
+      "taskId": "mlresdq22x4r",
+      "title": "Build kanban board layout"
     },
-    "timestamp": "2026-02-17T02:24:16.126Z"
+    "timestamp": "2026-02-13T22:24:24.697Z"
   },
   {
-    "id": "mlpzcseo5yge",
+    "id": "mlresdq2nfwl",
     "actor": "bot",
     "action": "task_pickup",
     "details": {
-      "taskId": "mlpypdfg6afq",
-      "title": "drag and dropping tasks is a inaccurate, drop area doesnt seem to match the ui columns, and when dropping tasks below the task already in the column it should land below that task, rather than on top of the column and messing up the order"
+      "taskId": "mlresdq22x4r",
+      "title": "Build kanban board layout"
     },
-    "timestamp": "2026-02-17T02:24:36.816Z"
+    "timestamp": "2026-02-14T03:24:24.697Z"
   },
   {
-    "id": "mlpzesyvaph7",
+    "id": "mlresdq2xnac",
     "actor": "bot",
     "action": "task_completed",
     "details": {
-      "taskId": "mlpypdfg6afq",
-      "title": "drag and dropping tasks is a inaccurate, drop area doesnt seem to match the ui columns, and when dropping tasks below the task already in the column it should land below that task, rather than on top of the column and messing up the order",
+      "taskId": "mlresdq22x4r",
+      "title": "Build kanban board layout",
       "hasError": false
     },
-    "timestamp": "2026-02-17T02:26:10.855Z"
+    "timestamp": "2026-02-14T13:24:24.697Z"
   },
   {
-    "id": "mlpzj88nddli",
+    "id": "mlresdq2u5he",
     "actor": "user",
-    "action": "task_updated",
+    "action": "task_created",
     "details": {
-      "taskId": "mlpyf9chmnrp",
-      "title": "we should have the ability to add multiple skills when editing a task card, also should be able to @skills (with nice autosuggest dropdown inside the quick add card input boxes, also remove the schedule part for now",
-      "changes": [
-        "status",
-        "order"
-      ]
+      "taskId": "mlresdq2b4zy",
+      "title": "Set up WebSocket broadcast layer"
     },
-    "timestamp": "2026-02-17T02:29:37.271Z"
+    "timestamp": "2026-02-14T02:24:24.697Z"
   },
   {
-    "id": "mlpzjt9x1gkk",
-    "actor": "dashboard",
-    "action": "settings_updated",
-    "details": {
-      "heartbeatEvery": "5m"
-    },
-    "timestamp": "2026-02-17T02:30:04.533Z"
-  },
-  {
-    "id": "mlpzki7z9uv8",
+    "id": "mlresdq2tn10",
     "actor": "bot",
     "action": "task_pickup",
     "details": {
-      "taskId": "mlpyf9chmnrp",
-      "title": "we should have the ability to add multiple skills when editing a task card, also should be able to @skills (with nice autosuggest dropdown inside the quick add card input boxes, also remove the schedule part for now"
+      "taskId": "mlresdq2b4zy",
+      "title": "Set up WebSocket broadcast layer"
     },
-    "timestamp": "2026-02-17T02:30:36.863Z"
+    "timestamp": "2026-02-14T08:24:24.697Z"
   },
   {
-    "id": "mlpzn8u47h24",
+    "id": "mlresdq2wjse",
+    "actor": "bot",
+    "action": "task_completed",
+    "details": {
+      "taskId": "mlresdq2b4zy",
+      "title": "Set up WebSocket broadcast layer",
+      "hasError": false
+    },
+    "timestamp": "2026-02-14T18:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2oiea",
+    "actor": "user",
+    "action": "task_created",
+    "details": {
+      "taskId": "mlresdq2917j",
+      "title": "Add activity logging"
+    },
+    "timestamp": "2026-02-15T04:24:24.697Z"
+  },
+  {
+    "id": "mlresdq29nuf",
+    "actor": "bot",
+    "action": "task_completed",
+    "details": {
+      "taskId": "mlresdq2917j",
+      "title": "Add activity logging",
+      "hasError": false
+    },
+    "timestamp": "2026-02-15T14:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2jk7m",
+    "actor": "user",
+    "action": "task_created",
+    "details": {
+      "taskId": "mlresdq2im94",
+      "title": "Write onboarding tutorial"
+    },
+    "timestamp": "2026-02-16T02:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2o5m9",
+    "actor": "user",
+    "action": "task_created",
+    "details": {
+      "taskId": "mlresdq2sr3x",
+      "title": "Refactor task card component"
+    },
+    "timestamp": "2026-02-16T14:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2drxi",
+    "actor": "user",
+    "action": "task_updated",
+    "details": {
+      "taskId": "mlresdq2sr3x",
+      "title": "Refactor task card component",
+      "changes": [
+        "status"
+      ]
+    },
+    "timestamp": "2026-02-17T14:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2n7ix",
+    "actor": "user",
+    "action": "task_created",
+    "details": {
+      "taskId": "mlresdq28zkl",
+      "title": "Investigate memory leak in WebSocket handler"
+    },
+    "timestamp": "2026-02-17T02:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2wb0q",
+    "actor": "user",
+    "action": "task_created",
+    "details": {
+      "taskId": "mlresdq2krlc",
+      "title": "Fix drag-and-drop accuracy on mobile"
+    },
+    "timestamp": "2026-02-17T16:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2me61",
+    "actor": "bot",
+    "action": "task_pickup",
+    "details": {
+      "taskId": "mlresdq2krlc",
+      "title": "Fix drag-and-drop accuracy on mobile"
+    },
+    "timestamp": "2026-02-18T00:24:24.697Z"
+  },
+  {
+    "id": "mlresdq22wer",
+    "actor": "user",
+    "action": "task_created",
+    "details": {
+      "taskId": "mlresdq2nxn6",
+      "title": "Implement skill auto-suggest in task input"
+    },
+    "timestamp": "2026-02-17T18:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2ipnc",
+    "actor": "bot",
+    "action": "task_pickup",
+    "details": {
+      "taskId": "mlresdq2nxn6",
+      "title": "Implement skill auto-suggest in task input"
+    },
+    "timestamp": "2026-02-17T23:24:24.697Z"
+  },
+  {
+    "id": "mlresdq2mk0a",
     "actor": "dashboard",
     "action": "settings_updated",
     "details": {
       "heartbeatEvery": "10m"
     },
-    "timestamp": "2026-02-17T02:32:44.668Z"
+    "timestamp": "2026-02-17T21:24:24.697Z"
   },
   {
-    "id": "mlpzu2uvwqxe",
-    "actor": "user",
-    "action": "task_created",
-    "details": {
-      "taskId": "mlpzu2uuoqe5",
-      "title": "send me a joke"
-    },
-    "timestamp": "2026-02-17T02:38:03.511Z"
-  },
-  {
-    "id": "mlq01iw668s0",
-    "actor": "dashboard",
-    "action": "settings_updated",
-    "details": {
-      "heartbeatEvery": "5m"
-    },
-    "timestamp": "2026-02-17T02:43:50.886Z"
-  },
-  {
-    "id": "mlq0oa1dqzv9",
+    "id": "mlresdq24p89",
     "actor": "bot",
     "action": "task_completed",
     "details": {
-      "taskId": "mlpyf9chmnrp",
-      "title": "we should have the ability to add multiple skills when editing a task card, also should be able to @skills (with nice autosuggest dropdown inside the quick add card input boxes, also remove the schedule part for now",
+      "taskId": "mlresdq2c1c4",
+      "title": "Weekly metrics report",
       "hasError": false
     },
-    "timestamp": "2026-02-17T03:01:32.497Z"
+    "timestamp": "2026-02-17T20:24:24.697Z"
   },
   {
-    "id": "mlq0sb54buc3",
+    "id": "mlresdq22ah8",
     "actor": "user",
     "action": "task_updated",
     "details": {
-      "taskId": "mlpzu2uuoqe5",
-      "title": "send me a joke",
+      "taskId": "mlresdq2m5fe",
+      "title": "Daily standup summary",
       "changes": [
-        "status",
-        "order"
+        "schedule",
+        "scheduledAt"
       ]
     },
-    "timestamp": "2026-02-17T03:04:40.552Z"
+    "timestamp": "2026-02-17T18:24:24.697Z"
+  },
+  {
+    "id": "mlrf1umg97u5",
+    "actor": "user",
+    "action": "task_deleted",
+    "details": {
+      "taskId": "mlresdq2c1c4",
+      "title": "Weekly metrics report"
+    },
+    "timestamp": "2026-02-18T02:31:46.504Z"
   }
 ]
