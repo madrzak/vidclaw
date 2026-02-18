@@ -1,19 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import gsap from 'gsap'
 import { cn } from '@/lib/utils'
 import UsageWidget from './Usage/UsageWidget'
-import { LayoutDashboard, Calendar, FolderOpen, Puzzle, Heart, Settings, Menu, X, Coffee } from 'lucide-react'
+import { LayoutDashboard, Calendar, FolderOpen, Puzzle, Heart, Settings, Menu, X, Coffee, Terminal } from 'lucide-react'
 
 const navItems = [
   { id: 'kanban', label: 'Tasks', icon: LayoutDashboard },
   { id: 'calendar', label: 'Activity', icon: Calendar },
   { id: 'files', label: 'Files', icon: FolderOpen },
+  { id: 'terminals', label: 'Terminals', icon: Terminal },
   { id: 'skills', label: 'Skills', icon: Puzzle },
   { id: 'soul', label: 'Soul', icon: Heart },
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
 
+const pageLabels = {
+  kanban: 'Task Board',
+  calendar: 'Activity Calendar',
+  files: 'Content Browser',
+  terminals: 'Terminals',
+  skills: 'Skills Manager',
+  soul: 'Soul Editor',
+  settings: 'Settings',
+}
+
 export default function Layout({ page, setPage, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const sidebarRef = useRef(null)
+  const logoRef = useRef(null)
+  const navRef = useRef(null)
+  const headerLabelRef = useRef(null)
+  const prevPageRef = useRef(page)
 
   // Close sidebar on page change (mobile)
   useEffect(() => {
@@ -27,8 +44,39 @@ export default function Layout({ page, setPage, children }) {
     return () => window.removeEventListener('keydown', handler)
   }, [])
 
+  // GSAP sidebar entrance animation
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+      tl.fromTo(logoRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.5 }
+      )
+
+      tl.fromTo(navRef.current?.children || [],
+        { opacity: 0, x: -16 },
+        { opacity: 1, x: 0, duration: 0.35, stagger: 0.04 },
+        '-=0.3'
+      )
+    }, sidebarRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  // Header label transition on page change
+  useEffect(() => {
+    if (prevPageRef.current !== page && headerLabelRef.current) {
+      gsap.fromTo(headerLabelRef.current,
+        { opacity: 0, y: -6 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+      )
+    }
+    prevPageRef.current = page
+  }, [page])
+
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -38,16 +86,15 @@ export default function Layout({ page, setPage, children }) {
       )}
 
       {/* Sidebar */}
-      <aside className={cn(
-        'w-56 shrink-0 border-r border-border bg-card flex flex-col z-50 transition-transform duration-200',
-        // Mobile: fixed overlay, hidden by default
+      <aside ref={sidebarRef} className={cn(
+        'w-56 shrink-0 border-r border-border/60 bg-card/40 flex flex-col backdrop-blur-sm z-50 transition-transform duration-200',
         'fixed inset-y-0 left-0 md:relative md:translate-x-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
-        <div className="p-4 border-b border-border flex items-center justify-between">
+        <div ref={logoRef} className="p-4 border-b border-border/60 flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
-              ⚡ VidClaw
+              VidClaw
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">Clawmand Center</p>
           </div>
@@ -58,31 +105,29 @@ export default function Layout({ page, setPage, children }) {
             <X size={18} />
           </button>
         </div>
-        <nav className="flex-1 p-2 space-y-1">
+
+        <nav ref={navRef} className="flex-1 px-3 py-4 space-y-0.5">
           {navItems.map(item => (
-            <button
+            <NavButton
               key={item.id}
+              item={item}
+              active={page === item.id}
               onClick={() => setPage(item.id)}
-              className={cn(
-                'w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors',
-                page === item.id
-                  ? 'bg-primary/10 text-primary font-medium'
-                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-              )}
-            >
-              <item.icon size={16} />
-              {item.label}
-            </button>
+            />
           ))}
         </nav>
-        <div className="p-3 border-t border-border text-xs text-muted-foreground">
-          localhost:3333
+
+        <div className="px-4 py-3 border-t border-border/60">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" style={{ animation: 'status-pulse 2s ease-in-out infinite' }} />
+            <span className="text-[11px] text-muted-foreground font-mono">localhost:3333</span>
+          </div>
         </div>
       </aside>
 
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden w-full">
-        <header className="h-12 border-b border-border flex items-center justify-between px-4 shrink-0 gap-2">
+        <header className="h-12 border-b border-border/60 flex items-center justify-between px-4 shrink-0 bg-card/20 gap-2">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -90,7 +135,9 @@ export default function Layout({ page, setPage, children }) {
             >
               <Menu size={20} />
             </button>
-            <span className="text-sm font-medium capitalize">{page === 'kanban' ? 'Task Board' : page === 'calendar' ? 'Activity Calendar' : page === 'skills' ? 'Skills Manager' : page === 'soul' ? 'Soul Editor' : page === 'settings' ? 'Settings' : 'Content Browser'}</span>
+            <span ref={headerLabelRef} className="text-sm font-semibold tracking-tight">
+              {pageLabels[page] || page}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <a
@@ -105,10 +152,43 @@ export default function Layout({ page, setPage, children }) {
             <UsageWidget />
           </div>
         </header>
-        <main className="flex-1 overflow-auto p-2 sm:p-4">
+        <main className="flex-1 overflow-auto">
           {children}
         </main>
       </div>
     </div>
+  )
+}
+
+function NavButton({ item, active, onClick }) {
+  const ref = useRef(null)
+
+  const handleMouseEnter = () => {
+    if (!active) {
+      gsap.to(ref.current, { x: 3, duration: 0.2, ease: 'power2.out' })
+    }
+  }
+  const handleMouseLeave = () => {
+    if (!active) {
+      gsap.to(ref.current, { x: 0, duration: 0.2, ease: 'power2.out' })
+    }
+  }
+
+  return (
+    <button
+      ref={ref}
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={cn(
+        'w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] transition-colors duration-200 relative',
+        active
+          ? 'bg-primary/10 text-primary font-semibold nav-active'
+          : 'text-muted-foreground hover:bg-accent/60 hover:text-foreground'
+      )}
+    >
+      <item.icon size={15} strokeWidth={active ? 2.5 : 2} />
+      {item.label}
+    </button>
   )
 }

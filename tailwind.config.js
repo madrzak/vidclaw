@@ -7,6 +7,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Outfit', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'monospace'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -44,11 +48,16 @@ export default {
       },
       animation: {
         'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
+        'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
       },
       keyframes: {
         'pulse-subtle': {
           '0%, 100%': { borderColor: 'rgb(245 158 11 / 0.3)' },
           '50%': { borderColor: 'rgb(245 158 11 / 0.7)' },
+        },
+        'glow-pulse': {
+          '0%, 100%': { boxShadow: '0 0 4px hsl(24 95% 53% / 0.3)' },
+          '50%': { boxShadow: '0 0 14px hsl(24 95% 53% / 0.5)' },
         },
       },
       borderRadius: {

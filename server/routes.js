@@ -15,6 +15,7 @@ import { listSkills, toggleSkill, createSkill, getSkillContent, deleteSkill } fr
 import { listFiles, getFileContent, downloadFile, getWorkspaceFile, putWorkspaceFile, getWorkspaceFileHistory } from './controllers/files.js';
 import { getSoul, putSoul, getSoulHistory, revertSoul, getSoulTemplates } from './controllers/soul.js';
 import { getSettings, postSettings } from './controllers/settings.js';
+import { listTerminals, createTerminal, getTerminalOutput, sendTerminalInput, resizeTerminal, deleteTerminal } from './controllers/terminals.js';
 
 const router = Router();
 
@@ -72,6 +73,14 @@ router.get('/api/soul/templates', getSoulTemplates);
 // Settings
 router.get('/api/settings', getSettings);
 router.post('/api/settings', postSettings);
+
+// Terminals
+router.get('/api/terminals', listTerminals);
+router.post('/api/terminals', createTerminal);
+router.get('/api/terminals/:id/output', getTerminalOutput);
+router.post('/api/terminals/:id/input', sendTerminalInput);
+router.post('/api/terminals/:id/resize', resizeTerminal);
+router.delete('/api/terminals/:id', deleteTerminal);
 
 // SPA fallback
 router.get('*', (req, res) => {
