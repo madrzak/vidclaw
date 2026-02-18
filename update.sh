@@ -20,7 +20,7 @@ else
     exit 1
   fi
   echo "📌 Checking out $LATEST_TAG..."
-  git checkout "$LATEST_TAG"
+  git -c advice.detachedHead=false checkout "$LATEST_TAG"
   VERSION="$LATEST_TAG"
 fi
 
