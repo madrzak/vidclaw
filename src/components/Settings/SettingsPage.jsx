@@ -122,6 +122,7 @@ export default function SettingsPage() {
   const [vidclawLoading, setVidclawLoading] = useState(true)
   const [vidclawUpdating, setVidclawUpdating] = useState(false)
   const [vidclawUpdateResult, setVidclawUpdateResult] = useState(null)
+  const [refreshCountdown, setRefreshCountdown] = useState(null)
 
   const isDirty = heartbeat !== savedHeartbeat || timezone !== savedTimezone
 
@@ -172,6 +173,13 @@ export default function SettingsPage() {
       if (!r.ok) throw new Error(data.error || 'Update failed')
       setVidclawUpdateResult({ success: true, version: data.version })
       setVidclawInfo(v => ({ ...v, current: data.version, outdated: false }))
+      setRefreshCountdown(5)
+      const interval = setInterval(() => {
+        setRefreshCountdown(prev => {
+          if (prev <= 1) { clearInterval(interval); window.location.reload(); return 0 }
+          return prev - 1
+        })
+      }, 1000)
     } catch (e) {
       setVidclawUpdateResult({ success: false, error: e.message })
     } finally {
@@ -359,7 +367,11 @@ export default function SettingsPage() {
               </button>
             )}
             {vidclawUpdateResult?.success && (
-              <p className="text-xs text-green-400">Updated to v{vidclawUpdateResult.version}. VidClaw is restarting…</p>
+              <p className="text-xs text-green-400">
+                Updated to v{vidclawUpdateResult.version}.{' '}
+                <a onClick={() => window.location.reload()} className="underline cursor-pointer hover:text-green-300">Refresh now</a>
+                {' '}or auto-refresh in {refreshCountdown}s…
+              </p>
             )}
             {vidclawUpdateResult && !vidclawUpdateResult.success && (
               <p className="text-xs text-red-400">Update failed: {vidclawUpdateResult.error}</p>
