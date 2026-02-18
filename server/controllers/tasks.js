@@ -148,16 +148,26 @@ export function getCalendar(req, res) {
     const files = fs.readdirSync(memoryDir).filter(f => /^\d{4}-\d{2}-\d{2}\.md$/.test(f));
     for (const f of files) {
       const date = f.replace('.md', '');
-      data[date] = data[date] || { memory: false, tasks: [] };
+      data[date] = data[date] || { memory: false, tasks: [], scheduled: [] };
       data[date].memory = true;
     }
   } catch {}
   const tasks = readTasks();
   for (const t of tasks) {
+    // Completed tasks
     if (t.completedAt) {
       const date = isoToDateInTz(t.completedAt);
-      data[date] = data[date] || { memory: false, tasks: [] };
+      data[date] = data[date] || { memory: false, tasks: [], scheduled: [] };
       data[date].tasks.push(t.title);
+    }
+    // Scheduled / upcoming tasks (scheduledAt or future schedule dates)
+    const schedDate = t.scheduledAt || (t.schedule && t.schedule !== 'asap' && t.schedule !== 'next-heartbeat' ? t.schedule : null);
+    if (schedDate && t.status !== 'done') {
+      try {
+        const date = isoToDateInTz(new Date(schedDate).toISOString());
+        data[date] = data[date] || { memory: false, tasks: [], scheduled: [] };
+        data[date].scheduled.push(t.title);
+      } catch {}
     }
   }
   res.json(data);

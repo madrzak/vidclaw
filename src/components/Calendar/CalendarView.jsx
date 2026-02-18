@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, FileText, CheckCircle, Clock } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileText, CheckCircle, Clock, CalendarClock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
 
@@ -92,6 +92,7 @@ export default function CalendarView() {
                 <div className="flex gap-0.5">
                   {entry.memory && <div className="w-1 h-1 rounded-full bg-blue-400" />}
                   {entry.tasks?.length > 0 && <div className="w-1 h-1 rounded-full bg-green-400" />}
+                  {entry.scheduled?.length > 0 && <div className="w-1 h-1 rounded-full bg-orange-400" />}
                 </div>
               )}
             </button>
