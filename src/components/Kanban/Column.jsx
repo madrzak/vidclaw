@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import TaskCard from './TaskCard'
-import { Plus, X } from 'lucide-react'
+import { Plus, X, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import HeartbeatTimer from '../Usage/HeartbeatTimer'
 
@@ -144,7 +144,7 @@ function SkillAutosuggest({ inputRef, title, setTitle, onSubmit, skills }) {
   )
 }
 
-export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onView, onDelete, onRun, onToggleSchedule }) {
+export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onView, onDelete, onRun, onToggleSchedule, onBulkDelete }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id })
   const [adding, setAdding] = useState(false)
   const [title, setTitle] = useState('')
@@ -186,7 +186,22 @@ export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onVie
           <span className="text-sm font-medium">{column.title}</span>
           <span className="text-xs text-muted-foreground bg-secondary rounded-full px-1.5">{tasks.length}</span>
         </div>
-        {column.id === 'todo' && <HeartbeatTimer />}
+        <div className="flex items-center gap-1">
+          {column.id === 'todo' && tasks.length > 0 && (
+            <button
+              onClick={() => {
+                if (window.confirm(`Delete all ${tasks.length} task(s) in ${column.title}?`)) {
+                  onBulkDelete?.(column.id)
+                }
+              }}
+              className="text-muted-foreground hover:text-destructive transition-colors p-0.5 rounded"
+              title="Clear all todo tasks"
+            >
+              <Trash2 size={14} />
+            </button>
+          )}
+          {column.id === 'todo' && <HeartbeatTimer />}
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[120px]">
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>

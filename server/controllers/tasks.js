@@ -147,6 +147,27 @@ export function completeTask(req, res) {
   res.json(tasks[idx]);
 }
 
+export function bulkDeleteTasks(req, res) {
+  let tasks = readTasks();
+  const { status, ids } = req.body;
+  let toDelete;
+  if (Array.isArray(ids) && ids.length) {
+    toDelete = tasks.filter(t => ids.includes(t.id));
+  } else if (status) {
+    toDelete = tasks.filter(t => t.status === status);
+  } else {
+    return res.status(400).json({ error: 'Provide status or ids[]' });
+  }
+  const deleteIds = new Set(toDelete.map(t => t.id));
+  tasks = tasks.filter(t => !deleteIds.has(t.id));
+  writeTasks(tasks);
+  for (const t of toDelete) {
+    logActivity('user', 'task_deleted', { taskId: t.id, title: t.title });
+  }
+  broadcast('tasks', tasks);
+  res.json({ ok: true, deleted: deleteIds.size });
+}
+
 export function deleteTask(req, res) {
   let tasks = readTasks();
   const deleted = tasks.find(t => t.id === req.params.id);
