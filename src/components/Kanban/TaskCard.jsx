@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
-import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2 } from 'lucide-react'
+import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 
 function formatTime(iso, tz) {
   if (!iso) return ''
@@ -23,6 +23,21 @@ function formatDuration(startIso, endIso) {
   return `${hrs}h ${mins % 60}m`
 }
 
+function formatRelativeTime(iso) {
+  if (!iso) return ''
+  const now = Date.now()
+  const diff = now - new Date(iso).getTime()
+  if (diff < 0) return 'just now'
+  const secs = Math.floor(diff / 1000)
+  if (secs < 60) return 'just now'
+  const mins = Math.floor(secs / 60)
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  return `${days}d ago`
+}
+
 function truncateResult(text, maxLen = 120) {
   if (!text) return ''
   const oneLine = text.replace(/\n/g, ' ').trim()
@@ -40,6 +55,7 @@ export function extractFilePaths(text) {
 
 export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDragging: isDraggingProp }) {
   const { timezone } = useTimezone()
+  const [expanded, setExpanded] = useState(false)
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
 
   const style = {
@@ -56,6 +72,7 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
   const skillsList = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
   const duration = isDone ? formatDuration(task.startedAt || task.createdAt, task.completedAt) : null
   const resultSummary = !hasError ? truncateResult(task.result) : null
+  const hasFullResult = task.result && task.result.length > 120
 
   return (
     <div
@@ -66,9 +83,18 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
         dragging && !isDraggingProp && 'opacity-30',
         isInProgress && 'border-amber-500/50 animate-pulse-subtle',
         hasError && 'border-red-500/50',
-        isDone && !hasError && 'border-border/50'
+        isDone && !hasError && 'border-green-500/20 bg-card/60 opacity-80',
+        isDone && hasError && 'bg-card/60 opacity-80'
       )}
-      onClick={() => { if (canEdit && onEdit) onEdit(task); else if (!canEdit && onView) onView(task) }}
+      onClick={() => {
+        if (isDone && (task.result || task.error)) {
+          setExpanded(prev => !prev)
+        } else if (canEdit && onEdit) {
+          onEdit(task)
+        } else if (!canEdit && onView) {
+          onView(task)
+        }
+      }}
       {...attributes}
       {...listeners}
     >
@@ -77,39 +103,65 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
           <div className="flex items-center gap-1.5">
             <GripVertical size={12} className="text-muted-foreground shrink-0 opacity-50 group-hover:opacity-100" />
             {isInProgress && <Loader2 size={12} className="text-amber-400 animate-spin shrink-0" />}
-            {isDone && !hasError && <CheckCircle2 size={12} className="text-green-500/70 shrink-0" />}
-            <p className="text-sm font-medium truncate">{task.title}</p>
+            {isDone && !hasError && <CheckCircle2 size={14} className="text-green-500 shrink-0" />}
+            {isDone && hasError && <AlertCircle size={14} className="text-red-500 shrink-0" />}
+            <p className={cn('text-sm font-medium truncate', isDone && 'text-foreground/70')}>{task.title}</p>
           </div>
-          {/* Show result summary inline for done tasks */}
-          {isDone && resultSummary && (
+
+          {/* Result summary for done tasks (collapsed view) */}
+          {isDone && !expanded && resultSummary && (
             <p className="text-[11px] text-muted-foreground/80 mt-1 line-clamp-2 italic">{resultSummary}</p>
           )}
-          {/* Show error summary inline for errored done tasks */}
-          {isDone && hasError && (
-            <p className="text-[11px] text-red-400/80 mt-1 line-clamp-1 italic">{truncateResult(task.error, 80)}</p>
-          )}
-        </div>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-          {canRun && onRun && (
-            <button
-              onClick={(e) => { e.stopPropagation(); e.preventDefault(); onRun(task.id) }}
-              onPointerDown={e => e.stopPropagation()}
-              className="text-muted-foreground hover:text-green-400 transition-colors"
-              title="Execute immediately"
-            >
-              <Play size={12} />
-            </button>
+
+          {/* Error summary for errored done tasks (collapsed view) */}
+          {isDone && !expanded && hasError && (
+            <p className="text-[11px] text-red-400/80 mt-1 line-clamp-2 italic">{truncateResult(task.error, 120)}</p>
           )}
 
-          {onDelete && (
-            <button onClick={(e) => { e.stopPropagation(); onDelete(task.id) }} onPointerDown={e => e.stopPropagation()} className="text-muted-foreground hover:text-destructive">
-              <Trash2 size={12} />
-            </button>
+          {/* Expanded full result preview */}
+          {isDone && expanded && (
+            <div className="mt-2 text-[11px] rounded-md bg-muted/50 p-2 max-h-48 overflow-y-auto">
+              {hasError && (
+                <div className="mb-2">
+                  <span className="text-red-400 font-medium">Error:</span>
+                  <pre className="text-red-400/80 whitespace-pre-wrap mt-0.5 font-mono text-[10px]">{task.error}</pre>
+                </div>
+              )}
+              {task.result && (
+                <pre className="text-muted-foreground whitespace-pre-wrap font-mono text-[10px]">{task.result}</pre>
+              )}
+            </div>
           )}
+        </div>
+        <div className="flex gap-1 shrink-0">
+          {/* Expand/collapse indicator for done tasks */}
+          {isDone && (task.result || task.error) && (
+            <span className="text-muted-foreground/50">
+              {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+            </span>
+          )}
+          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {canRun && onRun && (
+              <button
+                onClick={(e) => { e.stopPropagation(); e.preventDefault(); onRun(task.id) }}
+                onPointerDown={e => e.stopPropagation()}
+                className="text-muted-foreground hover:text-green-400 transition-colors"
+                title="Execute immediately"
+              >
+                <Play size={12} />
+              </button>
+            )}
+
+            {onDelete && (
+              <button onClick={(e) => { e.stopPropagation(); onDelete(task.id) }} onPointerDown={e => e.stopPropagation()} className="text-muted-foreground hover:text-destructive">
+                <Trash2 size={12} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Skills and error badges - always show */}
+      {/* Skills and error badges */}
       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
         {skillsList.map(sk => (
           <span key={sk} className={cn(
@@ -117,7 +169,7 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
             isDone && !hasError ? 'bg-orange-500/10 text-orange-400/60' : 'bg-orange-500/20 text-orange-400'
           )}>{sk}</span>
         ))}
-        {hasError && (
+        {hasError && !isDone && (
           <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400">
             <AlertCircle size={10} /> Error
           </span>
@@ -129,16 +181,12 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
       )}
 
       {isDone && (
-        <div className="flex items-center gap-2 text-[10px] text-muted-foreground/70 mt-1.5">
-          {task.completedAt && (
-            <span className="flex items-center gap-0.5">
-              <Clock size={9} className="shrink-0" />
-              {formatTime(task.completedAt, timezone)}
-            </span>
-          )}
-          {duration && (
-            <span className="text-muted-foreground/50">({duration})</span>
-          )}
+        <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60 mt-1.5">
+          <span className="flex items-center gap-0.5">
+            <Clock size={9} className="shrink-0" />
+            Completed {formatRelativeTime(task.completedAt)}
+            {duration && <span className="text-muted-foreground/40"> in {duration}</span>}
+          </span>
         </div>
       )}
     </div>
