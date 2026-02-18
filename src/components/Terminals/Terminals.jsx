@@ -85,6 +85,7 @@ function TerminalWindow({ id, title, visible, onClose }) {
     const term = new Terminal({
       cursorBlink: true,
       fontSize: 13,
+      scrollback: 5000,
       fontFamily: "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace",
       theme: {
         background: '#0c0e14',
@@ -190,7 +191,7 @@ function TerminalWindow({ id, title, visible, onClose }) {
         </button>
       </div>
       <div className="flex-1 relative">
-        <div ref={containerRef} className="absolute inset-0 p-1" />
+        <div ref={containerRef} className="absolute inset-0 pl-1 pt-1 pb-1" />
       </div>
     </div>
   )
