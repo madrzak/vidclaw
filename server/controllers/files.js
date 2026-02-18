@@ -66,3 +66,37 @@ export function getWorkspaceFileHistory(req, res) {
   if (!name || name.includes('/') || name.includes('..')) return res.status(400).json({ error: 'Invalid name' });
   res.json(readHistoryFile(path.join(__dirname, 'data', `${name}-history.json`)));
 }
+
+export function putFileContent(req, res) {
+  const reqPath = req.body.path;
+  if (!reqPath) return res.status(400).json({ error: 'Path required' });
+  const fullPath = path.join(WORKSPACE, reqPath);
+  if (!fullPath.startsWith(WORKSPACE)) return res.status(403).json({ error: 'Forbidden' });
+  try {
+    const safeName = reqPath.replace(/\//g, '_');
+    const histPath = path.join(__dirname, 'data', `${safeName}-history.json`);
+    if (fs.existsSync(fullPath)) {
+      const old = fs.readFileSync(fullPath, 'utf-8');
+      if (old) appendHistory(histPath, old);
+    }
+    fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+    fs.writeFileSync(fullPath, req.body.content);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+}
+
+export function deleteFile(req, res) {
+  const reqPath = req.query.path;
+  if (!reqPath) return res.status(400).json({ error: 'Path required' });
+  const fullPath = path.join(WORKSPACE, reqPath);
+  if (!fullPath.startsWith(WORKSPACE)) return res.status(403).json({ error: 'Forbidden' });
+  try {
+    const stat = fs.statSync(fullPath);
+    if (stat.isDirectory()) {
+      fs.rmSync(fullPath, { recursive: true });
+    } else {
+      fs.unlinkSync(fullPath);
+    }
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+}

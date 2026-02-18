@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -9,19 +9,10 @@ const extToLang = {
   css: 'css', html: 'html', md: 'markdown',
 }
 
-export default function FilePreview({ path }) {
-  const [content, setContent] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    setLoading(true)
-    fetch(`/api/files/content?path=${encodeURIComponent(path)}`)
-      .then(r => r.json())
-      .then(d => { setContent(d.content); setLoading(false) })
-      .catch(() => { setContent('Failed to load file'); setLoading(false) })
-  }, [path])
-
-  if (loading) return <div className="p-4 text-sm text-muted-foreground">Loading...</div>
+export default function FilePreview({ path, content }) {
+  if (content === null || content === undefined) {
+    return <div className="p-4 text-sm text-muted-foreground">Loading...</div>
+  }
 
   const ext = path.split('.').pop().toLowerCase()
   const isMarkdown = ext === 'md'
