@@ -74,7 +74,12 @@ The setup script also configures your `HEARTBEAT.md` so your agent automatically
 
 ```bash
 cd ~/.openclaw/workspace/dashboard
+
+# Update to latest stable release (recommended)
 ./update.sh
+
+# Update to bleeding edge (latest commit on main)
+./update.sh --latest
 ```
 
 ## Configuration

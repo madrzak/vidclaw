@@ -15,6 +15,7 @@ import { listSkills, toggleSkill, createSkill, getSkillContent, deleteSkill } fr
 import { listFiles, getFileContent, downloadFile, getWorkspaceFile, putWorkspaceFile, getWorkspaceFileHistory } from './controllers/files.js';
 import { getSoul, putSoul, getSoulHistory, revertSoul, getSoulTemplates } from './controllers/soul.js';
 import { getSettings, postSettings } from './controllers/settings.js';
+import { getVidclawVersion, updateVidclaw } from './controllers/vidclaw.js';
 
 const router = Router();
 
@@ -74,6 +75,10 @@ router.get('/api/soul/templates', getSoulTemplates);
 // Settings
 router.get('/api/settings', getSettings);
 router.post('/api/settings', postSettings);
+
+// VidClaw
+router.get('/api/vidclaw/version', getVidclawVersion);
+router.post('/api/vidclaw/update', updateVidclaw);
 
 // SPA fallback
 router.get('*', (req, res) => {

@@ -218,5 +218,23 @@
       "title": "Weekly metrics report"
     },
     "timestamp": "2026-02-18T02:31:46.504Z"
+  },
+  {
+    "id": "mlrgm1cvhhr5",
+    "actor": "user",
+    "action": "task_updated",
+    "details": {
+      "taskId": "mlresdq2yxk9",
+      "title": "Add bulk delete for completed tasks 2",
+      "changes": [
+        "title",
+        "description",
+        "skill",
+        "skills",
+        "status",
+        "schedule"
+      ]
+    },
+    "timestamp": "2026-02-18T03:15:27.967Z"
   }
 ]

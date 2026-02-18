@@ -16,6 +16,17 @@ const navItems = [
 export default function Layout({ page, setPage, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { theme, toggleTheme } = useTheme()
+  const [updateAvailable, setUpdateAvailable] = useState(null)
+
+  // Check for updates on mount
+  useEffect(() => {
+    fetch('/api/vidclaw/version')
+      .then(r => r.json())
+      .then(data => {
+        if (data.outdated) setUpdateAvailable(data.latest)
+      })
+      .catch(() => {})
+  }, [])
 
   // Close sidebar on page change (mobile)
   useEffect(() => {
@@ -77,9 +88,15 @@ export default function Layout({ page, setPage, children }) {
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-border text-xs text-muted-foreground">
-          localhost:3333
-        </div>
+        <button
+          onClick={() => setPage('settings')}
+          className="p-3 border-t border-border text-xs text-muted-foreground hover:text-foreground transition-colors text-left flex items-center gap-1.5 w-full"
+        >
+          <span>VidClaw v{__APP_VERSION__}</span>
+          {updateAvailable && (
+            <span className="inline-block w-2 h-2 rounded-full bg-amber-400 shrink-0" title={`Update available: v${updateAvailable}`} />
+          )}
+        </button>
       </aside>
 
       {/* Main */}
