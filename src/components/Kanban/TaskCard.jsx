@@ -3,7 +3,20 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
-import { GripVertical, Pencil, Trash2, Play, AlertCircle, ChevronDown, ChevronUp, Loader2, FileText } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, Play, AlertCircle, ChevronDown, ChevronUp, Loader2, FileText, Clock } from 'lucide-react'
+
+function formatDuration(startIso, endIso) {
+  if (!startIso || !endIso) return null
+  const ms = new Date(endIso) - new Date(startIso)
+  if (ms < 0) return null
+  const totalSeconds = Math.floor(ms / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`
+  if (minutes > 0) return `${minutes}m ${seconds}s`
+  return `${seconds}s`
+}
 
 function formatTime(iso, tz) {
   if (!iso) return ''
@@ -102,7 +115,16 @@ export default function TaskCard({ task, onEdit, onDelete, onRun, isDragging: is
 
       {isDone && (
         <div className="mt-1.5 space-y-1">
-          {task.completedAt && <p className="text-[10px] text-muted-foreground">Completed {formatTime(task.completedAt, timezone)}</p>}
+          {task.completedAt && (
+            <p className="text-[10px] text-muted-foreground">
+              Completed {formatTime(task.completedAt, timezone)}
+              {task.startedAt && formatDuration(task.startedAt, task.completedAt) && (
+                <span className="inline-flex items-center gap-0.5 ml-1.5 text-emerald-400">
+                  <Clock size={9} /> {formatDuration(task.startedAt, task.completedAt)}
+                </span>
+              )}
+            </p>
+          )}
           {(task.result || task.error) && (
             <div onPointerDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}>
               <button
