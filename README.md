@@ -1,8 +1,32 @@
-# VidClaw
+<h1 align="center">
+  VidClaw — Open-Source, Self-Hosted Dashboard for OpenClaw AI Agents
+</h1>
 
-A secure, self-hosted command center for managing your OpenClaw AI agent.
+<p align="center">
+  <strong>A secure, self-hosted command center for managing your <a href="https://openclaw.ai">OpenClaw</a> AI agent — right from your browser.</strong>
+</p>
 
-![Dark theme dashboard with Kanban board, usage tracking, and more](https://img.shields.io/badge/status-beta-orange)
+<p align="center">
+  <a href="https://github.com/madrzak/vidclaw/stargazers"><img src="https://img.shields.io/github/stars/madrzak/vidclaw?style=social" alt="GitHub stars for VidClaw open-source dashboard"></a>
+  <a href="https://github.com/madrzak/vidclaw/blob/main/LICENSE"><img src="https://img.shields.io/github/license/madrzak/vidclaw" alt="MIT License"></a>
+  <a href="https://github.com/madrzak/vidclaw/releases"><img src="https://img.shields.io/github/v/release/madrzak/vidclaw" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/status-beta-orange" alt="Beta status">
+  <a href="https://vidclaw.com"><img src="https://img.shields.io/badge/website-vidclaw.com-blue" alt="VidClaw website"></a>
+</p>
+
+<p align="center">
+  <a href="https://vidclaw.com">🌐 vidclaw.com</a> · <a href="#install">⚡ Quick Start</a> · <a href="API.md">📖 API Docs</a>
+</p>
+
+---
+
+## What is VidClaw?
+
+**VidClaw** is an **open-source, self-hosted dashboard** that gives you full visibility and control over your [OpenClaw](https://openclaw.ai) AI agent. Track usage, manage tasks, switch models, browse files — all from a clean web UI that runs entirely on your own machine.
+
+> **🔒 Privacy-first:** VidClaw binds to `localhost` only — no external network calls, all data stays on your machine.
+
+![VidClaw open-source self-hosted Kanban task board for OpenClaw AI agent management](docs/img/kanban.png)
 
 ## Features
 
@@ -15,6 +39,10 @@ A secure, self-hosted command center for managing your OpenClaw AI agent.
 - **💜 Soul Editor** — Edit SOUL.md, IDENTITY.md, USER.md, AGENTS.md with version history and persona templates.
 - **⚡ Task Execution** — Tasks execute automatically via cron (every 2 min) or heartbeat (every 30 min). Hit "Run Now" for immediate execution.
 
+![VidClaw self-hosted AI agent usage tracking and cost monitoring dashboard](docs/img/usage.png)
+
+![VidClaw OpenClaw agent activity calendar view](docs/img/calendar.png)
+
 ## Security
 
 VidClaw binds to localhost only (`127.0.0.1:3333`) — no external network calls, all data stays on your machine.
@@ -24,13 +52,13 @@ Two ways to access from another device:
 | Method | Command |
 |--------|---------|
 | **SSH tunnel** | `ssh -L 3333:localhost:3333 <user>@<server>` |
-| **Tailscale Serve** | Pass `--tailscale` to `setup.sh` (see Install) |
+| **Tailscale Serve** | Pass `--tailscale` to `setup.sh` (see [Install](#install)) |
 
 Then open `http://localhost:3333` (SSH) or `https://your-machine.your-tailnet.ts.net:8443` (Tailscale).
 
 ## Prerequisites
 
-- OpenClaw installed and running
+- [OpenClaw](https://openclaw.ai) installed and running
 - Node.js >= 18
 - Git
 
@@ -79,8 +107,10 @@ React + Vite + Tailwind CSS / Express.js / JSON file storage
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
-Copyright (c) 2026 [woocassh](https://x.com/woocassh) · [GitHub](https://github.com/madrzak/vidclaw) · MIT License
+<p align="center">
+  <a href="https://vidclaw.com">vidclaw.com</a> · Copyright (c) 2026 <a href="https://x.com/woocassh">woocassh</a> · <a href="https://github.com/madrzak/vidclaw">GitHub</a> · MIT License
+</p>
