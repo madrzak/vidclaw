@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { X, Bot, User, Activity, FileText, FolderOpen } from 'lucide-react'
 import { extractFilePaths } from './TaskCard'
-import { useNavigation } from '../NavigationContext'
+// NavigationContext removed — not yet implemented
 
 function formatTime(iso) {
   if (!iso) return ''
