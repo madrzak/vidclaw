@@ -114,7 +114,7 @@ export default function SettingsPage() {
   const { setTimezone: setGlobalTimezone } = useTimezone()
 
   const [versionInfo, setVersionInfo] = useState(null)
-  const [versionLoading, setVersionLoading] = useState(true)
+  const [versionChecking, setVersionChecking] = useState(false)
   const [updating, setUpdating] = useState(false)
   const [updateResult, setUpdateResult] = useState(null)
 
@@ -138,15 +138,24 @@ export default function SettingsPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-    fetch('/api/openclaw/version')
-      .then(r => r.json())
-      .then(d => { setVersionInfo(d); setVersionLoading(false) })
-      .catch(() => setVersionLoading(false))
     fetch('/api/vidclaw/version')
       .then(r => r.json())
       .then(d => { setVidclawInfo(d); setVidclawLoading(false) })
       .catch(() => setVidclawLoading(false))
   }, [])
+
+  const checkOpenclawVersion = async () => {
+    setVersionChecking(true)
+    try {
+      const r = await fetch('/api/openclaw/version')
+      const d = await r.json()
+      setVersionInfo(d)
+    } catch {
+      setVersionInfo(null)
+    } finally {
+      setVersionChecking(false)
+    }
+  }
 
   const handleUpdate = async () => {
     setUpdating(true)
@@ -274,12 +283,15 @@ export default function SettingsPage() {
           <Package size={16} className="text-green-400" />
           <h3 className="font-medium text-sm">OpenClaw Version</h3>
         </div>
-        {versionLoading ? (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="animate-spin" size={14} /> Checking version…
-          </div>
-        ) : !versionInfo || (!versionInfo.current && !versionInfo.latest) ? (
-          <p className="text-xs text-muted-foreground">Could not check version</p>
+        {!versionInfo ? (
+          <button
+            onClick={checkOpenclawVersion}
+            disabled={versionChecking}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-50"
+          >
+            {versionChecking ? <Loader2 className="animate-spin" size={14} /> : <Package size={14} />}
+            {versionChecking ? 'Checking…' : 'Check for updates'}
+          </button>
         ) : (
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-sm">
