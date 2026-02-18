@@ -17,6 +17,7 @@ Options:
   --interactive       Allow interactive sudo prompts when needed
   --skip-service      Install/build only; do not install service
   --skip-heartbeat    Do not modify ../HEARTBEAT.md
+  --tailscale [PORT]  Enable Tailscale Serve integration (default port: 8443)
   --service-mode MODE Override service mode (auto|systemd|launchd|direct|none)
   -h, --help          Show this help
 
@@ -44,6 +45,13 @@ while [[ $# -gt 0 ]]; do
       ;;
     --skip-heartbeat)
       SKIP_HEARTBEAT=1
+      ;;
+    --tailscale)
+      enable_tailscale
+      if [[ "${2:-}" =~ ^[0-9]+$ ]]; then
+        TAILSCALE_PORT="$2"
+        shift
+      fi
       ;;
     --service-mode)
       [[ $# -gt 1 ]] || die "Missing value for --service-mode" "Use auto, systemd, launchd, direct, or none."
@@ -111,6 +119,7 @@ HEARTBEAT_BLOCK
 init_os
 assert_repo_layout
 init_runtime
+init_tailscale
 ensure_data_dir
 EFFECTIVE_MODE="$(service_mode)"
 
@@ -150,4 +159,11 @@ fi
 
 if [[ "${EFFECTIVE_MODE}" == "direct" ]]; then
   log_info "Direct mode logs: ${DATA_DIR}/vidclaw.direct.out.log and ${DATA_DIR}/vidclaw.direct.err.log"
+fi
+
+if is_tailscale_enabled; then
+  ts_hostname="$(tailscale status --json 2>/dev/null \
+    | "${NODE_BIN}" -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{console.log(JSON.parse(d).Self.DNSName.replace(/\.$/,''))}catch{console.log('your-machine.your-tailnet.ts.net')}})" 2>/dev/null \
+    || echo "your-machine.your-tailnet.ts.net")"
+  log_info "Tailscale URL: https://${ts_hostname}:${TAILSCALE_PORT}/"
 fi

@@ -103,6 +103,12 @@ write_systemd_unit_file() {
   local escaped_node escaped_entrypoint
   escaped_node="$(systemd_escape_exec_arg "${NODE_BIN}")"
   escaped_entrypoint="$(systemd_escape_exec_arg "${REPO_ROOT}/server.js")"
+
+  local tailscale_line=""
+  if is_tailscale_enabled && [[ -n "${TAILSCALE_BIN:-}" ]]; then
+    tailscale_line="ExecStartPre=-$(tailscale_serve_cmd)"
+  fi
+
   cat > "${tmp_file}" <<EOF
 [Unit]
 Description=VidClaw Dashboard
@@ -112,7 +118,8 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=${REPO_ROOT}
-ExecStart=${escaped_node} ${escaped_entrypoint}
+${tailscale_line:+${tailscale_line}
+}ExecStart=${escaped_node} ${escaped_entrypoint}
 Restart=always
 RestartSec=3
 Environment=NODE_ENV=production
@@ -143,8 +150,35 @@ install_systemd_service() {
   log_ok "systemd service installed and started: ${VIDCLAW_SERVICE_NAME}"
 }
 
+LAUNCHD_WRAPPER_SCRIPT="${REPO_ROOT}/start-vidclaw.sh"
+
+write_launchd_wrapper_script() {
+  cat > "${LAUNCHD_WRAPPER_SCRIPT}" <<WRAPPER
+#!/bin/bash
+# Re-register Tailscale Serve route (idempotent — safe to run on every start).
+# Continue even if tailscale is temporarily unavailable.
+$(tailscale_serve_cmd) || true
+exec ${NODE_BIN} ${REPO_ROOT}/server.js
+WRAPPER
+  chmod +x "${LAUNCHD_WRAPPER_SCRIPT}"
+}
+
 write_launchd_plist() {
   local plist_path="$1"
+  local program_args
+
+  if is_tailscale_enabled && [[ -n "${TAILSCALE_BIN:-}" ]]; then
+    write_launchd_wrapper_script
+    program_args="    <array>
+      <string>${LAUNCHD_WRAPPER_SCRIPT}</string>
+    </array>"
+  else
+    program_args="    <array>
+      <string>${NODE_BIN}</string>
+      <string>${REPO_ROOT}/server.js</string>
+    </array>"
+  fi
+
   cat > "${plist_path}" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -157,10 +191,7 @@ write_launchd_plist() {
     <string>${REPO_ROOT}</string>
 
     <key>ProgramArguments</key>
-    <array>
-      <string>${NODE_BIN}</string>
-      <string>${REPO_ROOT}/server.js</string>
-    </array>
+${program_args}
 
     <key>EnvironmentVariables</key>
     <dict>
@@ -290,8 +321,15 @@ start_direct_service() {
   fi
 
   if is_dry_run; then
+    is_tailscale_enabled && log_info "[dry-run] would run: $(tailscale_serve_cmd)"
     log_info "[dry-run] would start direct process with nohup"
     return 0
+  fi
+
+  if is_tailscale_enabled && [[ -n "${TAILSCALE_BIN:-}" ]]; then
+    log_info "Registering Tailscale Serve route..."
+    "${TAILSCALE_BIN}" serve --bg "--https=${TAILSCALE_PORT}" "http://127.0.0.1:${VIDCLAW_PORT}" \
+      || log_warn "Tailscale serve registration failed; continuing anyway."
   fi
 
   nohup "${NODE_BIN}" "${REPO_ROOT}/server.js" >>"${DIRECT_STDOUT_LOG}" 2>>"${DIRECT_STDERR_LOG}" &

@@ -22,6 +22,10 @@ NODE_BIN="${NODE_BIN:-}"
 NPM_BIN="${NPM_BIN:-}"
 OS="${OS:-}"
 
+TAILSCALE_ENABLED="${TAILSCALE_ENABLED:-0}"
+TAILSCALE_PORT="${TAILSCALE_PORT:-8443}"
+TAILSCALE_BIN="${TAILSCALE_BIN:-}"
+
 command_display() {
   local parts=()
   local arg
@@ -80,6 +84,10 @@ enable_dry_run() {
 
 enable_interactive_sudo() {
   ALLOW_INTERACTIVE=1
+}
+
+enable_tailscale() {
+  TAILSCALE_ENABLED=1
 }
 
 is_dry_run() {
@@ -220,6 +228,39 @@ init_runtime() {
   NPM_BIN="$(find_npm_bin "${NODE_BIN}")" || die "npm was not found." "Install npm or ensure it is available in PATH."
   ensure_node_version
   export NODE_BIN NPM_BIN
+}
+
+is_tailscale_enabled() {
+  [[ "${TAILSCALE_ENABLED}" == "1" ]]
+}
+
+find_tailscale_bin() {
+  local candidate
+  if candidate="$(command -v tailscale 2>/dev/null)"; then
+    printf '%s\n' "$candidate"
+    return 0
+  fi
+  for candidate in /usr/bin/tailscale /usr/local/bin/tailscale /opt/homebrew/bin/tailscale; do
+    if [[ -x "$candidate" ]]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+init_tailscale() {
+  is_tailscale_enabled || return 0
+  TAILSCALE_BIN="$(find_tailscale_bin)" || die \
+    "--tailscale requested but 'tailscale' was not found in PATH." \
+    "Install Tailscale and re-run."
+  export TAILSCALE_BIN
+  log_info "Tailscale integration enabled (port ${TAILSCALE_PORT}, binary: ${TAILSCALE_BIN})"
+}
+
+tailscale_serve_cmd() {
+  printf '%s serve --bg --https=%s http://127.0.0.1:%s' \
+    "${TAILSCALE_BIN}" "${TAILSCALE_PORT}" "${VIDCLAW_PORT}"
 }
 
 npm_install_dependencies() {

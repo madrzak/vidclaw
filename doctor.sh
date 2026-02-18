@@ -90,7 +90,7 @@ else
 fi
 
 if [[ -n "${NODE_PATH}" ]]; then
-  NODE_MAJOR="$(${NODE_PATH} -p "process.versions.node.split('.')[0]" 2>/dev/null || true)"
+  NODE_MAJOR="$("${NODE_PATH}" -p "process.versions.node.split('.')[0]" 2>/dev/null || true)"
   if [[ "${NODE_MAJOR}" =~ ^[0-9]+$ ]] && (( NODE_MAJOR >= REQUIRED_NODE_MAJOR )); then
     pass "Node major version is supported (${NODE_MAJOR})"
   else

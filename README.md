@@ -60,7 +60,13 @@ cd ~/.openclaw/workspace
 git clone https://github.com/madrzak/vidclaw.git dashboard
 cd dashboard
 ./setup.sh
+
+# Or with Tailscale Serve integration (optional, default port 8443)
+./setup.sh --tailscale
+./setup.sh --tailscale 9443  # custom port
 ```
+
+When `--tailscale` is passed, the service is configured to register its Tailscale Serve route on every start, so the route survives OpenClaw gateway restarts with `resetOnExit: true`.
 
 `setup.sh` is idempotent: safe to re-run.
 
