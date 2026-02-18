@@ -160,28 +160,38 @@ export function deleteTask(req, res) {
 export function getCalendar(req, res) {
   const memoryDir = path.join(WORKSPACE, 'memory');
   const data = {};
+  const initDay = (d) => { data[d] = data[d] || { memory: false, tasks: [], scheduled: [] }; };
   try {
     const files = fs.readdirSync(memoryDir).filter(f => /^\d{4}-\d{2}-\d{2}\.md$/.test(f));
     for (const f of files) {
       const date = f.replace('.md', '');
-      data[date] = data[date] || { memory: false, tasks: [], scheduled: [] };
+      initDay(date);
       data[date].memory = true;
     }
   } catch {}
   const tasks = readTasks();
   for (const t of tasks) {
-    // Completed tasks
+    // Completed tasks (including recurring run history)
     if (t.completedAt) {
       const date = isoToDateInTz(t.completedAt);
-      data[date] = data[date] || { memory: false, tasks: [], scheduled: [] };
+      initDay(date);
       data[date].tasks.push(t.title);
     }
-    // Scheduled / upcoming tasks (scheduledAt or future schedule dates)
-    const schedDate = t.scheduledAt || (t.schedule && t.schedule !== 'asap' && t.schedule !== 'next-heartbeat' ? t.schedule : null);
-    if (schedDate && t.status !== 'done') {
+    // Run history entries from recurring tasks
+    if (Array.isArray(t.runHistory)) {
+      for (const run of t.runHistory) {
+        if (run.completedAt) {
+          const date = isoToDateInTz(run.completedAt);
+          initDay(date);
+          data[date].tasks.push(t.title + (run.error ? ' ⚠' : ''));
+        }
+      }
+    }
+    // Scheduled / upcoming tasks
+    if (t.scheduledAt && t.status !== 'done') {
       try {
-        const date = isoToDateInTz(new Date(schedDate).toISOString());
-        data[date] = data[date] || { memory: false, tasks: [], scheduled: [] };
+        const date = isoToDateInTz(new Date(t.scheduledAt).toISOString());
+        initDay(date);
         data[date].scheduled.push(t.title);
       } catch {}
     }
