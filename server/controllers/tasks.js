@@ -6,7 +6,9 @@ import { isoToDateInTz } from '../lib/timezone.js';
 import { WORKSPACE } from '../config.js';
 
 export function listTasks(req, res) {
-  res.json(readTasks());
+  const tasks = readTasks();
+  const includeArchived = req.query.includeArchived === 'true';
+  res.json(includeArchived ? tasks : tasks.filter(t => t.status !== 'archived'));
 }
 
 export function createTask(req, res) {
@@ -145,6 +147,32 @@ export function completeTask(req, res) {
   logActivity('bot', 'task_completed', { taskId: req.params.id, title: tasks[idx].title, hasError: !!req.body.error });
   broadcast('tasks', tasks);
   res.json(tasks[idx]);
+}
+
+export function bulkDeleteTasks(req, res) {
+  const tasks = readTasks();
+  const { status, ids } = req.body;
+  let targets;
+  if (Array.isArray(ids) && ids.length) {
+    targets = tasks.filter(t => ids.includes(t.id) && t.status !== 'archived');
+  } else if (status) {
+    targets = tasks.filter(t => t.status === status);
+  } else {
+    return res.status(400).json({ error: 'Provide status or ids[]' });
+  }
+  const now = new Date().toISOString();
+  for (const t of targets) {
+    t.previousStatus = t.status;
+    t.status = 'archived';
+    t.archivedAt = now;
+    t.updatedAt = now;
+  }
+  writeTasks(tasks);
+  for (const t of targets) {
+    logActivity('user', 'task_archived', { taskId: t.id, title: t.title });
+  }
+  broadcast('tasks', tasks.filter(t => t.status !== 'archived'));
+  res.json({ ok: true, archived: targets.length });
 }
 
 export function deleteTask(req, res) {
