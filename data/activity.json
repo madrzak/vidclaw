@@ -236,5 +236,16 @@
       ]
     },
     "timestamp": "2026-02-18T03:15:27.967Z"
+  },
+  {
+    "id": "mls3dqzoqzr5",
+    "actor": "bot",
+    "action": "task_completed",
+    "details": {
+      "taskId": "mls3awnq0s78",
+      "title": "GH #7: Better display for completed tasks",
+      "hasError": false
+    },
+    "timestamp": "2026-02-18T13:52:52.452Z"
   }
 ]
