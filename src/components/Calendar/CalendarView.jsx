@@ -109,17 +109,23 @@ export default function CalendarView() {
               <FileText size={12} /> Memory note exists
             </div>
           )}
+          {selectedData?.scheduled?.map((t, i) => (
+            <div key={`s${i}`} className="flex items-center gap-2 text-xs text-orange-400 border border-dashed border-orange-400/40 rounded px-2 py-1">
+              <CalendarClock size={12} /> {t}
+            </div>
+          ))}
           {selectedData?.tasks?.map((t, i) => (
-            <div key={i} className="flex items-center gap-2 text-xs text-green-400">
+            <div key={i} className="flex items-center gap-2 text-xs text-green-400 border border-solid border-green-400/30 rounded px-2 py-1">
               <CheckCircle size={12} /> {t}
             </div>
           ))}
         </div>
       )}
 
-      <div className="flex gap-4 text-xs text-muted-foreground">
+      <div className="flex gap-4 text-xs text-muted-foreground flex-wrap">
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-400" /> Memory note</div>
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-400" /> Task completed</div>
+        <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-400" /> Scheduled</div>
       </div>
     </div>
   )

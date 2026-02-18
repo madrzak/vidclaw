@@ -6,7 +6,7 @@ import { getActivity, getTime } from './controllers/activity.js';
 import {
   listTasks, createTask, updateTask, reorderTasks,
   runTask, getTaskQueue, pickupTask, completeTask, deleteTask,
-  getCalendar,
+  getCalendar, getRunHistory, toggleSchedule,
 } from './controllers/tasks.js';
 import { getUsage } from './controllers/usage.js';
 import { getOpenclawVersion, updateOpenclaw } from './controllers/openclaw.js';
@@ -31,6 +31,8 @@ router.post('/api/tasks/:id/run', runTask);
 router.get('/api/tasks/queue', getTaskQueue);
 router.post('/api/tasks/:id/pickup', pickupTask);
 router.post('/api/tasks/:id/complete', completeTask);
+router.get('/api/tasks/:id/history', getRunHistory);
+router.post('/api/tasks/:id/schedule-toggle', toggleSchedule);
 router.delete('/api/tasks/:id', deleteTask);
 router.get('/api/calendar', getCalendar);
 
