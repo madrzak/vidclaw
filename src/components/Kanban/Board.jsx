@@ -182,6 +182,15 @@ export default function Board() {
     fetchTasks()
   }
 
+  async function handleBulkArchive(status) {
+    await fetch('/api/tasks/bulk-archive', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    })
+    fetchTasks()
+  }
+
   async function handleQuickAdd(status, title, skills = []) {
     await fetch('/api/tasks', {
       method: 'POST',
@@ -222,6 +231,7 @@ export default function Board() {
               onDelete={handleDelete}
               onRun={handleRun}
               onToggleSchedule={handleToggleSchedule}
+              onBulkArchive={handleBulkArchive}
             />
           ))}
         </div>
