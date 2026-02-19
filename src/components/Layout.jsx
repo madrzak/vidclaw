@@ -112,14 +112,7 @@ export default function Layout({ page, setPage, children }) {
             </button>
             <span className="text-sm font-medium capitalize">{page === 'kanban' ? 'Task Board' : page === 'calendar' ? 'Activity Calendar' : page === 'skills' ? 'Skills Manager' : page === 'soul' ? 'Soul Editor' : page === 'credentials' ? 'Credentials' : page === 'settings' ? 'Settings' : 'Content Browser'}</span>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <a
               href="https://buy.stripe.com/8x2aEX0Wl7Wv7Roag9cEw0f"
               target="_blank"
@@ -130,6 +123,13 @@ export default function Layout({ page, setPage, children }) {
               <span className="hidden sm:inline">Buy me a coffee</span>
             </a>
             <UsageWidget />
+            <button
+              onClick={toggleTheme}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
           </div>
         </header>
         <main className="flex-1 overflow-auto p-2 sm:p-4">

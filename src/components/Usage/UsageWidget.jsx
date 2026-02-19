@@ -88,11 +88,11 @@ export default function UsageWidget() {
     <div className="relative">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-2 bg-secondary/50 hover:bg-secondary/70 rounded-full px-4 py-1.5 text-xs transition-colors"
+        className="flex items-center gap-1.5 sm:gap-2 bg-secondary/50 hover:bg-secondary/70 rounded-full px-2.5 sm:px-4 py-1.5 text-xs transition-colors"
       >
         <Zap size={12} className="text-orange-400 shrink-0" />
-        <span className="text-muted-foreground text-[10px]">{displayModel}</span>
-        <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+        <span className="hidden sm:inline text-muted-foreground text-[10px]">{displayModel}</span>
+        <div className="hidden sm:block w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${sessionPct > 80 ? 'bg-red-500' : sessionPct > 60 ? 'bg-amber-500' : 'bg-emerald-500'}`}
             style={{ width: `${Math.max(1, sessionPct)}%` }}
@@ -100,13 +100,13 @@ export default function UsageWidget() {
         </div>
         <span className={`text-[10px] font-medium ${pillColor}`}>{sessionPct}%</span>
         <ChevronDown size={10} className={`text-muted-foreground transition-transform ${expanded ? 'rotate-180' : ''}`} />
-        <div onClick={e => { e.stopPropagation(); fetchUsage(); }} className="hover:text-orange-400 transition-colors">
+        <div onClick={e => { e.stopPropagation(); fetchUsage(); }} className="hidden sm:block hover:text-orange-400 transition-colors">
           <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
         </div>
       </button>
 
       {expanded && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-card border border-border rounded-lg shadow-xl p-4 z-50 space-y-4">
+        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-80 bg-card border border-border rounded-lg shadow-xl p-4 z-50 space-y-4">
           {/* Active Model */}
           <div className="space-y-1">
             <label className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Active Model</label>
