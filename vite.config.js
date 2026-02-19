@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       __APP_VERSION__: JSON.stringify(getVersion()),
+      __WS_TARGET__: JSON.stringify(apiTarget !== 'http://localhost:3333' ? apiTarget : ''),
     },
     resolve: {
       alias: {
@@ -32,12 +33,6 @@ export default defineConfig(({ mode }) => {
           target: apiTarget,
           changeOrigin: true,
           secure: false,
-        },
-        '/ws': {
-          target: apiTarget,
-          changeOrigin: true,
-          secure: false,
-          ws: true,
         },
       }
     },

@@ -12,8 +12,14 @@ export function SocketProvider({ children }) {
     let attempts = 0
 
     function connect() {
-      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const ws = new WebSocket(`${protocol}//${location.host}/ws`)
+      let wsUrl
+      if (typeof __WS_TARGET__ !== 'undefined' && __WS_TARGET__) {
+        wsUrl = __WS_TARGET__.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:').replace(/\/$/, '') + '/ws'
+      } else {
+        const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
+        wsUrl = `${protocol}//${location.host}/ws`
+      }
+      const ws = new WebSocket(wsUrl)
       wsRef.current = ws
 
       ws.addEventListener('open', () => {
