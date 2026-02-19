@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import UsageWidget from './Usage/UsageWidget'
-import { LayoutDashboard, Calendar, FolderOpen, Puzzle, Heart, Settings, Menu, X, Coffee, Sun, Moon } from 'lucide-react'
+import { LayoutDashboard, Calendar, FolderOpen, Puzzle, Heart, Settings, Menu, X, Coffee, Sun, Moon, KeyRound } from 'lucide-react'
 import { useTheme } from './ThemeContext'
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { id: 'files', label: 'Files', icon: FolderOpen },
   { id: 'skills', label: 'Skills', icon: Puzzle },
   { id: 'soul', label: 'Soul', icon: Heart },
+  { id: 'credentials', label: 'Credentials', icon: KeyRound },
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
 
@@ -109,7 +110,7 @@ export default function Layout({ page, setPage, children }) {
             >
               <Menu size={20} />
             </button>
-            <span className="text-sm font-medium capitalize">{page === 'kanban' ? 'Task Board' : page === 'calendar' ? 'Activity Calendar' : page === 'skills' ? 'Skills Manager' : page === 'soul' ? 'Soul Editor' : page === 'settings' ? 'Settings' : 'Content Browser'}</span>
+            <span className="text-sm font-medium capitalize">{page === 'kanban' ? 'Task Board' : page === 'calendar' ? 'Activity Calendar' : page === 'skills' ? 'Skills Manager' : page === 'soul' ? 'Soul Editor' : page === 'credentials' ? 'Credentials' : page === 'settings' ? 'Settings' : 'Content Browser'}</span>
           </div>
           <div className="flex items-center gap-3">
             <button

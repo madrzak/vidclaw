@@ -16,6 +16,7 @@ import { listFiles, getFileContent, downloadFile, getWorkspaceFile, putWorkspace
 import { getSoul, putSoul, getSoulHistory, revertSoul, getSoulTemplates } from './controllers/soul.js';
 import { getSettings, postSettings } from './controllers/settings.js';
 import { getVidclawVersion, updateVidclaw } from './controllers/vidclaw.js';
+import { listCredentials, putCredential, deleteCredential } from './controllers/credentials.js';
 
 const router = Router();
 
@@ -76,6 +77,11 @@ router.get('/api/soul/templates', getSoulTemplates);
 // Settings
 router.get('/api/settings', getSettings);
 router.post('/api/settings', postSettings);
+
+// Credentials
+router.get('/api/credentials', listCredentials);
+router.put('/api/credentials/:name', putCredential);
+router.delete('/api/credentials/:name', deleteCredential);
 
 // VidClaw
 router.get('/api/vidclaw/version', getVidclawVersion);
