@@ -3,7 +3,7 @@ import { WebSocketServer } from 'ws';
 let wss;
 
 export function setupWebSocket(server) {
-  wss = new WebSocketServer({ server });
+  wss = new WebSocketServer({ server, path: '/ws' });
 }
 
 export function broadcast(type, data) {

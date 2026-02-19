@@ -13,7 +13,7 @@ export function SocketProvider({ children }) {
 
     function connect() {
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const ws = new WebSocket(`${protocol}//${location.host}`)
+      const ws = new WebSocket(`${protocol}//${location.host}/ws`)
       wsRef.current = ws
 
       ws.addEventListener('open', () => {
@@ -79,4 +79,9 @@ export function useSocket(type, callback) {
     const handler = (data) => callbackRef.current(data)
     return ctx.subscribe(type, handler)
   }, [ctx, type])
+}
+
+export function useSocketStatus() {
+  const ctx = useContext(SocketContext)
+  return ctx?.connected ?? false
 }
