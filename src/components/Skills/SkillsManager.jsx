@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Search, Plus, X, Trash2, ChevronDown, ChevronRight, Package, FolderCog, Briefcase } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import PageSkeleton from '../PageSkeleton'
 
 const API = '/api/skills'
 
@@ -148,13 +149,14 @@ function SkillCard({ skill, onToggle, onDelete, onExpand, expanded }) {
 
 export default function SkillsManager() {
   const [skills, setSkills] = useState([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [sourceFilter, setSourceFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [expanded, setExpanded] = useState(null)
   const [showCreate, setShowCreate] = useState(false)
 
-  const load = () => fetch(API).then(r => r.json()).then(setSkills).catch(() => {})
+  const load = () => fetch(API).then(r => r.json()).then(setSkills).catch(() => {}).finally(() => setLoading(false))
   useEffect(() => { load() }, [])
 
   const toggle = async (id, enabled) => {
@@ -187,6 +189,8 @@ export default function SkillsManager() {
     managed: skills.filter(s => s.source === 'managed').length,
     workspace: skills.filter(s => s.source === 'workspace').length,
   }), [skills])
+
+  if (loading) return <PageSkeleton variant="skills" />
 
   return (
     <div className="space-y-4">

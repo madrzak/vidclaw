@@ -5,6 +5,7 @@ import Column from './Column'
 import TaskCard from './TaskCard'
 import TaskDialog from './TaskDialog'
 import TaskDetailDialog from './TaskDetailDialog'
+import PageSkeleton from '../PageSkeleton'
 import { useSocket } from '../../hooks/useSocket.jsx'
 
 const COLUMNS = [
@@ -16,6 +17,7 @@ const COLUMNS = [
 
 export default function Board() {
   const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
   const [activeId, setActiveId] = useState(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editTask, setEditTask] = useState(null)
@@ -31,8 +33,12 @@ export default function Board() {
   }, [])
 
   const fetchTasks = useCallback(async () => {
-    const res = await fetch('/api/tasks')
-    setTasks(await res.json())
+    try {
+      const res = await fetch('/api/tasks')
+      setTasks(await res.json())
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { fetchTasks() }, [fetchTasks])
@@ -214,6 +220,8 @@ export default function Board() {
     setViewTask(task)
   }
 
+
+  if (loading) return <PageSkeleton variant="kanban" />
 
   return (
     <>

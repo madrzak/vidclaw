@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { Settings, Clock, Globe, Save, Check, Loader2, Search, ChevronDown, Package, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
+import PageSkeleton from '../PageSkeleton'
 
 const HEARTBEAT_OPTIONS = [
   { value: '5m', label: '5 minutes' },
@@ -223,13 +224,7 @@ export default function SettingsPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64 text-muted-foreground">
-        <Loader2 className="animate-spin mr-2" size={18} /> Loading settings…
-      </div>
-    )
-  }
+  if (loading) return <PageSkeleton variant="settings" />
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">

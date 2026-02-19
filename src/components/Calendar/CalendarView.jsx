@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, FileText, CheckCircle, Clock, CalendarClock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
+import PageSkeleton from '../PageSkeleton'
 
 function LiveClock({ timezone }) {
   const [now, setNow] = useState(new Date())
@@ -24,12 +25,13 @@ function LiveClock({ timezone }) {
 
 export default function CalendarView() {
   const [data, setData] = useState({})
+  const [loading, setLoading] = useState(true)
   const [current, setCurrent] = useState(new Date())
   const [selected, setSelected] = useState(null)
   const { timezone } = useTimezone()
 
   useEffect(() => {
-    fetch('/api/calendar').then(r => r.json()).then(setData).catch(() => {})
+    fetch('/api/calendar').then(r => r.json()).then(setData).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const year = current.getFullYear()
@@ -47,6 +49,8 @@ export default function CalendarView() {
   }
 
   const selectedData = selected ? data[selected] : null
+
+  if (loading) return <PageSkeleton variant="calendar" />
 
   return (
     <div className="max-w-3xl mx-auto space-y-4">

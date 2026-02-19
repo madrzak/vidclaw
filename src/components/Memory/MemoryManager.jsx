@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Brain, FileText, Save, Check, Clock, Activity, ChevronRight, ChevronDown, RefreshCw, AlertTriangle, CheckCircle, Timer } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import PageSkeleton from '../PageSkeleton'
 
 function timeAgo(ts) {
   if (!ts) return 'never'
@@ -43,6 +44,7 @@ function HealthBadge({ health }) {
 // --- Memory Files Panel ---
 function MemoryFilesPanel() {
   const [files, setFiles] = useState([])
+  const [loading, setLoading] = useState(true)
   const [selectedFile, setSelectedFile] = useState(null)
   const [content, setContent] = useState('')
   const [savedContent, setSavedContent] = useState('')
@@ -57,7 +59,9 @@ function MemoryFilesPanel() {
     try {
       const r = await fetch('/api/memory/files')
       setFiles(await r.json())
-    } catch {}
+    } catch {} finally {
+      setLoading(false)
+    }
   }, [])
 
   const loadFile = useCallback(async (filePath) => {
@@ -115,6 +119,8 @@ function MemoryFilesPanel() {
 
   const memoryMd = files.find(f => f.path === 'MEMORY.md')
   const dailyFiles = files.filter(f => f.isDaily)
+
+  if (loading) return <PageSkeleton variant="memory" />
 
   return (
     <div className="flex gap-4 h-full">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Lock, Plus, Pencil, Trash2, X, KeyRound, Shield, Upload, FileText, Key } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import PageSkeleton from '../PageSkeleton'
 
 const API = '/api/credentials'
 const ACCEPTED_EXTENSIONS = '.json,.pem,.key,.p12,.pfx,.crt,.cert'
@@ -146,7 +147,7 @@ export default function CredentialsManager() {
       </div>
 
       {loading ? (
-        <div className="text-center text-muted-foreground py-12">Loading…</div>
+        <PageSkeleton variant="credentials" />
       ) : creds.length === 0 ? (
         <div className="text-center py-12 space-y-2">
           <KeyRound size={32} className="mx-auto text-muted-foreground/40" />

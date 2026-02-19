@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Save, RotateCcw, Check, Clock, FileText, Sparkles, History, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import PageSkeleton from '../PageSkeleton'
 
 const FILE_TABS = [
   { name: 'SOUL.md', label: 'Soul' },
@@ -19,6 +20,7 @@ function timeAgo(ts) {
 }
 
 export default function SoulEditor() {
+  const [loading, setLoading] = useState(true)
   const [activeFile, setActiveFile] = useState('SOUL.md')
   const [content, setContent] = useState('')
   const [savedContent, setSavedContent] = useState('')
@@ -42,7 +44,9 @@ export default function SoulEditor() {
       setContent(d.content || '')
       setSavedContent(d.content || '')
       setLastModified(d.lastModified)
-    } catch {}
+    } catch {} finally {
+      setLoading(false)
+    }
   }, [])
 
   const loadHistory = useCallback(async (name) => {
@@ -103,6 +107,8 @@ export default function SoulEditor() {
     }
     if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); handleSave() }
   }
+
+  if (loading) return <PageSkeleton variant="soul" />
 
   return (
     <div className="h-full flex flex-col gap-3">
