@@ -124,7 +124,11 @@ if [[ "${TAILSCALE_FLAG}" == "1" ]]; then
   else
     ok "Tailscale $(tailscale version 2>/dev/null | head -1 || echo 'installed') (not yet connected)"
     # Remove --tailscale from setup args so setup.sh doesn't fail
-    SETUP_ARGS=("${SETUP_ARGS[@]/--tailscale/}")
+    local filtered=()
+    for arg in "${SETUP_ARGS[@]}"; do
+      [[ "$arg" != "--tailscale" ]] && filtered+=("$arg")
+    done
+    SETUP_ARGS=("${filtered[@]+"${filtered[@]}"}")
   fi
 fi
 
