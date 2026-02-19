@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
 import { useTimezone } from '../TimezoneContext'
-import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2, FileText } from 'lucide-react'
+import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2 } from 'lucide-react'
 
 function formatTime(iso, tz) {
   if (!iso) return ''
@@ -40,7 +40,7 @@ export function extractFilePaths(text) {
 
 export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDragging: isDraggingProp }) {
   const { timezone } = useTimezone()
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, disabled: task.status === 'done' })
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -56,33 +56,21 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
   const skillsList = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
   const duration = isDone ? formatDuration(task.startedAt || task.createdAt, task.completedAt) : null
   const resultSummary = !hasError ? truncateResult(task.result) : null
-  const filePaths = isDone ? extractFilePaths(task.result) : []
-
-  // Live elapsed time for in-progress tasks
-  const [elapsed, setElapsed] = useState('')
-  useEffect(() => {
-    if (!isInProgress || !task.startedAt) return
-    const tick = () => setElapsed(formatDuration(task.startedAt, new Date().toISOString()) || '')
-    tick()
-    const id = setInterval(tick, 1000)
-    return () => clearInterval(id)
-  }, [isInProgress, task.startedAt])
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group bg-card border border-border rounded-lg p-3 transition-shadow',
-        !isDone && 'cursor-grab active:cursor-grabbing',
-        isDone && 'cursor-pointer',
+        'group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing transition-shadow',
         dragging && !isDraggingProp && 'opacity-30',
         isInProgress && 'border-amber-500/50 animate-pulse-subtle',
         hasError && 'border-red-500/50',
-        isDone && !hasError && 'border-border/50 opacity-80'
+        isDone && !hasError && 'border-border/50'
       )}
       onClick={() => { if (canEdit && onEdit) onEdit(task); else if (!canEdit && onView) onView(task) }}
-      {...(isDone ? {} : { ...attributes, ...listeners })}
+      {...attributes}
+      {...listeners}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
@@ -137,10 +125,7 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
       </div>
 
       {isInProgress && task.startedAt && (
-        <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-1.5">
-          <span>Started {formatTime(task.startedAt, timezone)}</span>
-          {elapsed && <span className="text-amber-400 font-medium">({elapsed})</span>}
-        </div>
+        <p className="text-[10px] text-muted-foreground mt-1.5">Started {formatTime(task.startedAt, timezone)}</p>
       )}
 
       {isDone && (
@@ -153,21 +138,6 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
           )}
           {duration && (
             <span className="text-muted-foreground/50">({duration})</span>
-          )}
-        </div>
-      )}
-
-      {/* Linked files from result */}
-      {filePaths.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-1.5">
-          {filePaths.slice(0, 3).map(fp => (
-            <span key={fp} className="inline-flex items-center gap-0.5 text-[10px] text-blue-400/80 bg-blue-500/10 rounded px-1.5 py-0.5 truncate max-w-[180px]" title={fp}>
-              <FileText size={9} className="shrink-0" />
-              {fp.split('/').pop()}
-            </span>
-          ))}
-          {filePaths.length > 3 && (
-            <span className="text-[10px] text-muted-foreground/50">+{filePaths.length - 3} more</span>
           )}
         </div>
       )}
