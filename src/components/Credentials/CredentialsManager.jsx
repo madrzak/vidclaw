@@ -3,7 +3,7 @@ import { Lock, Plus, Pencil, Trash2, X, KeyRound, Shield, Upload, FileText, Key 
 import { cn } from '@/lib/utils'
 import PageSkeleton from '../PageSkeleton'
 
-const API = '/api/credentials'
+const API = 'api/credentials'
 const ACCEPTED_EXTENSIONS = '.json,.pem,.key,.p12,.pfx,.crt,.cert'
 
 function Modal({ title, onClose, children }) {

@@ -31,7 +31,7 @@ export default function CalendarView() {
   const { timezone } = useTimezone()
 
   useEffect(() => {
-    fetch('/api/calendar').then(r => r.json()).then(setData).catch(() => {}).finally(() => setLoading(false))
+    fetch('api/calendar').then(r => r.json()).then(setData).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const year = current.getFullYear()

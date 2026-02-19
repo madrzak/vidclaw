@@ -71,7 +71,7 @@ export default function FileBrowser() {
   }, [])
 
   useEffect(() => {
-    fetch(`/api/files?path=${encodeURIComponent(currentPath)}`)
+    fetch(`api/files?path=${encodeURIComponent(currentPath)}`)
       .then(r => r.json())
       .then(setEntries)
       .catch(() => setEntries([]))
@@ -172,7 +172,7 @@ export default function FileBrowser() {
               {entry.isDirectory && <span className="w-16 hidden sm:inline" />}
               {!entry.isDirectory && (
                 <a
-                  href={`/api/files/download?path=${encodeURIComponent(entry.path)}`}
+                  href={`api/files/download?path=${encodeURIComponent(entry.path)}`}
                   onClick={e => e.stopPropagation()}
                   className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-all"
                 >
@@ -192,7 +192,7 @@ export default function FileBrowser() {
           <div className="flex items-center justify-between p-3 border-b border-border">
             <span className="text-sm font-medium truncate">{preview.split('/').pop()}</span>
             <div className="flex gap-2">
-              <a href={`/api/files/download?path=${encodeURIComponent(preview)}`} className="text-muted-foreground hover:text-foreground">
+              <a href={`api/files/download?path=${encodeURIComponent(preview)}`} className="text-muted-foreground hover:text-foreground">
                 <Download size={14} />
               </a>
               <button onClick={() => setPreview(null)} className="text-muted-foreground hover:text-foreground text-xs">✕</button>

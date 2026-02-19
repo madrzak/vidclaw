@@ -13,7 +13,8 @@ export function SocketProvider({ children }) {
 
     function connect() {
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const ws = new WebSocket(`${protocol}//${location.host}`)
+      const path = location.pathname.endsWith('/') ? location.pathname : location.pathname + '/'
+      const ws = new WebSocket(`${protocol}//${location.host}${path}`)
       wsRef.current = ws
 
       ws.addEventListener('open', () => {

@@ -54,7 +54,7 @@ function ActivityLog({ taskId }) {
     const params = new URLSearchParams({ limit: '50' })
     if (taskId) params.set('taskId', taskId)
     const load = () => {
-      fetch(`/api/activity?${params}`)
+      fetch(`api/activity?${params}`)
         .then(r => r.json())
         .then(data => { if (mounted) { setActivities(data); setLoading(false) } })
         .catch(() => { if (mounted) setLoading(false) })

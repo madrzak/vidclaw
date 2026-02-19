@@ -156,7 +156,7 @@ export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onVie
   }, [adding])
 
   useEffect(() => {
-    fetch('/api/skills').then(r => r.json()).then(setSkills).catch(() => {})
+    fetch('api/skills').then(r => r.json()).then(setSkills).catch(() => {})
   }, [])
 
   const handleSubmit = () => {

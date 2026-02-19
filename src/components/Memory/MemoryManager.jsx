@@ -57,7 +57,7 @@ function MemoryFilesPanel() {
 
   const loadFiles = useCallback(async () => {
     try {
-      const r = await fetch('/api/memory/files')
+      const r = await fetch('api/memory/files')
       setFiles(await r.json())
     } catch {} finally {
       setLoading(false)
@@ -66,7 +66,7 @@ function MemoryFilesPanel() {
 
   const loadFile = useCallback(async (filePath) => {
     try {
-      const r = await fetch(`/api/memory/file?path=${encodeURIComponent(filePath)}`)
+      const r = await fetch(`api/memory/file?path=${encodeURIComponent(filePath)}`)
       const d = await r.json()
       setContent(d.content || '')
       setSavedContent(d.content || '')
@@ -92,7 +92,7 @@ function MemoryFilesPanel() {
     if (!selectedFile) return
     setSaving(true)
     try {
-      await fetch(`/api/memory/file?path=${encodeURIComponent(selectedFile)}`, {
+      await fetch(`api/memory/file?path=${encodeURIComponent(selectedFile)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
@@ -240,7 +240,7 @@ function SessionsPanel() {
   const loadSessions = useCallback(async (offset = 0) => {
     setLoading(true)
     try {
-      const r = await fetch(`/api/sessions?limit=${LIMIT}&offset=${offset}`)
+      const r = await fetch(`api/sessions?limit=${LIMIT}&offset=${offset}`)
       const d = await r.json()
       setSessions(d.sessions)
       setTotal(d.total)
@@ -253,7 +253,7 @@ function SessionsPanel() {
     if (expandedId === id) { setExpandedId(null); return }
     setExpandedId(id)
     try {
-      const r = await fetch(`/api/sessions/${id}`)
+      const r = await fetch(`api/sessions/${id}`)
       setSessionDetail(await r.json())
     } catch { setSessionDetail(null) }
   }

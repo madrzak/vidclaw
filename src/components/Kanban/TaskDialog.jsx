@@ -32,7 +32,7 @@ function ActivityLog({ taskId }) {
     const params = new URLSearchParams({ limit: '50' })
     if (taskId) params.set('taskId', taskId)
     const load = () => {
-      fetch(`/api/activity?${params}`)
+      fetch(`api/activity?${params}`)
         .then(r => r.json())
         .then(data => { if (mounted) { setActivities(data); setLoading(false) } })
         .catch(() => { if (mounted) setLoading(false) })
@@ -162,7 +162,7 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
   const [skills, setSkills] = useState([])
 
   useEffect(() => {
-    fetch('/api/skills').then(r => r.json()).then(setSkills).catch(() => {})
+    fetch('api/skills').then(r => r.json()).then(setSkills).catch(() => {})
   }, [])
 
   useEffect(() => {

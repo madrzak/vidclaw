@@ -21,7 +21,7 @@ export default function Layout({ page, setPage, children }) {
 
   // Check for updates on mount
   useEffect(() => {
-    fetch('/api/vidclaw/version')
+    fetch('api/vidclaw/version')
       .then(r => r.json())
       .then(data => {
         if (data.outdated) setUpdateAvailable(data.latest)

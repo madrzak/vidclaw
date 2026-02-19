@@ -15,7 +15,7 @@ export default function FilePreview({ path }) {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/files/content?path=${encodeURIComponent(path)}`)
+    fetch(`api/files/content?path=${encodeURIComponent(path)}`)
       .then(r => r.json())
       .then(d => { setContent(d.content); setLoading(false) })
       .catch(() => { setContent('Failed to load file'); setLoading(false) })

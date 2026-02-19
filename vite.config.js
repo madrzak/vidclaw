@@ -13,6 +13,7 @@ function getVersion() {
 }
 
 export default defineConfig({
+  base: './',
   plugins: [react()],
   define: {
     __APP_VERSION__: JSON.stringify(getVersion()),

@@ -50,7 +50,7 @@ export default function UsageWidget() {
   const fetchUsage = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/usage')
+      const res = await fetch('api/usage')
       setUsage(await res.json())
     } catch {}
     setLoading(false)
@@ -58,14 +58,14 @@ export default function UsageWidget() {
 
   useEffect(() => {
     fetchUsage()
-    fetch('/api/models').then(r => r.json()).then(setModels).catch(() => {})
+    fetch('api/models').then(r => r.json()).then(setModels).catch(() => {})
     const iv = setInterval(fetchUsage, 5 * 60 * 1000)
     return () => clearInterval(iv)
   }, [fetchUsage])
 
   const switchModel = async (model) => {
     try {
-      await fetch('/api/model', {
+      await fetch('api/model', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model }),

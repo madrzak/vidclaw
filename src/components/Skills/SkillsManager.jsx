@@ -3,7 +3,7 @@ import { Search, Plus, X, Trash2, ChevronDown, ChevronRight, Package, FolderCog,
 import { cn } from '@/lib/utils'
 import PageSkeleton from '../PageSkeleton'
 
-const API = '/api/skills'
+const API = 'api/skills'
 
 const sourceMeta = {
   bundled: { label: 'Bundled', icon: Package, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },

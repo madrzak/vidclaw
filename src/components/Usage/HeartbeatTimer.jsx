@@ -28,7 +28,7 @@ export default function HeartbeatTimer() {
   useEffect(() => {
     async function checkBeat() {
       try {
-        const res = await fetch('/api/heartbeat')
+        const res = await fetch('api/heartbeat')
         if (res.ok) {
           const data = await res.json()
           if (data.lastHeartbeat) {
@@ -40,7 +40,7 @@ export default function HeartbeatTimer() {
     }
     async function fetchInterval() {
       try {
-        const res = await fetch('/api/settings')
+        const res = await fetch('api/settings')
         if (res.ok) {
           const data = await res.json()
           const val = data.heartbeatInterval || data.heartbeatEvery

@@ -6,7 +6,7 @@ export function TimezoneProvider({ children }) {
   const [timezone, setTimezone] = useState('UTC')
 
   useEffect(() => {
-    fetch('/api/settings')
+    fetch('api/settings')
       .then(r => r.json())
       .then(d => { if (d.timezone) setTimezone(d.timezone) })
       .catch(() => {})
