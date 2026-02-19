@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useRef, useEffect } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
@@ -156,7 +157,7 @@ export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onVie
   }, [adding])
 
   useEffect(() => {
-    fetch('api/skills').then(r => r.json()).then(setSkills).catch(() => {})
+    fetch(apiUrl('api/skills')).then(r => r.json()).then(setSkills).catch(() => {})
   }, [])
 
   const handleSubmit = () => {

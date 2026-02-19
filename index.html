@@ -8,9 +8,13 @@
     <script>
       (function() {
         var path = window.location.pathname;
+        // Ensure trailing slash for directory-style paths
         if (path.length > 0 && !path.endsWith('/') && !path.split('/').pop().includes('.')) {
           window.location.replace(path + '/' + window.location.search + window.location.hash);
+          return;
         }
+        // Capture the base path (e.g., "/dashboard/")
+        window.__APP_BASE__ = path.endsWith('/') ? path : path.substring(0, path.lastIndexOf('/') + 1);
       })();
     </script>
   </head>

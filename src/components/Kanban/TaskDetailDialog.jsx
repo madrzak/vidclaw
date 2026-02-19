@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect } from 'react'
 import { X, Bot, User, Activity, FileText, AlertCircle, Clock, CheckCircle2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -54,7 +55,7 @@ function ActivityLog({ taskId }) {
     const params = new URLSearchParams({ limit: '50' })
     if (taskId) params.set('taskId', taskId)
     const load = () => {
-      fetch(`api/activity?${params}`)
+      fetch(apiUrl(`api/activity?${params}`))
         .then(r => r.json())
         .then(data => { if (mounted) { setActivities(data); setLoading(false) } })
         .catch(() => { if (mounted) setLoading(false) })

@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect, useMemo } from 'react'
 import { Folder, File, ChevronRight, ArrowLeft, Download, Eye, ArrowUpDown, FileText, FileImage, FileVideo, FileAudio, FileCode, FileArchive } from 'lucide-react'
 import FilePreview from './FilePreview'
@@ -71,7 +72,7 @@ export default function FileBrowser() {
   }, [])
 
   useEffect(() => {
-    fetch(`api/files?path=${encodeURIComponent(currentPath)}`)
+    fetch(apiUrl(`api/files?path=${encodeURIComponent(currentPath)}`))
       .then(r => r.json())
       .then(setEntries)
       .catch(() => setEntries([]))
@@ -172,7 +173,7 @@ export default function FileBrowser() {
               {entry.isDirectory && <span className="w-16 hidden sm:inline" />}
               {!entry.isDirectory && (
                 <a
-                  href={`api/files/download?path=${encodeURIComponent(entry.path)}`}
+                  href={apiUrl(`api/files/download?path=${encodeURIComponent(entry.path)}`)}
                   onClick={e => e.stopPropagation()}
                   className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-all"
                 >

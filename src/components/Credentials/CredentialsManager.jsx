@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Lock, Plus, Pencil, Trash2, X, KeyRound, Shield, Upload, FileText, Key } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import PageSkeleton from '../PageSkeleton'
+import { apiUrl } from '@/lib/api'
 
-const API = 'api/credentials'
+const API = apiUrl('api/credentials')
 const ACCEPTED_EXTENSIONS = '.json,.pem,.key,.p12,.pfx,.crt,.cert'
 
 function Modal({ title, onClose, children }) {

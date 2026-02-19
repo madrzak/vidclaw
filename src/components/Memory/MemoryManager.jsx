@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Brain, FileText, Save, Check, Clock, Activity, ChevronRight, ChevronDown, RefreshCw, AlertTriangle, CheckCircle, Timer } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -57,7 +58,7 @@ function MemoryFilesPanel() {
 
   const loadFiles = useCallback(async () => {
     try {
-      const r = await fetch('api/memory/files')
+      const r = await fetch(apiUrl('api/memory/files'))
       setFiles(await r.json())
     } catch {} finally {
       setLoading(false)
@@ -66,7 +67,7 @@ function MemoryFilesPanel() {
 
   const loadFile = useCallback(async (filePath) => {
     try {
-      const r = await fetch(`api/memory/file?path=${encodeURIComponent(filePath)}`)
+      const r = await fetch(apiUrl(`api/memory/file?path=${encodeURIComponent(filePath)}`))
       const d = await r.json()
       setContent(d.content || '')
       setSavedContent(d.content || '')
@@ -92,7 +93,7 @@ function MemoryFilesPanel() {
     if (!selectedFile) return
     setSaving(true)
     try {
-      await fetch(`api/memory/file?path=${encodeURIComponent(selectedFile)}`, {
+      await fetch(apiUrl(`api/memory/file?path=${encodeURIComponent(selectedFile)}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
@@ -240,7 +241,7 @@ function SessionsPanel() {
   const loadSessions = useCallback(async (offset = 0) => {
     setLoading(true)
     try {
-      const r = await fetch(`api/sessions?limit=${LIMIT}&offset=${offset}`)
+      const r = await fetch(apiUrl(`api/sessions?limit=${LIMIT}&offset=${offset}`))
       const d = await r.json()
       setSessions(d.sessions)
       setTotal(d.total)
@@ -253,7 +254,7 @@ function SessionsPanel() {
     if (expandedId === id) { setExpandedId(null); return }
     setExpandedId(id)
     try {
-      const r = await fetch(`api/sessions/${id}`)
+      const r = await fetch(apiUrl(`api/sessions/${id}`))
       setSessionDetail(await r.json())
     } catch { setSessionDetail(null) }
   }

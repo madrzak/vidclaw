@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect, useCallback } from 'react'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, pointerWithin, rectIntersection } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -35,7 +36,7 @@ export default function Board() {
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await fetch('api/tasks')
+      const res = await fetch(apiUrl('api/tasks'))
       setTasks(await res.json())
     } finally {
       setLoading(false)
@@ -44,7 +45,7 @@ export default function Board() {
 
   const fetchCapacity = useCallback(async () => {
     try {
-      const res = await fetch('api/tasks/capacity')
+      const res = await fetch(apiUrl('api/tasks/capacity'))
       setCapacity(await res.json())
     } catch {}
   }, [])
@@ -110,7 +111,7 @@ export default function Board() {
       setTasks(prev => prev.map(t => orderMap[t.id] !== undefined ? { ...t, order: orderMap[t.id] } : t))
 
       try {
-        await fetch('api/tasks/reorder', {
+        await fetch(apiUrl('api/tasks/reorder'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: sourceColumn, order: reordered.map(t => t.id) }),
@@ -138,7 +139,7 @@ export default function Board() {
         setTasks(prev => prev.map(t => t.id === active.id ? { ...t, status: targetColumn, order: newOrder } : t))
       }
       try {
-        await fetch(`api/tasks/${active.id}`, {
+        await fetch(apiUrl(`api/tasks/${active.id}`), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: targetColumn, order: newOrder }),
@@ -147,7 +148,7 @@ export default function Board() {
         const updatedTargetTasks = [...targetTasks.filter(t => t.id !== active.id)]
         const insertAt = overTaskId ? updatedTargetTasks.findIndex(t => t.id === overTaskId) + 1 : updatedTargetTasks.length
         updatedTargetTasks.splice(insertAt, 0, { id: active.id })
-        await fetch('api/tasks/reorder', {
+        await fetch(apiUrl('api/tasks/reorder'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: targetColumn, order: updatedTargetTasks.map(t => t.id) }),
@@ -161,13 +162,13 @@ export default function Board() {
 
   async function handleSave(data) {
     if (editTask) {
-      await fetch(`api/tasks/${editTask.id}`, {
+      await fetch(apiUrl(`api/tasks/${editTask.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
     } else {
-      await fetch('api/tasks', {
+      await fetch(apiUrl('api/tasks'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -179,17 +180,17 @@ export default function Board() {
   }
 
   async function handleDelete(id) {
-    await fetch(`api/tasks/${id}`, { method: 'DELETE' })
+    await fetch(apiUrl(`api/tasks/${id}`), { method: 'DELETE' })
     fetchTasks()
   }
 
   async function handleRun(id) {
-    await fetch(`api/tasks/${id}/run`, { method: 'POST' })
+    await fetch(apiUrl(`api/tasks/${id}/run`), { method: 'POST' })
     fetchTasks()
   }
 
   async function handleToggleSchedule(id, enabled) {
-    await fetch(`api/tasks/${id}/schedule-toggle`, {
+    await fetch(apiUrl(`api/tasks/${id}/schedule-toggle`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ enabled }),
@@ -198,7 +199,7 @@ export default function Board() {
   }
 
   async function handleBulkArchive(status) {
-    await fetch('api/tasks/bulk-archive', {
+    await fetch(apiUrl('api/tasks/bulk-archive'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
@@ -207,7 +208,7 @@ export default function Board() {
   }
 
   async function handleQuickAdd(status, title, skills = []) {
-    await fetch('api/tasks', {
+    await fetch(apiUrl('api/tasks'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, status, skills, skill: skills[0] || '' }),

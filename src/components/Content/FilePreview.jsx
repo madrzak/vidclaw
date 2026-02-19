@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -15,7 +16,7 @@ export default function FilePreview({ path }) {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`api/files/content?path=${encodeURIComponent(path)}`)
+    fetch(apiUrl(`api/files/content?path=${encodeURIComponent(path)}`))
       .then(r => r.json())
       .then(d => { setContent(d.content); setLoading(false) })
       .catch(() => { setContent('Failed to load file'); setLoading(false) })

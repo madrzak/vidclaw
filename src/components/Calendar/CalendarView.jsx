@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, FileText, CheckCircle, Clock, CalendarClock } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -31,7 +32,7 @@ export default function CalendarView() {
   const { timezone } = useTimezone()
 
   useEffect(() => {
-    fetch('api/calendar').then(r => r.json()).then(setData).catch(() => {}).finally(() => setLoading(false))
+    fetch(apiUrl('api/calendar')).then(r => r.json()).then(setData).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const year = current.getFullYear()

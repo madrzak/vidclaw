@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect, useRef } from 'react'
 import { X, Bot, User, Activity, FileText, FolderOpen } from 'lucide-react'
 import { extractFilePaths } from './TaskCard'
@@ -32,7 +33,7 @@ function ActivityLog({ taskId }) {
     const params = new URLSearchParams({ limit: '50' })
     if (taskId) params.set('taskId', taskId)
     const load = () => {
-      fetch(`api/activity?${params}`)
+      fetch(apiUrl(`api/activity?${params}`))
         .then(r => r.json())
         .then(data => { if (mounted) { setActivities(data); setLoading(false) } })
         .catch(() => { if (mounted) setLoading(false) })
@@ -162,7 +163,7 @@ export default function TaskDialog({ open, onClose, onSave, task }) {
   const [skills, setSkills] = useState([])
 
   useEffect(() => {
-    fetch('api/skills').then(r => r.json()).then(setSkills).catch(() => {})
+    fetch(apiUrl('api/skills')).then(r => r.json()).then(setSkills).catch(() => {})
   }, [])
 
   useEffect(() => {

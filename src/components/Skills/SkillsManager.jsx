@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { Search, Plus, X, Trash2, ChevronDown, ChevronRight, Package, FolderCog, Briefcase } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import PageSkeleton from '../PageSkeleton'
+import { apiUrl } from '@/lib/api'
 
-const API = 'api/skills'
+const API = apiUrl('api/skills')
 
 const sourceMeta = {
   bundled: { label: 'Bundled', icon: Package, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },

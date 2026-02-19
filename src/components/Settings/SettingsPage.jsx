@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { Settings, Clock, Globe, Save, Check, Loader2, Search, ChevronDown, Package, Zap, Layers } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -130,7 +131,7 @@ export default function SettingsPage() {
   const isDirty = heartbeat !== savedHeartbeat || timezone !== savedTimezone || maxConcurrent !== savedMaxConcurrent
 
   useEffect(() => {
-    fetch('api/settings')
+    fetch(apiUrl('api/settings'))
       .then(r => r.json())
       .then(d => {
         setHeartbeat(d.heartbeatEvery || '30m')
@@ -144,7 +145,7 @@ export default function SettingsPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-    fetch('api/vidclaw/version')
+    fetch(apiUrl('api/vidclaw/version'))
       .then(r => r.json())
       .then(d => { setVidclawInfo(d); setVidclawLoading(false) })
       .catch(() => setVidclawLoading(false))
@@ -153,7 +154,7 @@ export default function SettingsPage() {
   const checkOpenclawVersion = async () => {
     setVersionChecking(true)
     try {
-      const r = await fetch('api/openclaw/version')
+      const r = await fetch(apiUrl('api/openclaw/version'))
       const d = await r.json()
       setVersionInfo(d)
     } catch {
@@ -167,7 +168,7 @@ export default function SettingsPage() {
     setUpdating(true)
     setUpdateResult(null)
     try {
-      const r = await fetch('api/openclaw/update', { method: 'POST' })
+      const r = await fetch(apiUrl('api/openclaw/update'), { method: 'POST' })
       const data = await r.json()
       if (!r.ok) throw new Error(data.error || 'Update failed')
       setUpdateResult({ success: true, version: data.version })
@@ -183,7 +184,7 @@ export default function SettingsPage() {
     setVidclawUpdating(true)
     setVidclawUpdateResult(null)
     try {
-      const r = await fetch('api/vidclaw/update', { method: 'POST' })
+      const r = await fetch(apiUrl('api/vidclaw/update'), { method: 'POST' })
       const data = await r.json()
       if (!r.ok) throw new Error(data.error || 'Update failed')
       setVidclawUpdateResult({ success: true, version: data.version })
@@ -206,7 +207,7 @@ export default function SettingsPage() {
     setSaving(true)
     setError(null)
     try {
-      const r = await fetch('api/settings', {
+      const r = await fetch(apiUrl('api/settings'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ heartbeatEvery: heartbeat, timezone, maxConcurrent }),
