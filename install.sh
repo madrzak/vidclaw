@@ -90,34 +90,33 @@ fi
 ok "git $(git --version | awk '{print $3}')"
 
 # Tailscale (if requested)
-if [[ "${TAILSCALE_FLAG}" == "1" ]] && ! command_exists tailscale; then
-  info "Tailscale not found. Installing..."
-  if [[ "$(uname)" == "Linux" ]]; then
-    curl -fsSL https://tailscale.com/install.sh | sh
-  elif [[ "$(uname)" == "Darwin" ]]; then
-    if command_exists brew; then
-      brew install --cask tailscale
+if [[ "${TAILSCALE_FLAG}" == "1" ]]; then
+  if ! command_exists tailscale; then
+    info "Tailscale not found. Installing..."
+    if [[ "$(uname)" == "Linux" ]]; then
+      curl -fsSL https://tailscale.com/install.sh | sh
+    elif [[ "$(uname)" == "Darwin" ]]; then
+      if command_exists brew; then
+        brew install --cask tailscale
+      else
+        die "Install Tailscale from https://tailscale.com/download and re-run."
+      fi
     else
       die "Install Tailscale from https://tailscale.com/download and re-run."
     fi
-  else
-    die "Install Tailscale from https://tailscale.com/download and re-run."
+
+    if ! command_exists tailscale; then
+      die "Tailscale installed but not in PATH. You may need to restart your shell."
+    fi
   fi
 
-  if ! command_exists tailscale; then
-    die "Tailscale installed but not in PATH. You may need to restart your shell."
-  fi
-  ok "Tailscale installed"
-
-  # Check if Tailscale is running
+  # Check if Tailscale is connected
   if ! tailscale status >/dev/null 2>&1; then
     warn "Tailscale is installed but not connected."
     info "Run 'sudo tailscale up' to authenticate, then re-run this installer."
     die "Tailscale not connected."
   fi
-fi
 
-if [[ "${TAILSCALE_FLAG}" == "1" ]]; then
   ok "Tailscale $(tailscale version 2>/dev/null | head -1 || echo 'installed')"
 fi
 
