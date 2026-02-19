@@ -12,7 +12,7 @@ import { getUsage } from './controllers/usage.js';
 import { getOpenclawVersion, updateOpenclaw } from './controllers/openclaw.js';
 import { listModels, setModel, getHeartbeat, postHeartbeat } from './controllers/models.js';
 import { listSkills, toggleSkill, createSkill, getSkillContent, deleteSkill } from './controllers/skills.js';
-import { listFiles, getFileContent, downloadFile, getWorkspaceFile, putWorkspaceFile, getWorkspaceFileHistory } from './controllers/files.js';
+import { listFiles, getFileContent, downloadFile, getWorkspaceFile, putWorkspaceFile, getWorkspaceFileHistory, putFileContent, deleteFile } from './controllers/files.js';
 import { getSoul, putSoul, getSoulHistory, revertSoul, getSoulTemplates } from './controllers/soul.js';
 import { getSettings, postSettings } from './controllers/settings.js';
 import { getVidclawVersion, updateVidclaw } from './controllers/vidclaw.js';
@@ -65,6 +65,8 @@ router.get('/api/files/download', downloadFile);
 router.get('/api/workspace-file', getWorkspaceFile);
 router.put('/api/workspace-file', putWorkspaceFile);
 router.get('/api/workspace-file/history', getWorkspaceFileHistory);
+router.put('/api/files/content', putFileContent);
+router.delete('/api/files', deleteFile);
 
 // Soul
 router.get('/api/soul', getSoul);

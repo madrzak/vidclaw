@@ -75,3 +75,59 @@ export function getWorkspaceFileHistory(req, res) {
   if (!name || name.includes('/') || name.includes('..')) return res.status(400).json({ error: 'Invalid name' });
   res.json(readHistoryFile(path.join(__dirname, 'data', `${name}-history.json`)));
 }
+
+// Validate path is within workspace (handles trailing slash edge case)
+function isPathWithinWorkspace(fullPath) {
+  const resolvedWorkspace = path.resolve(WORKSPACE) + path.sep;
+  const resolvedPath = path.resolve(fullPath);
+  return resolvedPath.startsWith(resolvedWorkspace) || resolvedPath === path.resolve(WORKSPACE);
+}
+
+export function putFileContent(req, res) {
+  const reqPath = req.body.path;
+  if (!reqPath) return res.status(400).json({ error: 'Path required' });
+  const fullPath = path.resolve(WORKSPACE, reqPath);
+  if (!isPathWithinWorkspace(fullPath)) return res.status(403).json({ error: 'Forbidden' });
+  try {
+    const safeName = reqPath.replace(/\//g, '_');
+    const histPath = path.join(__dirname, 'data', `${safeName}-history.json`);
+    if (fs.existsSync(fullPath)) {
+      const old = fs.readFileSync(fullPath, 'utf-8');
+      if (old) appendHistory(histPath, old);
+    }
+    fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+    fs.writeFileSync(fullPath, req.body.content);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+}
+
+export function deleteFile(req, res) {
+  const reqPath = req.query.path;
+  if (!reqPath) return res.status(400).json({ error: 'Path required' });
+  const fullPath = path.resolve(WORKSPACE, reqPath);
+
+  // Security: validate path is within workspace
+  if (!isPathWithinWorkspace(fullPath)) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  // Security: disallow deleting the workspace root
+  if (path.resolve(fullPath) === path.resolve(WORKSPACE)) {
+    return res.status(403).json({ error: 'Cannot delete workspace root' });
+  }
+
+  try {
+    const stat = fs.statSync(fullPath);
+    if (stat.isDirectory()) {
+      // For directories, use recursive delete but log the action
+      const entries = fs.readdirSync(fullPath);
+      if (entries.length > 0) {
+        console.log(`[deleteFile] Recursively deleting directory with ${entries.length} entries: ${reqPath}`);
+      }
+      fs.rmSync(fullPath, { recursive: true });
+    } else {
+      fs.unlinkSync(fullPath);
+    }
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+}
