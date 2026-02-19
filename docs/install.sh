@@ -117,11 +117,17 @@ if [[ "${TAILSCALE_FLAG}" == "1" ]]; then
     fi
   fi
 
-  # Check if Tailscale is connected
+  # Check if Tailscale is connected, auto-authenticate if not
   if ! tailscale status >/dev/null 2>&1; then
-    warn "Tailscale is installed but not connected."
-    info "Run 'sudo tailscale up' to authenticate, then re-run this installer."
-    die "Tailscale not connected."
+    info "Tailscale needs authentication. Starting login..."
+    echo
+    sudo tailscale up
+    echo
+    # Verify connection after auth
+    if ! tailscale status >/dev/null 2>&1; then
+      die "Tailscale authentication failed. Run 'sudo tailscale up' manually and re-run."
+    fi
+    ok "Tailscale authenticated and connected"
   fi
 
   ok "Tailscale $(tailscale version 2>/dev/null | head -1 || echo 'installed')"
