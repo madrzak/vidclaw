@@ -207,7 +207,13 @@ export function getCalendar(req, res) {
     for (const f of files) {
       const date = f.replace('.md', '');
       initDay(date);
-      data[date].memory = true;
+      try {
+        const content = fs.readFileSync(path.join(memoryDir, f), 'utf8').trim();
+        const firstLine = content.split('\n').find(l => l.trim() && !l.startsWith('#')) || content.split('\n')[0] || '';
+        data[date].memory = firstLine.replace(/^[#\-*>\s]+/, '').trim().slice(0, 120) || true;
+      } catch {
+        data[date].memory = true;
+      }
     }
   } catch {}
   const tasks = readTasks();

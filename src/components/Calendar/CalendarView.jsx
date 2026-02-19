@@ -27,7 +27,7 @@ export default function CalendarView() {
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(true)
   const [current, setCurrent] = useState(new Date())
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(() => new Date().toLocaleDateString('en-CA'))
   const { timezone } = useTimezone()
 
   useEffect(() => {
@@ -104,33 +104,49 @@ export default function CalendarView() {
         })}
       </div>
 
-      {selected && (
-        <div className="bg-card border border-border rounded-xl p-4 space-y-2">
-          <h3 className="font-medium text-sm">{selected}</h3>
-          {!selectedData && <p className="text-xs text-muted-foreground">No activity recorded</p>}
-          {selectedData?.memory && (
-            <div className="flex items-center gap-2 text-xs text-blue-400">
-              <FileText size={12} /> Memory note exists
-            </div>
-          )}
-          {selectedData?.scheduled?.map((t, i) => (
-            <div key={`s${i}`} className="flex items-center gap-2 text-xs text-orange-400 border border-dashed border-orange-400/40 rounded px-2 py-1">
-              <CalendarClock size={12} /> {t}
-            </div>
-          ))}
-          {selectedData?.tasks?.map((t, i) => (
-            <div key={i} className="flex items-center gap-2 text-xs text-green-400 border border-solid border-green-400/30 rounded px-2 py-1">
-              <CheckCircle size={12} /> {t}
-            </div>
-          ))}
-        </div>
-      )}
-
       <div className="flex gap-4 text-xs text-muted-foreground flex-wrap">
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-400" /> Memory note</div>
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-400" /> Task completed</div>
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-400" /> Scheduled</div>
       </div>
+
+      {selected && (() => {
+        const entries = []
+        if (selectedData?.memory) entries.push({ type: 'memory', text: typeof selectedData.memory === 'string' ? selectedData.memory : 'Memory note' })
+        selectedData?.tasks?.forEach(t => entries.push({ type: 'task', text: t }))
+        selectedData?.scheduled?.forEach(t => entries.push({ type: 'scheduled', text: t }))
+
+        const dateLabel = new Date(selected + 'T00:00:00').toLocaleDateString('en-US', {
+          weekday: 'long', month: 'long', day: 'numeric'
+        })
+
+        const dotColor = { memory: 'bg-blue-400', task: 'bg-green-400', scheduled: 'bg-orange-400' }
+        const textColor = { memory: 'text-muted-foreground', task: 'text-muted-foreground', scheduled: 'text-orange-400' }
+        const Icon = { memory: FileText, task: CheckCircle, scheduled: CalendarClock }
+
+        return (
+          <div className="bg-card border border-border rounded-xl p-5 space-y-3">
+            <h3 className="font-medium text-sm">{dateLabel}</h3>
+            {entries.length === 0 && <p className="text-sm text-muted-foreground">No activity recorded</p>}
+            {entries.length > 0 && (
+              <div className="space-y-3">
+                {entries.map((entry, i) => {
+                  const EntryIcon = Icon[entry.type]
+                  return (
+                    <div key={i} className="flex items-start gap-2">
+                      <div className={cn('w-2 h-2 rounded-full shrink-0 mt-1.5', dotColor[entry.type])} />
+                      <div className={cn('flex items-start gap-2 text-sm', textColor[entry.type])}>
+                        <EntryIcon size={14} className={cn('shrink-0 mt-0.5', entry.type === 'task' ? 'text-green-400' : undefined)} />
+                        <span>{entry.type === 'scheduled' ? `Scheduled: ${entry.text}` : entry.text}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )
+      })()}
     </div>
   )
 }
