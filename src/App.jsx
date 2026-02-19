@@ -5,6 +5,7 @@ import CalendarView from './components/Calendar/CalendarView'
 import FileBrowser from './components/Content/FileBrowser'
 import SkillsManager from './components/Skills/SkillsManager'
 import SoulEditor from './components/Soul/SoulEditor'
+import CredentialsManager from './components/Credentials/CredentialsManager'
 import SettingsPage from './components/Settings/SettingsPage'
 import { TimezoneProvider } from './components/TimezoneContext'
 import { ThemeProvider } from './components/ThemeContext'
@@ -23,6 +24,7 @@ export default function App() {
             {page === 'files' && <FileBrowser />}
             {page === 'skills' && <SkillsManager />}
             {page === 'soul' && <SoulEditor />}
+            {page === 'credentials' && <CredentialsManager />}
             {page === 'settings' && <SettingsPage />}
           </Layout>
         </TimezoneProvider>
