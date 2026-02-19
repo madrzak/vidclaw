@@ -96,10 +96,22 @@ export const BUNDLED_SKILLS_DIRS = uniqueExistingDirs([
   path.join(HOME, '.npm-global', 'lib', 'node_modules', 'openclaw', 'skills'),
 ]);
 
+// Read actual workspace from OpenClaw config
+function getActualWorkspace() {
+  try {
+    const config = JSON.parse(fs.readFileSync(OPENCLAW_JSON, 'utf8'));
+    return config?.agents?.defaults?.workspace || WORKSPACE;
+  } catch {
+    return WORKSPACE;
+  }
+}
+
+export const ACTUAL_WORKSPACE = getActualWorkspace();
+
 export const SKILLS_DIRS = {
   bundled: BUNDLED_SKILLS_DIRS[0] || '/usr/lib/node_modules/openclaw/skills',
   managed: path.join(OPENCLAW_DIR, 'skills'),
-  workspace: path.join(WORKSPACE, 'skills'),
+  workspace: path.join(ACTUAL_WORKSPACE, 'skills'),
 };
 
 export const SKILL_SCAN_DIRS = {

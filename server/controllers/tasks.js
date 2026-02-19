@@ -3,7 +3,7 @@ import path from 'path';
 import { readTasks, writeTasks, logActivity, readSettings } from '../lib/fileStore.js';
 import { broadcast } from '../broadcast.js';
 import { isoToDateInTz } from '../lib/timezone.js';
-import { WORKSPACE } from '../config.js';
+import { ACTUAL_WORKSPACE } from '../config.js';
 import { computeNextRun, computeFutureRuns } from '../lib/schedule.js';
 
 export function listTasks(req, res) {
@@ -22,6 +22,7 @@ export function createTask(req, res) {
     skill: req.body.skill || '',
     skills: Array.isArray(req.body.skills) ? req.body.skills : (req.body.skill ? [req.body.skill] : []),
     status: req.body.status || 'backlog',
+    channel: req.body.channel || null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     completedAt: null,
@@ -46,7 +47,7 @@ export function updateTask(req, res) {
   const idx = tasks.findIndex(t => t.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
   const wasNotDone = tasks[idx].status !== 'done';
-  const allowedFields = ['title', 'description', 'priority', 'skill', 'skills', 'status', 'schedule', 'scheduledAt', 'scheduleEnabled', 'result', 'startedAt', 'completedAt', 'error', 'order', 'subagentId'];
+  const allowedFields = ['title', 'description', 'priority', 'skill', 'skills', 'status', 'channel', 'schedule', 'scheduledAt', 'scheduleEnabled', 'result', 'startedAt', 'completedAt', 'error', 'order', 'subagentId'];
   const updates = {};
   for (const k of allowedFields) { if (req.body[k] !== undefined) updates[k] = req.body[k]; }
   tasks[idx] = { ...tasks[idx], ...updates, updatedAt: new Date().toISOString() };
@@ -223,7 +224,7 @@ export function deleteTask(req, res) {
 }
 
 export function getCalendar(req, res) {
-  const memoryDir = path.join(WORKSPACE, 'memory');
+  const memoryDir = path.join(ACTUAL_WORKSPACE, 'memory');
   const data = {};
   const initDay = (d) => { data[d] = data[d] || { memory: false, tasks: [], scheduled: [] }; };
   try {

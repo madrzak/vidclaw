@@ -169,7 +169,7 @@ function QuickAddInput({ inputRef, title, setTitle, onSubmit, skills }) {
   )
 }
 
-export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onView, onDelete, onRun, onToggleSchedule, onBulkArchive, capacity }) {
+export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onView, onDelete, onRun, onToggleSchedule, onBulkArchive, capacity, channels = [] }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id })
   const [adding, setAdding] = useState(false)
   const [title, setTitle] = useState('')
@@ -264,7 +264,7 @@ export default function Column({ column, tasks, onAdd, onQuickAdd, onEdit, onVie
       <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[120px]">
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           {tasks.map(task => (
-            <TaskCard key={task.id} task={task} onEdit={onEdit} onView={onView} onDelete={onDelete} onRun={onRun} onToggleSchedule={onToggleSchedule} />
+            <TaskCard key={task.id} task={task} onEdit={onEdit} onView={onView} onDelete={onDelete} onRun={onRun} onToggleSchedule={onToggleSchedule} channels={channels} />
           ))}
         </SortableContext>
       </div>

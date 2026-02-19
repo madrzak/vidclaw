@@ -1,0 +1,30 @@
+{
+  "_comment": "Optional channel display names for VidClaw task routing.",
+  "_usage": "Copy this file to your OpenClaw workspace as 'vidclaw-channels.json' and customize the names/icons.",
+  
+  "telegram:-1003821920425": {
+    "name": "My Team"
+  },
+  "telegram:-1003821920425:topic:1": {
+    "name": "general",
+    "icon": "💬"
+  },
+  "telegram:-1003821920425:topic:2": {
+    "name": "projects",
+    "icon": "🚀"
+  },
+  "telegram:-1003821920425:topic:4": {
+    "name": "tech",
+    "icon": "⚙️"
+  },
+  
+  "discord:123456789:thread:987654321": {
+    "name": "feature-requests",
+    "icon": "🧵"
+  },
+  
+  "slack:C1234567:thread:T9876543": {
+    "name": "stand-ups",
+    "icon": "💬"
+  }
+}

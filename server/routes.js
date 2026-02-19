@@ -17,12 +17,16 @@ import { getSoul, putSoul, getSoulHistory, revertSoul, getSoulTemplates } from '
 import { getSettings, postSettings } from './controllers/settings.js';
 import { getVidclawVersion, updateVidclaw } from './controllers/vidclaw.js';
 import { listCredentials, putCredential, deleteCredential } from './controllers/credentials.js';
+import { listChannels } from './controllers/channels.js';
 
 const router = Router();
 
 // Activity
 router.get('/api/activity', getActivity);
 router.get('/api/time', getTime);
+
+// Channels
+router.get('/api/channels', listChannels);
 
 // Tasks
 router.get('/api/tasks', listTasks);

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { WORKSPACE, OPENCLAW_DIR } from '../config.js';
+import { ACTUAL_WORKSPACE, OPENCLAW_DIR } from '../config.js';
 import { appendHistory, readHistoryFile } from '../lib/fileStore.js';
 
 // --- Memory Files ---
@@ -9,14 +9,14 @@ export function listMemoryFiles(req, res) {
   const files = [];
 
   // MEMORY.md
-  const memoryMd = path.join(WORKSPACE, 'MEMORY.md');
+  const memoryMd = path.join(ACTUAL_WORKSPACE, 'MEMORY.md');
   try {
     const stat = fs.statSync(memoryMd);
     files.push({ name: 'MEMORY.md', path: 'MEMORY.md', size: stat.size, mtime: stat.mtime.toISOString(), isDaily: false });
   } catch {}
 
   // memory/*.md
-  const memoryDir = path.join(WORKSPACE, 'memory');
+  const memoryDir = path.join(ACTUAL_WORKSPACE, 'memory');
   try {
     const entries = fs.readdirSync(memoryDir).filter(f => f.endsWith('.md')).sort().reverse();
     for (const name of entries) {
@@ -50,7 +50,7 @@ export function getMemoryFile(req, res) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
-  const fullPath = path.join(WORKSPACE, filePath);
+  const fullPath = path.join(ACTUAL_WORKSPACE, filePath);
   try {
     const content = fs.readFileSync(fullPath, 'utf-8');
     const stat = fs.statSync(fullPath);
@@ -68,7 +68,7 @@ export function putMemoryFile(req, res) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
-  const fullPath = path.join(WORKSPACE, filePath);
+  const fullPath = path.join(ACTUAL_WORKSPACE, filePath);
   const dir = path.dirname(fullPath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 

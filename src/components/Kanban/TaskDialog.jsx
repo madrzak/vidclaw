@@ -208,20 +208,22 @@ function buildScheduleString({ scheduleInterval, schedulePeriod, scheduleTime })
 }
 
 export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
-  const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
+  const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog', channel: null, scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
   const [skills, setSkills] = useState([])
+  const [channels, setChannels] = useState([])
 
   useEffect(() => {
     fetch('/api/skills').then(r => r.json()).then(setSkills).catch(() => {})
+    fetch('/api/channels').then(r => r.json()).then(setChannels).catch(() => {})
   }, [])
 
   useEffect(() => {
     if (task) {
       const taskSkills = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
       const sched = parseSchedule(task.schedule)
-      setForm({ title: task.title, description: task.description, skills: taskSkills, status: task.status, scheduleMode: sched.mode, scheduleInterval: sched.interval, schedulePeriod: sched.period, scheduleTime: sched.time, scheduleCron: sched.cron })
+      setForm({ title: task.title, description: task.description, skills: taskSkills, status: task.status, channel: task.channel || null, scheduleMode: sched.mode, scheduleInterval: sched.interval, schedulePeriod: sched.period, scheduleTime: sched.time, scheduleCron: sched.cron })
     } else {
-      setForm({ title: '', description: '', skills: [], status: 'backlog', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
+      setForm({ title: '', description: '', skills: [], status: 'backlog', channel: null, scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
     }
   }, [task, open])
 
@@ -240,7 +242,7 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
       : form.scheduleMode === 'interval' ? buildScheduleString(form)
       : null
     const { scheduleMode, scheduleInterval, schedulePeriod, scheduleTime, scheduleCron, ...rest } = form
-    const data = { ...rest, skill: rest.skills[0] || '', schedule }
+    const data = { ...rest, skill: rest.skills[0] || '', schedule, channel: rest.channel || null }
     onSave(data)
   }
 
@@ -292,6 +294,28 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
                 <option value="done">Done</option>
               </select>
             </div>
+
+            {channels && channels.length > 1 && (
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">
+                  Channel <span className="text-muted-foreground/60">(optional - execute in specific context)</span>
+                </label>
+                <select
+                  className="w-full bg-secondary border border-border rounded-md px-3 py-2 text-sm outline-none"
+                  value={form.channel || ''}
+                  onChange={e => setForm(f => ({ ...f, channel: e.target.value || null }))}
+                >
+                  {channels.map(ch => (
+                    <option key={ch.id || 'main'} value={ch.id || ''}>
+                      {ch.icon ? `${ch.icon} ` : ''}{ch.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-muted-foreground/70 mt-1">
+                  Run this task in a specific channel context (e.g., Telegram topic, Discord thread) to use that conversation's memory and history.
+                </p>
+              </div>
+            )}
 
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Schedule</label>

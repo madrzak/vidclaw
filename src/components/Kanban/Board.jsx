@@ -23,6 +23,7 @@ export default function Board() {
   const [editTask, setEditTask] = useState(null)
   const [viewTask, setViewTask] = useState(null)
   const [capacity, setCapacity] = useState({ maxConcurrent: 1, activeCount: 0, remainingSlots: 1 })
+  const [channels, setChannels] = useState([])
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -49,7 +50,14 @@ export default function Board() {
     } catch {}
   }, [])
 
-  useEffect(() => { fetchTasks(); fetchCapacity() }, [fetchTasks, fetchCapacity])
+  const fetchChannels = useCallback(async () => {
+    try {
+      const res = await fetch('/api/channels')
+      setChannels(await res.json())
+    } catch {}
+  }, [])
+
+  useEffect(() => { fetchTasks(); fetchCapacity(); fetchChannels() }, [fetchTasks, fetchCapacity, fetchChannels])
   useSocket('tasks', (newTasks) => { setTasks(newTasks); fetchCapacity() })
   useSocket('settings', () => { fetchCapacity() })
 
@@ -250,11 +258,12 @@ export default function Board() {
               onToggleSchedule={handleToggleSchedule}
               onBulkArchive={handleBulkArchive}
               capacity={col.id === 'in-progress' ? capacity : undefined}
+              channels={channels}
             />
           ))}
         </div>
         <DragOverlay>
-          {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
+          {activeTask ? <TaskCard task={activeTask} isDragging channels={channels} /> : null}
         </DragOverlay>
       </DndContext>
       <TaskDialog

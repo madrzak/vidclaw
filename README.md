@@ -7,6 +7,7 @@ A secure, self-hosted command center for managing your OpenClaw AI agent.
 ## Features
 
 - **🗂️ Kanban Task Board** — Backlog → Todo → In Progress → Done. Drag & drop, priorities, skill assignment. Your agent picks up tasks automatically via heartbeat or cron.
+- **📡 Channel Routing** *(optional)* — Route tasks to specific channels (Telegram topics, Discord threads, Slack channels) to preserve context and conversation history.
 - **📊 Usage Tracking** — Real-time token usage and cost estimates parsed from session transcripts. Progress bars matching Anthropic's rate limit windows.
 - **🔄 Model Switching** — Switch between Claude models directly from the dashboard. Hot-reloads via OpenClaw's config watcher.
 - **📅 Activity Calendar** — Monthly view of agent activity, parsed from memory files and task history.
@@ -47,6 +48,46 @@ Installs Node.js, git, Tailscale, and VidClaw in one command. Localhost only: ad
 ```bash
 ./update.sh
 ```
+
+## Channel Routing (Optional)
+
+VidClaw can route tasks to specific OpenClaw channels (Telegram topics, Discord threads, Slack channels, etc.) to preserve context and conversation history.
+
+**How it works:**
+- Channels are auto-discovered from live OpenClaw sessions
+- Tasks without a channel run in the main session (default)
+- Tasks with a channel run in that channel's context (e.g., Telegram topic 4)
+
+**Setup (optional):**
+
+Create `vidclaw-channels.json` in your OpenClaw workspace to add friendly names:
+
+```json
+{
+  "telegram:-1003821920425": {
+    "name": "My Team"
+  },
+  "telegram:-1003821920425:topic:1": {
+    "name": "general",
+    "icon": "💬"
+  },
+  "telegram:-1003821920425:topic:2": {
+    "name": "projects",
+    "icon": "🚀"
+  }
+}
+```
+
+Without this file, channels appear with generic labels (e.g., "Group -123 (Topic 1)").
+
+**Supported channel types:**
+- Telegram topics (`telegram:GROUP_ID:topic:TOPIC_ID`)
+- Discord threads (`discord:CHANNEL_ID:thread:THREAD_ID`)
+- Slack threads (`slack:CHANNEL_ID:thread:THREAD_ID`)
+
+**UI behavior:**
+- Channel dropdown only appears if you have multiple channels
+- Users without channels see no difference in the UI
 
 ## Usage
 

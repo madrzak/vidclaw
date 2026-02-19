@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { __dirname, WORKSPACE, SOUL_TEMPLATES } from '../config.js';
+import { __dirname, ACTUAL_WORKSPACE, SOUL_TEMPLATES } from '../config.js';
 import { readHistoryFile, appendHistory } from '../lib/fileStore.js';
 
 export function getSoul(req, res) {
-  const fp = path.join(WORKSPACE, 'SOUL.md');
+  const fp = path.join(ACTUAL_WORKSPACE, 'SOUL.md');
   try {
     const content = fs.readFileSync(fp, 'utf-8');
     const stat = fs.statSync(fp);
@@ -13,7 +13,7 @@ export function getSoul(req, res) {
 }
 
 export function putSoul(req, res) {
-  const fp = path.join(WORKSPACE, 'SOUL.md');
+  const fp = path.join(ACTUAL_WORKSPACE, 'SOUL.md');
   const histPath = path.join(__dirname, 'data', 'soul-history.json');
   try {
     const old = fs.existsSync(fp) ? fs.readFileSync(fp, 'utf-8') : '';
@@ -28,7 +28,7 @@ export function getSoulHistory(req, res) {
 }
 
 export function revertSoul(req, res) {
-  const fp = path.join(WORKSPACE, 'SOUL.md');
+  const fp = path.join(ACTUAL_WORKSPACE, 'SOUL.md');
   const histPath = path.join(__dirname, 'data', 'soul-history.json');
   const history = readHistoryFile(histPath);
   const idx = req.body.index;

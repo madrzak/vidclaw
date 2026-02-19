@@ -53,9 +53,12 @@ function formatNextRun(iso, tz) {
   return d.toLocaleDateString('en-US', { timeZone: tz, month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit' })
 }
 
-export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDragging: isDraggingProp }) {
+export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDragging: isDraggingProp, channels }) {
   const { timezone } = useTimezone()
   const [expanded, setExpanded] = useState(false)
+  
+  // Get channel color from channels list
+  const channelColor = channels?.find(ch => ch.id === task.channel)?.color || '#3B82F6'
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, disabled: task.status === 'done' || task.status === 'in-progress' })
 
   const style = {
@@ -177,8 +180,20 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
         </div>
       </div>
 
-      {/* Skills and error badges */}
+      {/* Skills, channel, and error badges */}
       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+        {task.channel && (
+          <span 
+            className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+            style={{
+              backgroundColor: `${channelColor}25`,
+              color: channelColor,
+            }}
+            title={task.channel}
+          >
+            {channels?.find(ch => ch.id === task.channel)?.icon || '📱'} {channels?.find(ch => ch.id === task.channel)?.label.split('(')[1]?.replace(')', '') || 'Channel'}
+          </span>
+        )}
         {skillsList.map(sk => (
           <span key={sk} className={cn(
             'text-[10px] px-1.5 py-0.5 rounded-full',

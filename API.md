@@ -2,18 +2,46 @@
 
 All endpoints are served on `localhost:3333`.
 
+## Channels
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/channels` | List available channels (auto-discovered from OpenClaw sessions) |
+
+Returns channels that tasks can be routed to (Telegram topics, Discord threads, Slack channels, etc.). Channels are auto-discovered from live OpenClaw sessions. Optional `vidclaw-channels.json` in workspace provides friendly names.
+
+**Response format:**
+```json
+[
+  { "id": null, "label": "Main Session", "type": "main", "icon": "🏠", "color": "#6B7280" },
+  { "id": "telegram:-123:topic:4", "label": "My Team (general)", "type": "telegram", "icon": "💬", "color": "#3B82F6" }
+]
+```
+
 ## Tasks
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/tasks` | List all tasks |
-| POST | `/api/tasks` | Create a task |
+| POST | `/api/tasks` | Create a task (accepts optional `channel` field) |
 | PUT | `/api/tasks/:id` | Update a task |
 | DELETE | `/api/tasks/:id` | Delete a task |
 | POST | `/api/tasks/:id/run` | Mark task for immediate execution |
 | POST | `/api/tasks/:id/pickup` | Mark task as picked up by agent |
 | POST | `/api/tasks/:id/complete` | Mark task as done with result |
 | GET | `/api/tasks/queue` | Get executable task queue (sorted by priority) |
+
+**Task object with channel routing:**
+```json
+{
+  "title": "Check project status",
+  "description": "Review latest updates",
+  "channel": "telegram:-123:topic:4",
+  "priority": "high",
+  "status": "todo"
+}
+```
+When `channel` is set, the task executes in that channel's context (preserves conversation history and memory).
 
 ## Usage & Models
 
