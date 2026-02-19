@@ -132,7 +132,7 @@ if [[ "${TAILSCALE_FLAG}" == "1" ]] && [[ "${TAILSCALE_CONNECTED}" == "0" ]]; th
   echo
   echo -e "  ${YELLOW}▸ Remote access:${RESET} Tailscale needs authentication"
   echo -e "    ${DIM}1.${RESET} sudo tailscale up"
-  echo -e "    ${DIM}2.${RESET} cd ${INSTALL_DIR} && ./setup.sh --tailscale"
+  echo -e "    ${DIM}2.${RESET} sudo tailscale serve --bg --https=8443 http://127.0.0.1:${VIDCLAW_PORT:-3333}"
 fi
 
 echo
