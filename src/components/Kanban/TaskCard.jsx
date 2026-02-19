@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { formatTime, formatDuration, formatRelativeTime } from '@/lib/time'
 import { useTimezone } from '../TimezoneContext'
 import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2, ChevronDown, ChevronUp, FileText, Timer } from 'lucide-react'
+import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 
 function truncateResult(text, maxLen = 120) {
   if (!text) return ''
@@ -139,15 +140,28 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
 
           {/* Expanded full result preview */}
           {isDone && expanded && (
-            <div className="mt-2 text-[11px] rounded-md bg-muted/50 p-2 max-h-48 overflow-y-auto">
+            <div className="mt-2">
               {hasError && (
                 <div className="mb-2">
-                  <span className="text-red-400 font-medium">Error:</span>
-                  <pre className="text-red-400/80 whitespace-pre-wrap mt-0.5 font-mono text-[10px]">{task.error}</pre>
+                  <span className="text-red-400 font-medium text-[11px]">Error:</span>
+                  <MarkdownRenderer
+                    content={task.error}
+                    isError={true}
+                    showToggle={false}
+                    size="xs"
+                    maxHeight="max-h-48"
+                    className="mt-1"
+                  />
                 </div>
               )}
               {task.result && (
-                <pre className="text-muted-foreground whitespace-pre-wrap font-mono text-[10px]">{task.result}</pre>
+                <MarkdownRenderer
+                  content={task.result}
+                  isError={false}
+                  showToggle={false}
+                  size="xs"
+                  maxHeight="max-h-48"
+                />
               )}
             </div>
           )}
