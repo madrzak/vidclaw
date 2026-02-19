@@ -1,24 +1,26 @@
 #!/usr/bin/env bash
 # VidClaw one-liner installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/madrzak/vidclaw/main/install.sh | bash
-#   With Tailscale: curl -fsSL ... | bash -s -- --tailscale
-#   Custom port:    curl -fsSL ... | bash -s -- --tailscale 9443
-#   Custom dir:     VIDCLAW_DIR=/path/to/dir curl -fsSL ... | bash
+# Usage: curl -fsSL vidclaw.com/install.sh | bash
+#   Without Tailscale: curl -fsSL vidclaw.com/install.sh | bash -s -- --no-tailscale
+#   Custom port:       curl -fsSL vidclaw.com/install.sh | bash -s -- --tailscale 9443
+#   Custom dir:        VIDCLAW_DIR=/path/to/dir curl -fsSL vidclaw.com/install.sh | bash
 set -euo pipefail
 
 # ---------- config ----------
 INSTALL_DIR="${VIDCLAW_DIR:-${HOME}/.openclaw/workspace/dashboard}"
 REPO_URL="https://github.com/madrzak/vidclaw.git"
-TAILSCALE_FLAG=""
+TAILSCALE_FLAG=1
 SETUP_ARGS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --no-tailscale)
+      TAILSCALE_FLAG=0
+      ;;
     --tailscale)
       TAILSCALE_FLAG=1
-      SETUP_ARGS+=("--tailscale")
       if [[ "${2:-}" =~ ^[0-9]+$ ]]; then
-        SETUP_ARGS+=("$2")
+        SETUP_ARGS+=("--tailscale" "$2")
         shift
       fi
       ;;
@@ -36,6 +38,11 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
+
+# Add tailscale flag to setup args if enabled
+if [[ "${TAILSCALE_FLAG}" == "1" ]]; then
+  SETUP_ARGS+=("--tailscale")
+fi
 
 # ---------- helpers ----------
 info()  { echo -e "\033[1;34m[INFO]\033[0m $*"; }
