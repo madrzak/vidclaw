@@ -225,6 +225,13 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
     }
   }, [task, open])
 
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [open, onClose])
+
   if (!open) return null
 
   function handleSave() {

@@ -7,6 +7,12 @@ const API = '/api/credentials'
 const ACCEPTED_EXTENSIONS = '.json,.pem,.key,.p12,.pfx,.crt,.cert'
 
 function Modal({ title, onClose, children }) {
+  React.useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div className="bg-card border border-border rounded-t-xl sm:rounded-lg w-full max-w-md p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>

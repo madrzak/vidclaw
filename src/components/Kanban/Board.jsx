@@ -198,7 +198,7 @@ export default function Board() {
   }
 
   async function handleBulkArchive(status) {
-    await fetch('/api/tasks/bulk-archive', {
+    await fetch('/api/tasks/bulk-delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),

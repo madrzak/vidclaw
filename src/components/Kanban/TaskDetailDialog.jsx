@@ -107,6 +107,13 @@ export default function TaskDetailDialog({ open, onClose, task }) {
     return () => clearInterval(id)
   }, [open, task?.id, task?.status, task?.startedAt])
 
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [open, onClose])
+
   if (!open || !task) return null
 
   const isDone = task.status === 'done'

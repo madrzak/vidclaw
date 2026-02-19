@@ -44,6 +44,11 @@ function SourceBadge({ source }) {
 }
 
 function CreateModal({ onClose, onCreated }) {
+  React.useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [instructions, setInstructions] = useState('')
