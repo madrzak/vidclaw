@@ -365,8 +365,8 @@ stop_direct_service() {
   fi
 
   kill "${pid}" >/dev/null 2>&1 || true
-  local attempt
-  for attempt in 1 2 3 4 5; do
+  local _attempt
+  for _attempt in 1 2 3 4 5; do
     if ! kill -0 "${pid}" >/dev/null 2>&1; then
       break
     fi
