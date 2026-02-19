@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features - VidClaw | Self-Hosted AI Dashboard for OpenClaw</title>
+  <meta name="description" content="Explore VidClaw features: self-hosted AI dashboard, OpenClaw agent management, AI cost tracking, Kanban task board, skills manager, and soul editor.">
+  <link rel="canonical" href="https://vidclaw.com/features">
+  <script async src="https://plausible.io/js/pa-GKT997euCDfQROHoFG713.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e; --text: #e4e4e7; --muted: #71717a; --accent: #f97316; --accent-glow: rgba(249, 115, 22, 0.15); }
+    html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem; }
+    nav .brand { font-weight: 800; font-size: 1.2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    nav .brand:hover { text-decoration: none; color: var(--accent); }
+    nav .nav-links { display: flex; gap: 1.5rem; font-size: 0.95rem; }
+    nav .nav-links a { color: var(--muted); }
+    nav .nav-links a:hover, nav .nav-links a.active { color: var(--accent); text-decoration: none; }
+
+    .page { max-width: 800px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+    .page h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #f97316, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page .subtitle { color: var(--muted); font-size: 1.15rem; margin-bottom: 3rem; }
+    .page h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; padding-top: 1rem; }
+    .page h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+    .page p, .page li { color: var(--muted); font-size: 1rem; margin-bottom: 1rem; }
+    .page p strong { color: var(--text); }
+    .page ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    .page li { margin-bottom: 0.5rem; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.2s, transform 0.2s; }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+    .card h3 { margin-top: 0; }
+
+    .cta-box { text-align: center; margin: 4rem 0 0; padding: 3rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .cta-box p { color: var(--muted); margin-bottom: 1.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #ea580c; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(249, 115, 22, 0.3); text-decoration: none; }
+
+    footer { text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">⚡ VidClaw</a>
+    <div class="nav-links">
+      <a href="/features" class="active">Features</a>
+      <a href="/docs">Docs</a>
+      <a href="/changelog">Changelog</a>
+      <a href="https://github.com/madrzak/vidclaw">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <h1>Features</h1>
+    <p class="subtitle">Everything you need to manage your AI agent from one self-hosted dashboard. No cloud, no accounts, no tracking.</p>
+
+    <h2>Self-Hosted AI Dashboard</h2>
+    <p>VidClaw is a <strong>self-hosted AI dashboard</strong> that runs entirely on your own server. Unlike cloud-based alternatives, your data never leaves your machine. The dashboard binds to localhost and is accessed through an SSH tunnel — giving you a secure, private command center for your AI agent.</p>
+    <p>Built with React and Node.js, VidClaw is lightweight, fast, and designed for developers who prefer to own their infrastructure. No subscriptions, no vendor lock-in, no third-party dependencies.</p>
+
+    <h2>OpenClaw Agent Management</h2>
+    <p>VidClaw is purpose-built for <strong>OpenClaw agent management</strong>. It reads directly from your OpenClaw workspace, giving you a visual interface over everything your agent does.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🗂️</div>
+        <h3>Kanban Task Board</h3>
+        <p>Drag-and-drop task management with Backlog, Todo, In Progress, and Done columns. Assign priorities and skills — your agent picks up tasks automatically.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💜</div>
+        <h3>Soul Editor</h3>
+        <p>Edit your agent's persona, identity, and operating instructions. Version history with one-click revert. Six starter templates to choose from.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧩</div>
+        <h3>Skills Manager</h3>
+        <p>Browse, enable, disable, or create custom skills. Your agent loads changes automatically on the next session — no restart required.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h3>Content Browser</h3>
+        <p>Browse workspace files with markdown preview and syntax highlighting. See exactly what your agent has created, edited, or organized.</p>
+      </div>
+    </div>
+
+    <h2>AI Cost Tracking</h2>
+    <p><strong>AI cost tracking</strong> is built into VidClaw's core. Monitor real-time token usage and cost estimates across all your AI models. Visual progress bars match Anthropic's rate limit windows so you always know where you stand.</p>
+    <ul>
+      <li><strong>Per-model breakdown</strong> — see costs for Claude, GPT, and other models separately</li>
+      <li><strong>Daily and monthly summaries</strong> — track spending trends over time</li>
+      <li><strong>Rate limit awareness</strong> — progress bars show how close you are to limits</li>
+      <li><strong>Model switching</strong> — change models directly from the navbar</li>
+    </ul>
+
+    <h2>Activity Calendar & History</h2>
+    <p>A monthly calendar view shows what your agent has been working on each day. Data is parsed from memory files and task completion history, giving you a bird's-eye view of your agent's productivity.</p>
+
+    <h2>Privacy & Security First</h2>
+    <p>VidClaw is <strong>100% self-hosted</strong> with zero cloud dependencies. The dashboard only binds to <code>localhost</code> — you access it through an SSH tunnel. No accounts, no analytics (except optional Plausible), no data collection. Your agent's data stays on your server.</p>
+
+    <div class="cta-box">
+      <p>Ready to take control of your AI agent?</p>
+      <a href="/docs" class="btn btn-primary">Get Started →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built by <a href="https://x.com/woocassh">woocassh</a> · <a href="https://github.com/madrzak/vidclaw">GitHub</a> · <a href="/features">Features</a> · <a href="/docs">Docs</a> · <a href="/changelog">Changelog</a> · MIT License</p>
+  </footer>
+
+</body>
+</html>
