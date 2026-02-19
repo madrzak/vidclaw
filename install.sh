@@ -117,20 +117,15 @@ if [[ "${TAILSCALE_FLAG}" == "1" ]]; then
     fi
   fi
 
-  # Check if Tailscale is connected, auto-authenticate if not
-  if ! tailscale status >/dev/null 2>&1; then
-    info "Tailscale needs authentication. Starting login..."
-    echo
-    sudo tailscale up
-    echo
-    # Verify connection after auth
-    if ! tailscale status >/dev/null 2>&1; then
-      die "Tailscale authentication failed. Run 'sudo tailscale up' manually and re-run."
-    fi
-    ok "Tailscale authenticated and connected"
+  TAILSCALE_CONNECTED=0
+  if tailscale status >/dev/null 2>&1; then
+    TAILSCALE_CONNECTED=1
+    ok "Tailscale $(tailscale version 2>/dev/null | head -1 || echo 'installed') (connected)"
+  else
+    ok "Tailscale $(tailscale version 2>/dev/null | head -1 || echo 'installed') (not yet connected)"
+    # Remove --tailscale from setup args so setup.sh doesn't fail
+    SETUP_ARGS=("${SETUP_ARGS[@]/--tailscale/}")
   fi
-
-  ok "Tailscale $(tailscale version 2>/dev/null | head -1 || echo 'installed')"
 fi
 
 # ---------- clone / update ----------
@@ -155,7 +150,16 @@ ok "VidClaw installed successfully."
 echo
 echo "  Directory: ${INSTALL_DIR}"
 echo "  Commands:  ./start.sh  ./stop.sh  ./status.sh  ./logs.sh"
+echo "  Dashboard: http://localhost:${VIDCLAW_PORT:-3333}"
 echo
-echo "  One-liner to update later:"
-echo "    cd ${INSTALL_DIR} && git pull && ./setup.sh ${SETUP_ARGS[*]:-}"
-echo
+
+if [[ "${TAILSCALE_FLAG}" == "1" ]] && [[ "${TAILSCALE_CONNECTED:-0}" == "0" ]]; then
+  echo "  ┌─────────────────────────────────────────────────┐"
+  echo "  │  Tailscale is installed but needs authentication │"
+  echo "  │                                                  │"
+  echo "  │  To enable remote access:                        │"
+  echo "  │    1. sudo tailscale up                          │"
+  echo "  │    2. cd ${INSTALL_DIR} && ./setup.sh --tailscale│"
+  echo "  └─────────────────────────────────────────────────┘"
+  echo
+fi
