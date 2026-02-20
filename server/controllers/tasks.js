@@ -86,7 +86,11 @@ export function updateTask(req, res) {
   if (tasks[idx].status !== 'done') tasks[idx].completedAt = null;
   writeTasks(tasks);
   const actor = req.body._actor || 'user';
-  logActivity(actor, 'task_updated', { taskId: req.params.id, title: tasks[idx].title, changes: Object.keys(updates) });
+  logActivity(actor, 'task_updated', {
+    taskId: req.params.id, title: tasks[idx].title, changes: Object.keys(updates),
+    ...(updates.status && { newStatus: updates.status }),
+    ...(updates.priority && { newPriority: updates.priority }),
+  });
   broadcast('tasks', tasks);
   res.json(tasks[idx]);
 }

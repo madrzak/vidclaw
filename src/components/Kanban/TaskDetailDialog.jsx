@@ -36,14 +36,74 @@ function formatTimeAgo(iso) {
 }
 
 const ACTION_LABELS = {
-  task_created: 'Created task',
-  task_updated: 'Updated task',
-  task_run: 'Started task',
-  task_pickup: 'Picked up task',
-  task_completed: 'Completed task',
-  task_deleted: 'Deleted task',
-  task_status_check: 'Checked sub-agent',
-  task_timeout: 'Task timed out',
+  task_created: 'Created',
+  task_updated: 'Updated',
+  task_run: 'Started',
+  task_pickup: 'Picked up',
+  task_completed: 'Completed',
+  task_deleted: 'Deleted',
+  task_status_check: 'Checked',
+  task_timeout: 'Timed out',
+  task_archived: 'Archived',
+}
+
+const STATUS_LABELS = {
+  todo: 'To Do', 'in-progress': 'In Progress', review: 'Review', done: 'Done', blocked: 'Blocked',
+}
+
+function truncateTitle(title, max = 40) {
+  if (!title || title.length <= max) return title
+  return title.slice(0, max - 1) + '…'
+}
+
+function describeActivity(a) {
+  const d = a.details || {}
+  const title = truncateTitle(d.title)
+  const label = ACTION_LABELS[a.action] || a.action
+
+  if (a.action === 'task_updated' && d.newStatus) {
+    return { verb: `Moved to ${STATUS_LABELS[d.newStatus] || d.newStatus}`, title }
+  }
+  if (a.action === 'task_updated' && d.newPriority) {
+    return { verb: `Set priority to ${d.newPriority}`, title }
+  }
+  if (a.action === 'task_updated' && d.changes?.length) {
+    const fields = d.changes.filter(c => c !== '_actor').join(', ')
+    return { verb: `Updated ${fields} on`, title }
+  }
+  return { verb: label, title }
+}
+
+function collapseActivities(activities) {
+  if (!activities.length) return []
+  const result = []
+  for (const a of activities) {
+    const prev = result[result.length - 1]
+    // Deduplicate consecutive identical entries
+    if (prev && !prev.grouped &&
+        prev.actor === a.actor && prev.action === a.action &&
+        prev.details?.taskId === a.details?.taskId) {
+      prev.count = (prev.count || 1) + 1
+      prev.timestamp = a.timestamp
+      continue
+    }
+    // Group flow pairs on same task (pickup → completed, started → completed)
+    if (prev && !prev.grouped &&
+        prev.actor === a.actor &&
+        prev.details?.taskId === a.details?.taskId &&
+        prev.action !== a.action) {
+      const FLOW = { task_pickup: 'task_completed', task_run: 'task_completed' }
+      if (FLOW[prev.action] === a.action) {
+        result[result.length - 1] = {
+          ...a, grouped: true,
+          groupLabel: `${ACTION_LABELS[prev.action]} → ${ACTION_LABELS[a.action]}`,
+        }
+        continue
+      }
+    }
+    result.push({ ...a })
+  }
+  return result
 }
 
 function ActivityLog({ taskId }) {
@@ -67,29 +127,35 @@ function ActivityLog({ taskId }) {
   if (loading) return <div className="text-xs text-muted-foreground p-4">Loading activity...</div>
   if (!activities.length) return <div className="text-xs text-muted-foreground p-4">No activity yet</div>
 
+  const collapsed = collapseActivities(activities)
+
   return (
     <div className="space-y-1 p-1">
-      {activities.map(a => (
-        <div key={a.id} className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-secondary/50 transition-colors">
-          <div className={`mt-0.5 shrink-0 rounded-full p-1 ${a.actor === 'bot' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'}`}>
-            {a.actor === 'bot' ? <Bot size={10} /> : <User size={10} />}
+      {collapsed.map(a => {
+        const { verb, title } = a.grouped
+          ? { verb: a.groupLabel, title: truncateTitle(a.details?.title) }
+          : describeActivity(a)
+        return (
+          <div key={a.id} className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-secondary/50 transition-colors">
+            <div className={`mt-0.5 shrink-0 rounded-full p-1 ${a.actor === 'bot' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'}`}>
+              {a.actor === 'bot' ? <Bot size={10} /> : <User size={10} />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs">
+                <span className={`font-medium ${a.actor === 'bot' ? 'text-purple-400' : 'text-blue-400'}`}>
+                  {a.actor === 'bot' ? 'Bot' : 'User'}
+                </span>
+                {' '}
+                <span className="text-muted-foreground">{verb}</span>
+                {title && <span className="text-foreground font-medium"> "{title}"</span>}
+                {a.count > 1 && <span className="text-muted-foreground/70 text-[10px] ml-1">×{a.count}</span>}
+                {a.details?.hasError && <span className="text-red-400"> (error)</span>}
+              </p>
+              <p className="text-[10px] text-muted-foreground">{formatTimeAgo(a.timestamp)}</p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs">
-              <span className={`font-medium ${a.actor === 'bot' ? 'text-purple-400' : 'text-blue-400'}`}>
-                {a.actor === 'bot' ? 'Bot' : 'User'}
-              </span>
-              {' '}
-              <span className="text-muted-foreground">{ACTION_LABELS[a.action] || a.action}</span>
-              {a.details?.title && (
-                <span className="text-foreground font-medium"> "{a.details.title}"</span>
-              )}
-              {a.details?.hasError && <span className="text-red-400"> (with error)</span>}
-            </p>
-            <p className="text-[10px] text-muted-foreground">{formatTimeAgo(a.timestamp)}</p>
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
