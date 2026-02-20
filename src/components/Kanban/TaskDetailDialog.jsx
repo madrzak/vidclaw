@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { X, Bot, User, Activity, FileText, AlertCircle, Clock, CheckCircle2, Loader2, MessageCircle } from 'lucide-react'
+import AttachmentSection from './AttachmentSection'
 import { cn } from '@/lib/utils'
 import { extractFilePaths } from './TaskCard'
 import { useTimezone } from '../TimezoneContext'
@@ -96,6 +97,21 @@ function ActivityLog({ taskId }) {
 export default function TaskDetailDialog({ open, onClose, task }) {
   const { timezone } = useTimezone()
   const { navigate } = useNav()
+  const [attachments, setAttachments] = useState([])
+  const [attKey, setAttKey] = useState(0)
+
+  const refreshAttachments = () => {
+    if (!task?.id) return
+    fetch(`/api/tasks/${task.id}/attachments`).then(r => r.json()).then(atts => {
+      if (Array.isArray(atts)) setAttachments(atts)
+    }).catch(() => {})
+    setAttKey(k => k + 1)
+  }
+
+  useEffect(() => {
+    if (task) setAttachments(task.attachments || [])
+    else setAttachments([])
+  }, [task, open])
 
   // Live elapsed time for in-progress tasks
   const [elapsed, setElapsed] = useState('')
@@ -187,6 +203,15 @@ export default function TaskDetailDialog({ open, onClose, task }) {
                 </pre>
               </div>
             )}
+
+            {/* Attachments */}
+            <AttachmentSection
+              key={attKey}
+              taskId={task.id}
+              attachments={attachments}
+              onChange={refreshAttachments}
+              readOnly={false}
+            />
 
             {/* Linked Files */}
             {filePaths.length > 0 && (

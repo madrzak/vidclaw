@@ -3,7 +3,7 @@ import path from 'path';
 import { readTasks, writeTasks, logActivity, readSettings } from '../lib/fileStore.js';
 import { broadcast } from '../broadcast.js';
 import { isoToDateInTz } from '../lib/timezone.js';
-import { WORKSPACE } from '../config.js';
+import { WORKSPACE, __dirname } from '../config.js';
 import { computeNextRun, computeFutureRuns } from '../lib/schedule.js';
 import { getKnownChannelIds } from './channels.js';
 
@@ -240,6 +240,9 @@ export function deleteTask(req, res) {
   task.updatedAt = new Date().toISOString();
   writeTasks(tasks);
   logActivity('user', 'task_archived', { taskId: task.id, title: task.title });
+  // Cleanup attachments directory
+  const attDir = path.join(__dirname, 'data', 'attachments', req.params.id);
+  try { fs.rmSync(attDir, { recursive: true, force: true }); } catch {}
   broadcast('tasks', tasks.filter(t => t.status !== 'archived'));
   res.json({ ok: true });
 }
