@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { X, Bot, User, Activity, FileText, FolderOpen } from 'lucide-react'
+import AttachmentSection from './AttachmentSection'
 import { extractFilePaths } from './TaskCard'
 // NavigationContext removed — not yet implemented
 
@@ -210,6 +211,22 @@ function buildScheduleString({ scheduleInterval, schedulePeriod, scheduleTime })
 export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
   const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
   const [skills, setSkills] = useState([])
+  const [attachments, setAttachments] = useState([])
+  const [attKey, setAttKey] = useState(0)
+
+  const refreshAttachments = () => {
+    if (!task?.id) return
+    fetch(`/api/tasks`).then(r => r.json()).then(tasks => {
+      const t = tasks.find(t => t.id === task.id)
+      if (t) setAttachments(t.attachments || [])
+    }).catch(() => {})
+    setAttKey(k => k + 1)
+  }
+
+  useEffect(() => {
+    if (task) setAttachments(task.attachments || [])
+    else setAttachments([])
+  }, [task, open])
 
   useEffect(() => {
     fetch('/api/skills').then(r => r.json()).then(setSkills).catch(() => {})
@@ -367,6 +384,15 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
                 allSkills={skills}
               />
             </div>
+
+            {task?.id && (
+              <AttachmentSection
+                key={attKey}
+                taskId={task.id}
+                attachments={attachments}
+                onChange={refreshAttachments}
+              />
+            )}
           </div>
 
           {/* Activity Log — right 1/3 */}

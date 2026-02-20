@@ -4,7 +4,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
 import { formatTime, formatDuration, formatRelativeTime } from '@/lib/time'
 import { useTimezone } from '../TimezoneContext'
-import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2, ChevronDown, ChevronUp, FileText, Timer } from 'lucide-react'
+import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2, ChevronDown, ChevronUp, FileText, Timer, Paperclip } from 'lucide-react'
+import { AttachmentBadge, AttachmentThumbnails } from './AttachmentSection'
 
 function truncateResult(text, maxLen = 120) {
   if (!text) return ''
@@ -190,7 +191,11 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
             <AlertCircle size={10} /> Error
           </span>
         )}
+        <AttachmentBadge count={task.attachments?.length} />
       </div>
+
+      {/* Attachment thumbnails */}
+      <AttachmentThumbnails taskId={task.id} attachments={task.attachments} />
 
       {hasSchedule && !isDone && (
         <div className={cn('flex items-center gap-1 text-[10px] mt-1.5', schedulePaused ? 'text-muted-foreground/50' : 'text-orange-400/80')}>
