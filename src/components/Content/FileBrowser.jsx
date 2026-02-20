@@ -68,6 +68,17 @@ function fuzzyMatch(pattern, text) {
   return pi === p.length ? score : -1
 }
 
+const PROTECTED_PATHS = new Set([
+  'SOUL.md', 'IDENTITY.md', 'USER.md', 'AGENTS.md',
+  'MEMORY.md', 'HEARTBEAT.md', 'BOOTSTRAP.md', 'TOOLS.md',
+  'dashboard', '.git',
+])
+
+function isProtected(entryPath) {
+  const parts = entryPath.split('/')
+  return parts.length === 1 && PROTECTED_PATHS.has(parts[0])
+}
+
 export default function FileBrowser() {
   const { consumeNavData } = useNav()
   const [currentPath, setCurrentPath] = useState('')
@@ -369,10 +380,16 @@ export default function FileBrowser() {
           style={{ left: ctxMenu.x, top: ctxMenu.y }}
         >
           <button
-            onClick={() => { handleDelete(ctxMenu.entry); setCtxMenu(null) }}
-            className="flex items-center gap-2 w-full px-3 py-1.5 text-sm text-red-400 hover:bg-accent/50 transition-colors"
+            onClick={() => { if (!isProtected(ctxMenu.entry.path)) { handleDelete(ctxMenu.entry); setCtxMenu(null) } }}
+            disabled={isProtected(ctxMenu.entry.path)}
+            className={cn(
+              'flex items-center gap-2 w-full px-3 py-1.5 text-sm transition-colors',
+              isProtected(ctxMenu.entry.path)
+                ? 'text-muted-foreground/40 cursor-not-allowed'
+                : 'text-red-400 hover:bg-accent/50'
+            )}
           >
-            <Trash2 size={14} /> Delete
+            <Trash2 size={14} /> Delete{isProtected(ctxMenu.entry.path) ? ' (protected)' : ''}
           </button>
         </div>
       )}

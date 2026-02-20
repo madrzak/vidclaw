@@ -107,6 +107,13 @@ export function putFileContent(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 }
 
+// Root-level files/dirs that must not be deleted
+const PROTECTED_PATHS = [
+  'SOUL.md', 'IDENTITY.md', 'USER.md', 'AGENTS.md',
+  'MEMORY.md', 'HEARTBEAT.md', 'BOOTSTRAP.md', 'TOOLS.md',
+  'dashboard', '.git',
+];
+
 export function deleteFile(req, res) {
   const reqPath = req.query.path;
   if (!reqPath) return res.status(400).json({ error: 'Path required' });
@@ -120,6 +127,12 @@ export function deleteFile(req, res) {
   // Security: disallow deleting the workspace root
   if (path.resolve(fullPath) === path.resolve(WORKSPACE)) {
     return res.status(403).json({ error: 'Cannot delete workspace root' });
+  }
+
+  // Security: protect critical workspace files/dirs
+  const topLevel = reqPath.split('/')[0];
+  if (PROTECTED_PATHS.includes(topLevel) && reqPath.split('/').length === 1) {
+    return res.status(403).json({ error: 'This file is protected and cannot be deleted' });
   }
 
   try {
