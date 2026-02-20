@@ -240,6 +240,7 @@ export default function Board() {
       <div className="flex items-center gap-1 mb-3 bg-zinc-900 rounded-lg p-1 self-start border border-zinc-800">
         <button
           onClick={() => setView('kanban')}
+          aria-pressed={view === 'kanban'}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
             view === 'kanban' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
           }`}
@@ -248,6 +249,7 @@ export default function Board() {
         </button>
         <button
           onClick={() => setView('pixelbot')}
+          aria-pressed={view === 'pixelbot'}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
             view === 'pixelbot' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
           }`}

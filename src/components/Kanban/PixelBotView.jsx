@@ -23,11 +23,7 @@ const PIXEL = 6
 
 function drawPixelRect(ctx, x, y, w, h, color) {
   ctx.fillStyle = color
-  for (let px = 0; px < w; px++) {
-    for (let py = 0; py < h; py++) {
-      ctx.fillRect((x + px) * PIXEL, (y + py) * PIXEL, PIXEL - 1, PIXEL - 1)
-    }
-  }
+  ctx.fillRect(x * PIXEL, y * PIXEL, w * PIXEL - 1, h * PIXEL - 1)
 }
 
 // Bot body shape (centered around cx, cy)
@@ -192,14 +188,24 @@ function drawScene(ctx, w, h, frame, state) {
   }
 }
 
-function deriveState(tasks) {
+function deriveState(tasks, celebratingRef) {
   const inProgress = tasks.filter(t => t.status === 'in-progress')
   const done = tasks.filter(t => t.status === 'done')
-  const recentDone = done.some(t => {
-    const completed = t.completedAt || t.updatedAt
-    return completed && (Date.now() - new Date(completed).getTime()) < 30000
-  })
-  if (recentDone) return 'celebrating'
+
+  // Check for newly completed tasks by tracking seen done-task IDs
+  const doneIds = new Set(done.map(t => t.id || t._id))
+  const prevDoneIds = celebratingRef.current.seenDoneIds
+  const hasNewDone = [...doneIds].some(id => !prevDoneIds.has(id))
+
+  if (hasNewDone) {
+    celebratingRef.current.seenDoneIds = doneIds
+    celebratingRef.current.celebrateUntil = Date.now() + 30000
+  } else {
+    // Update seen set without triggering celebration
+    celebratingRef.current.seenDoneIds = doneIds
+  }
+
+  if (Date.now() < celebratingRef.current.celebrateUntil) return 'celebrating'
   if (inProgress.length > 0) return 'working'
   return 'idle'
 }
@@ -214,6 +220,7 @@ export default function PixelBotView() {
   const canvasRef = useRef(null)
   const frameRef = useRef(0)
   const animRef = useRef(null)
+  const celebratingRef = useRef({ seenDoneIds: new Set(), celebrateUntil: 0 })
   const [tasks, setTasks] = useState([])
   const [botState, setBotState] = useState('idle')
 
@@ -229,16 +236,18 @@ export default function PixelBotView() {
   useSocket('tasks', (newTasks) => { setTasks(newTasks) })
 
   useEffect(() => {
-    setBotState(deriveState(tasks))
+    setBotState(deriveState(tasks, celebratingRef))
   }, [tasks])
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
+    let paused = document.hidden
 
     const animate = () => {
-      frameRef.current++
+      if (paused) return
+      frameRef.current = (frameRef.current + 1) % 10000
       const w = canvas.width
       const h = canvas.height
       ctx.clearRect(0, 0, w, h)
@@ -246,8 +255,20 @@ export default function PixelBotView() {
       animRef.current = requestAnimationFrame(animate)
     }
 
+    const onVisibility = () => {
+      paused = document.hidden
+      if (!paused && !animRef.current) {
+        animRef.current = requestAnimationFrame(animate)
+      }
+    }
+
+    document.addEventListener('visibilitychange', onVisibility)
     animRef.current = requestAnimationFrame(animate)
-    return () => { if (animRef.current) cancelAnimationFrame(animRef.current) }
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility)
+      if (animRef.current) cancelAnimationFrame(animRef.current)
+      animRef.current = null
+    }
   }, [botState])
 
   useEffect(() => {
