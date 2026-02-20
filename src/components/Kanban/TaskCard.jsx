@@ -4,7 +4,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { cn } from '@/lib/utils'
 import { formatTime, formatDuration, formatRelativeTime } from '@/lib/time'
 import { useTimezone } from '../TimezoneContext'
-import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2, ChevronDown, ChevronUp, FileText, Timer, MessageCircle } from 'lucide-react'
+import { GripVertical, Trash2, Play, AlertCircle, Loader2, Clock, CheckCircle2, ChevronDown, ChevronUp, FileText, Timer, Paperclip, MessageCircle } from 'lucide-react'
+import { AttachmentBadge, AttachmentThumbnails } from './AttachmentSection'
 
 function truncateResult(text, maxLen = 120) {
   if (!text) return ''
@@ -185,6 +186,11 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
             isDone && !hasError ? 'bg-orange-500/10 text-orange-400/60' : 'bg-orange-500/20 text-orange-400'
           )}>{sk}</span>
         ))}
+        {task.channel && (
+          <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
+            <MessageCircle size={10} /> {task.channel}
+          </span>
+        )}
         {task.source && (
           <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400" title={`Source: ${task.source}`}>
             <MessageCircle size={10} /> {task.source}
@@ -195,7 +201,11 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
             <AlertCircle size={10} /> Error
           </span>
         )}
+        <AttachmentBadge count={task.attachments?.length} />
       </div>
+
+      {/* Attachment thumbnails */}
+      <AttachmentThumbnails taskId={task.id} attachments={task.attachments} />
 
       {hasSchedule && !isDone && (
         <div className={cn('flex items-center gap-1 text-[10px] mt-1.5', schedulePaused ? 'text-muted-foreground/50' : 'text-orange-400/80')}>

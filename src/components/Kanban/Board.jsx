@@ -6,6 +6,7 @@ import TaskCard from './TaskCard'
 import TaskDialog from './TaskDialog'
 import TaskDetailDialog from './TaskDetailDialog'
 import PageSkeleton from '../PageSkeleton'
+import PixelBotView from './PixelBotView'
 import { useSocket } from '../../hooks/useSocket.jsx'
 
 const COLUMNS = [
@@ -23,6 +24,7 @@ export default function Board() {
   const [editTask, setEditTask] = useState(null)
   const [viewTask, setViewTask] = useState(null)
   const [capacity, setCapacity] = useState({ maxConcurrent: 1, activeCount: 0, remainingSlots: 1 })
+  const [view, setView] = useState('kanban') // 'kanban' | 'pixelbot'
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -233,42 +235,73 @@ export default function Board() {
   if (loading) return <PageSkeleton variant="kanban" />
 
   return (
-    <>
-      <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
-        <div className="flex gap-4 h-full overflow-x-auto pb-2">
-          {COLUMNS.map(col => (
-            <Column
-              key={col.id}
-              column={col}
-              tasks={getColumnTasks(col.id)}
-              onAdd={() => openNew(col.id)}
-              onQuickAdd={handleQuickAdd}
-              onEdit={openEdit}
-              onView={openView}
+    <div className="flex flex-col h-full">
+      {/* View Toggle */}
+      <div className="flex items-center gap-1 mb-3 bg-zinc-900 rounded-lg p-1 self-start border border-zinc-800">
+        <button
+          onClick={() => setView('kanban')}
+          aria-pressed={view === 'kanban'}
+          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            view === 'kanban' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
+          }`}
+        >
+          📋 Kanban
+        </button>
+        <button
+          onClick={() => setView('pixelbot')}
+          aria-pressed={view === 'pixelbot'}
+          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            view === 'pixelbot' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
+          }`}
+        >
+          🤖 Pixel Bot
+        </button>
+      </div>
+
+      {/* Views */}
+      <div className="flex-1 min-h-0">
+        {view === 'pixelbot' ? (
+          <PixelBotView />
+        ) : (
+          <>
+            <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
+              <div className="flex gap-4 h-full overflow-x-auto pb-2">
+                {COLUMNS.map(col => (
+                  <Column
+                    key={col.id}
+                    column={col}
+                    tasks={getColumnTasks(col.id)}
+                    onAdd={() => openNew(col.id)}
+                    onQuickAdd={handleQuickAdd}
+                    onEdit={openEdit}
+                    onView={openView}
+                    onDelete={handleDelete}
+                    onRun={handleRun}
+                    onToggleSchedule={handleToggleSchedule}
+                    onBulkArchive={handleBulkArchive}
+                    capacity={col.id === 'in-progress' ? capacity : undefined}
+                  />
+                ))}
+              </div>
+              <DragOverlay>
+                {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
+              </DragOverlay>
+            </DndContext>
+            <TaskDialog
+              open={dialogOpen}
+              onClose={() => { setDialogOpen(false); setEditTask(null) }}
+              onSave={handleSave}
               onDelete={handleDelete}
-              onRun={handleRun}
-              onToggleSchedule={handleToggleSchedule}
-              onBulkArchive={handleBulkArchive}
-              capacity={col.id === 'in-progress' ? capacity : undefined}
+              task={editTask}
             />
-          ))}
-        </div>
-        <DragOverlay>
-          {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
-        </DragOverlay>
-      </DndContext>
-      <TaskDialog
-        open={dialogOpen}
-        onClose={() => { setDialogOpen(false); setEditTask(null) }}
-        onSave={handleSave}
-        onDelete={handleDelete}
-        task={editTask}
-      />
-      <TaskDetailDialog
-        open={!!viewTask}
-        onClose={() => setViewTask(null)}
-        task={viewTask}
-      />
-    </>
+            <TaskDetailDialog
+              open={!!viewTask}
+              onClose={() => setViewTask(null)}
+              task={viewTask}
+            />
+          </>
+        )}
+      </div>
+    </div>
   )
 }

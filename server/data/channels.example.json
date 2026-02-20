@@ -1,0 +1,6 @@
+[
+  { "id": "telegram", "label": "Telegram", "icon": "MessageCircle" },
+  { "id": "discord", "label": "Discord", "icon": "Hash" },
+  { "id": "whatsapp", "label": "WhatsApp", "icon": "Smartphone" },
+  { "id": "slack", "label": "Slack", "icon": "Slack" }
+]

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { X, Bot, User, Activity, FileText, FolderOpen } from 'lucide-react'
+import AttachmentSection from './AttachmentSection'
 import { extractFilePaths } from './TaskCard'
 // NavigationContext removed — not yet implemented
 
@@ -208,20 +209,37 @@ function buildScheduleString({ scheduleInterval, schedulePeriod, scheduleTime })
 }
 
 export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
-  const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
+  const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog', channel: '', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
   const [skills, setSkills] = useState([])
+  const [attachments, setAttachments] = useState([])
+  const [attKey, setAttKey] = useState(0)
+  const [channels, setChannels] = useState([])
+
+  const refreshAttachments = () => {
+    if (!task?.id) return
+    fetch(`/api/tasks/${task.id}/attachments`).then(r => r.json()).then(atts => {
+      if (Array.isArray(atts)) setAttachments(atts)
+    }).catch(() => {})
+    setAttKey(k => k + 1)
+  }
+
+  useEffect(() => {
+    if (task) setAttachments(task.attachments || [])
+    else setAttachments([])
+  }, [task, open])
 
   useEffect(() => {
     fetch('/api/skills').then(r => r.json()).then(setSkills).catch(() => {})
+    fetch('/api/channels').then(r => r.json()).then(setChannels).catch(() => {})
   }, [])
 
   useEffect(() => {
     if (task) {
       const taskSkills = task.skills && task.skills.length ? task.skills : (task.skill ? [task.skill] : [])
       const sched = parseSchedule(task.schedule)
-      setForm({ title: task.title, description: task.description, skills: taskSkills, status: task.status, scheduleMode: sched.mode, scheduleInterval: sched.interval, schedulePeriod: sched.period, scheduleTime: sched.time, scheduleCron: sched.cron })
+      setForm({ title: task.title, description: task.description, skills: taskSkills, status: task.status, channel: task.channel || '', scheduleMode: sched.mode, scheduleInterval: sched.interval, schedulePeriod: sched.period, scheduleTime: sched.time, scheduleCron: sched.cron })
     } else {
-      setForm({ title: '', description: '', skills: [], status: 'backlog', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
+      setForm({ title: '', description: '', skills: [], status: 'backlog', channel: '', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
     }
   }, [task, open])
 
@@ -240,7 +258,7 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
       : form.scheduleMode === 'interval' ? buildScheduleString(form)
       : null
     const { scheduleMode, scheduleInterval, schedulePeriod, scheduleTime, scheduleCron, ...rest } = form
-    const data = { ...rest, skill: rest.skills[0] || '', schedule }
+    const data = { ...rest, skill: rest.skills[0] || '', schedule, channel: rest.channel || null }
     onSave(data)
   }
 
@@ -290,6 +308,20 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
                 <option value="todo">Todo</option>
                 <option value="in-progress">In Progress</option>
                 <option value="done">Done</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Channel</label>
+              <select
+                className="w-full bg-secondary border border-border rounded-md px-3 py-2 text-sm outline-none"
+                value={form.channel}
+                onChange={e => setForm(f => ({ ...f, channel: e.target.value }))}
+              >
+                <option value="">Main Session (default)</option>
+                {channels.map(ch => (
+                  <option key={ch.id} value={ch.id}>{ch.label}</option>
+                ))}
               </select>
             </div>
 
@@ -367,6 +399,15 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
                 allSkills={skills}
               />
             </div>
+
+            {task?.id && (
+              <AttachmentSection
+                key={attKey}
+                taskId={task.id}
+                attachments={attachments}
+                onChange={refreshAttachments}
+              />
+            )}
           </div>
 
           {/* Activity Log — right 1/3 */}
