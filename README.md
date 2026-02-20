@@ -19,14 +19,9 @@ A secure, self-hosted command center for managing your OpenClaw AI agent.
 
 VidClaw binds to localhost only (`127.0.0.1:3333`) — no external network calls, all data stays on your machine.
 
-Two ways to access from another device:
+Remote access is handled via **Tailscale Serve** (enabled by default on port 8443). Alternatively, use an SSH tunnel: `ssh -L 3333:localhost:3333 <user>@<server>`.
 
-| Method | Command |
-|--------|---------|
-| **SSH tunnel** | `ssh -L 3333:localhost:3333 <user>@<server>` |
-| **Tailscale Serve** | Pass `--tailscale` to `setup.sh` (see Install) |
-
-Then open `http://localhost:3333` (SSH) or `https://your-machine.your-tailnet.ts.net:8443` (Tailscale).
+Then open `https://your-machine.your-tailnet.ts.net:8443` (Tailscale) or `http://localhost:3333` (SSH).
 
 ## Prerequisites
 
