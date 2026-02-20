@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix mobile viewport height (100vh includes address bar on mobile browsers) */
+html, body, #root {
+  height: 100dvh;
+  overflow: hidden;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

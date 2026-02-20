@@ -42,7 +42,7 @@ export default function Layout({ page, setPage, children }) {
   }, [])
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-dvh overflow-hidden">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
