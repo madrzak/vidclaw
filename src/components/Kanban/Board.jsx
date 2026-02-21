@@ -261,7 +261,7 @@ export default function Board() {
       {/* Views */}
       <div className="flex-1 min-h-0">
         {view === 'pixelbot' ? (
-          <PixelBotView />
+          <PixelBotView onAddTask={() => openNew('backlog')} />
         ) : (
           <>
             <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
@@ -287,13 +287,6 @@ export default function Board() {
                 {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
               </DragOverlay>
             </DndContext>
-            <TaskDialog
-              open={dialogOpen}
-              onClose={() => { setDialogOpen(false); setEditTask(null) }}
-              onSave={handleSave}
-              onDelete={handleDelete}
-              task={editTask}
-            />
             <TaskDetailDialog
               open={!!viewTask}
               onClose={() => setViewTask(null)}
@@ -302,6 +295,13 @@ export default function Board() {
           </>
         )}
       </div>
+      <TaskDialog
+        open={dialogOpen}
+        onClose={() => { setDialogOpen(false); setEditTask(null) }}
+        onSave={handleSave}
+        onDelete={handleDelete}
+        task={editTask}
+      />
     </div>
   )
 }

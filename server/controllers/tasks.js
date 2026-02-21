@@ -38,7 +38,7 @@ export function createTask(req, res) {
     priority: req.body.priority || 'medium',
     skill: req.body.skill || '',
     skills: Array.isArray(req.body.skills) ? req.body.skills : (req.body.skill ? [req.body.skill] : []),
-    status: req.body.status || 'backlog',
+    status: req.body.schedule ? 'todo' : (req.body.status || 'backlog'),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     completedAt: null,
@@ -187,8 +187,9 @@ export function getTaskQueue(req, res) {
   const activeCount = tasks.filter(t => t.status === 'in-progress' && t.pickedUp).length;
   const remainingSlots = Math.max(0, maxConcurrent - activeCount);
 
+  const staleCount = queue.filter(t => t.scheduledAt && new Date(t.scheduledAt) <= now).length;
   const limitedQueue = req.query.limit === 'capacity' ? queue.slice(0, remainingSlots) : queue;
-  res.json({ tasks: limitedQueue, maxConcurrent, activeCount, remainingSlots });
+  res.json({ tasks: limitedQueue, maxConcurrent, activeCount, remainingSlots, staleCount });
 }
 
 export function pickupTask(req, res) {
@@ -430,7 +431,7 @@ export function toggleSchedule(req, res) {
   tasks[idx].scheduleEnabled = !tasks[idx].scheduleEnabled;
   tasks[idx].updatedAt = new Date().toISOString();
   writeTasks(tasks);
-  logActivity({ type: tasks[idx].scheduleEnabled ? 'schedule-resumed' : 'schedule-paused', taskId: tasks[idx].id, title: tasks[idx].title, actor: 'user' });
-  broadcast({ type: 'task-updated', task: tasks[idx] });
+  logActivity('user', 'schedule_toggled', { taskId: tasks[idx].id, title: tasks[idx].title, enabled: tasks[idx].scheduleEnabled });
+  broadcast('tasks', tasks.filter(t => t.status !== 'archived'));
   res.json(tasks[idx]);
 }
