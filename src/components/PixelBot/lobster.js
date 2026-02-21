@@ -61,7 +61,7 @@ export function drawLobster(ctx, cx, cy, frame, state) {
 
   // Small walking legs (4 pairs)
   for (let i = 0; i < 4; i++) {
-    const legWiggle = state === 'working' ? Math.sin(frame * 0.2 + i * 1.5) * 0.6 : 0
+    const legWiggle = (state === 'working' || state === 'walking') ? Math.sin(frame * 0.2 + i * 1.5) * 0.6 : 0
     const lx = cx - 4 - Math.round(legWiggle)
     const rx = cx + 4 + Math.round(legWiggle)
     const ly = y - 2 + i

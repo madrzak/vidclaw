@@ -22,6 +22,7 @@ export default function Board() {
   const [activeId, setActiveId] = useState(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editTask, setEditTask] = useState(null)
+  const [newTaskStatus, setNewTaskStatus] = useState('backlog')
   const [viewTask, setViewTask] = useState(null)
   const [capacity, setCapacity] = useState({ maxConcurrent: 1, activeCount: 0, remainingSlots: 1 })
   const [view, setView] = useState('kanban') // 'kanban' | 'pixelbot'
@@ -219,6 +220,7 @@ export default function Board() {
 
   function openNew(status) {
     setEditTask(null)
+    setNewTaskStatus(status || 'backlog')
     setDialogOpen(true)
   }
 
@@ -261,7 +263,7 @@ export default function Board() {
       {/* Views */}
       <div className="flex-1 min-h-0">
         {view === 'pixelbot' ? (
-          <PixelBotView onAddTask={() => openNew('backlog')} />
+          <PixelBotView onAddTask={() => openNew('todo')} />
         ) : (
           <>
             <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
@@ -301,6 +303,7 @@ export default function Board() {
         onSave={handleSave}
         onDelete={handleDelete}
         task={editTask}
+        defaultStatus={newTaskStatus}
       />
     </div>
   )

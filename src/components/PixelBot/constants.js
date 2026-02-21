@@ -17,6 +17,7 @@ export const C = {
 }
 
 export const PIXEL = 6
+export const WALK_SPEED = 0.3
 export const FRAME_INTERVAL = 1000 / 30
 
 export const STATE_LABELS = {

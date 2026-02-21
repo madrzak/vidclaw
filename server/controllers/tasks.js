@@ -328,7 +328,7 @@ export function getCalendar(req, res) {
       }
     }
     // Scheduled / upcoming tasks — project future runs for recurring schedules
-    if (t.schedule && t.scheduleEnabled !== false && t.status !== 'done') {
+    if (t.schedule && t.scheduleEnabled !== false && t.status !== 'done' && t.status !== 'archived') {
       try {
         const runs = computeFutureRuns(t.schedule, 90);
         for (const run of runs) {
@@ -345,7 +345,7 @@ export function getCalendar(req, res) {
           if (!data[date].scheduled.find(s => s.id === t.id)) data[date].scheduled.push({ id: t.id, title: t.title });
         } catch {}
       }
-    } else if (t.scheduledAt && t.status !== 'done') {
+    } else if (t.scheduledAt && t.status !== 'done' && t.status !== 'archived') {
       // One-off scheduledAt without recurring schedule
       try {
         const date = isoToDateInTz(new Date(t.scheduledAt).toISOString());

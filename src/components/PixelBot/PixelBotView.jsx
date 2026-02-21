@@ -3,6 +3,7 @@ import { useSocket } from '../../hooks/useSocket.jsx'
 import { FRAME_INTERVAL, STATE_LABELS } from './constants'
 import { drawScene } from './scene'
 import { deriveState } from './deriveState'
+import { createLobster } from './lobsterAI'
 
 export default function PixelBotView({ onAddTask }) {
   const canvasRef = useRef(null)
@@ -11,8 +12,7 @@ export default function PixelBotView({ onAddTask }) {
   const lastFrameTime = useRef(0)
   const stateRef = useRef({ seenDoneIds: new Set(), seenInProgressIds: new Set(), celebrateUntil: 0, workingUntil: 0, pendingCelebration: false })
   const countsRef = useRef({ backlog: 0, todo: 0, 'in-progress': 0, done: 0 })
-  const idleStartFrame = useRef(0)
-  const prevBotState = useRef('idle')
+  const lobsterRef = useRef(createLobster())
   const botStateRef = useRef('idle')
   const [tasks, setTasks] = useState([])
   const [botState, setBotState] = useState('idle')
@@ -66,8 +66,6 @@ export default function PixelBotView({ onAddTask }) {
     }
     resize()
 
-    let resuming = false
-
     const animate = (timestamp) => {
       if (paused) return
       animRef.current = requestAnimationFrame(animate)
@@ -79,20 +77,12 @@ export default function PixelBotView({ onAddTask }) {
       const h = canvas.height
       if (w === 0 || h === 0) return
       ctx.clearRect(0, 0, w, h)
-      const currentState = botStateRef.current
-      if (!resuming && currentState === 'idle' && prevBotState.current !== 'idle') {
-        idleStartFrame.current = frameRef.current
-      }
-      resuming = false
-      prevBotState.current = currentState
-      const idleFrame = frameRef.current - idleStartFrame.current
-      drawScene(ctx, w, h, frameRef.current, currentState, countsRef.current, idleFrame)
+      drawScene(ctx, w, h, frameRef.current, botStateRef.current, countsRef.current, lobsterRef.current)
     }
 
     const onVisibility = () => {
       paused = document.hidden
       if (!paused) {
-        resuming = true
         lastFrameTime.current = 0
         animRef.current = requestAnimationFrame(animate)
       }

@@ -54,7 +54,7 @@ function formatNextRun(iso, tz) {
   return d.toLocaleDateString('en-US', { timeZone: tz, month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit' })
 }
 
-export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDragging: isDraggingProp }) {
+export default function TaskCard({ task, onEdit, onView, onDelete, onRun, onToggleSchedule, isDragging: isDraggingProp }) {
   const { timezone } = useTimezone()
   const [expanded, setExpanded] = useState(false)
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, disabled: task.status === 'done' || task.status === 'in-progress' })
@@ -214,7 +214,23 @@ export default function TaskCard({ task, onEdit, onView, onDelete, onRun, isDrag
           {!schedulePaused && task.scheduledAt && (
             <span className="text-muted-foreground">· next: {formatNextRun(task.scheduledAt, timezone)}</span>
           )}
-          {schedulePaused && <span>· paused</span>}
+          {schedulePaused && onToggleSchedule && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleSchedule(task.id, true) }}
+              className="text-orange-400/60 hover:text-orange-400 hover:underline transition-colors"
+            >
+              · paused — resume
+            </button>
+          )}
+          {schedulePaused && !onToggleSchedule && <span>· paused</span>}
+          {!schedulePaused && onToggleSchedule && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleSchedule(task.id, false) }}
+              className="text-muted-foreground/50 hover:text-orange-400 opacity-0 group-hover:opacity-100 transition-all"
+            >
+              · pause
+            </button>
+          )}
         </div>
       )}
 

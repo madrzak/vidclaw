@@ -208,7 +208,7 @@ function buildScheduleString({ scheduleInterval, schedulePeriod, scheduleTime })
   }
 }
 
-export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
+export default function TaskDialog({ open, onClose, onSave, onDelete, task, defaultStatus = 'backlog' }) {
   const [form, setForm] = useState({ title: '', description: '', skills: [], status: 'backlog', channel: '', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
   const [skills, setSkills] = useState([])
   const [attachments, setAttachments] = useState([])
@@ -239,9 +239,9 @@ export default function TaskDialog({ open, onClose, onSave, onDelete, task }) {
       const sched = parseSchedule(task.schedule)
       setForm({ title: task.title, description: task.description, skills: taskSkills, status: task.status, channel: task.channel || '', scheduleMode: sched.mode, scheduleInterval: sched.interval, schedulePeriod: sched.period, scheduleTime: sched.time, scheduleCron: sched.cron })
     } else {
-      setForm({ title: '', description: '', skills: [], status: 'backlog', channel: '', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
+      setForm({ title: '', description: '', skills: [], status: defaultStatus, channel: '', scheduleMode: 'none', scheduleInterval: 1, schedulePeriod: 'days', scheduleTime: '09:00', scheduleCron: '' })
     }
-  }, [task, open])
+  }, [task, open, defaultStatus])
 
   useEffect(() => {
     if (!open) return
