@@ -6,7 +6,7 @@ import { drawScene } from './scene'
 import { deriveState } from './deriveState'
 import { createLobster } from './lobsterAI'
 
-export default function PixelBotView({ onAddTask }) {
+export default function PixelBotView({ onAddTask, visible = true }) {
   const canvasRef = useRef(null)
   const frameRef = useRef(Math.floor(Math.random() * 10000))
   const animRef = useRef(null)
@@ -15,6 +15,8 @@ export default function PixelBotView({ onAddTask }) {
   const countsRef = useRef({ backlog: 0, todo: 0, 'in-progress': 0, done: 0 })
   const lobsterRef = useRef(createLobster())
   const botStateRef = useRef('idle')
+  const visibleRef = useRef(visible)
+  const resizeRef = useRef(null)
   const [tasks, setTasks] = useState([])
   const [botState, setBotState] = useState('idle')
 
@@ -57,7 +59,6 @@ export default function PixelBotView({ onAddTask }) {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let paused = document.hidden
     const MIN_WIDTH = 1320
 
     const resize = () => {
@@ -65,10 +66,11 @@ export default function PixelBotView({ onAddTask }) {
       canvas.height = container.clientHeight
       canvas.width = Math.max(MIN_WIDTH, container.clientWidth)
     }
-    resize()
+    resizeRef.current = resize
+    if (visibleRef.current) resize()
 
     const animate = (timestamp) => {
-      if (paused) return
+      if (document.hidden || !visibleRef.current) return
       animRef.current = requestAnimationFrame(animate)
       const elapsed = timestamp - lastFrameTime.current
       if (elapsed < FRAME_INTERVAL) return
@@ -82,8 +84,7 @@ export default function PixelBotView({ onAddTask }) {
     }
 
     const onVisibility = () => {
-      paused = document.hidden
-      if (!paused) {
+      if (!document.hidden && visibleRef.current) {
         lastFrameTime.current = 0
         animRef.current = requestAnimationFrame(animate)
       }
@@ -91,7 +92,7 @@ export default function PixelBotView({ onAddTask }) {
 
     document.addEventListener('visibilitychange', onVisibility)
     window.addEventListener('resize', resize)
-    animRef.current = requestAnimationFrame(animate)
+    if (visibleRef.current) animRef.current = requestAnimationFrame(animate)
     return () => {
       document.removeEventListener('visibilitychange', onVisibility)
       window.removeEventListener('resize', resize)
@@ -99,6 +100,37 @@ export default function PixelBotView({ onAddTask }) {
       animRef.current = null
     }
   }, []) // Run once on mount — reads botStateRef/countsRef for latest values
+
+  // Pause/resume animation when visibility changes
+  useEffect(() => {
+    visibleRef.current = visible
+    if (visible) {
+      if (resizeRef.current) resizeRef.current()
+      lastFrameTime.current = 0
+      if (canvasRef.current && !animRef.current) {
+        const ctx = canvasRef.current.getContext('2d')
+        const animate = (timestamp) => {
+          if (document.hidden || !visibleRef.current) return
+          animRef.current = requestAnimationFrame(animate)
+          const elapsed = timestamp - lastFrameTime.current
+          if (elapsed < FRAME_INTERVAL) return
+          lastFrameTime.current = timestamp - (elapsed % FRAME_INTERVAL)
+          frameRef.current = (frameRef.current + 1) % 10000
+          const w = canvasRef.current.width
+          const h = canvasRef.current.height
+          if (w === 0 || h === 0) return
+          ctx.clearRect(0, 0, w, h)
+          drawScene(ctx, w, h, frameRef.current, botStateRef.current, countsRef.current, lobsterRef.current)
+        }
+        animRef.current = requestAnimationFrame(animate)
+      }
+    } else {
+      if (animRef.current) {
+        cancelAnimationFrame(animRef.current)
+        animRef.current = null
+      }
+    }
+  }, [visible])
 
   const label = STATE_LABELS[botState]
   const counts = {

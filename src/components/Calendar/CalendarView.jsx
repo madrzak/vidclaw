@@ -109,12 +109,10 @@ export default function CalendarView() {
               className={cn(
                 'aspect-square rounded-lg flex flex-col items-center justify-center gap-0.5 text-sm transition-all relative',
                 isToday && 'ring-1 ring-primary',
-                isSelected && 'bg-primary/20',
-                entry && 'bg-accent',
-                !entry && 'hover:bg-accent/50'
+                isSelected ? 'ring-2 ring-primary/50 bg-primary/10' : entry ? 'bg-accent' : 'hover:bg-accent/50',
               )}
             >
-              <span className={cn(isToday && 'font-bold text-primary')}>{d}</span>
+              <span className={cn(isToday && 'font-bold text-primary', isSelected && !isToday && 'font-medium text-foreground')}>{d}</span>
               {entry && (
                 <div className="flex gap-0.5">
                   {entry.memory && <div className="w-1 h-1 rounded-full bg-blue-400" />}

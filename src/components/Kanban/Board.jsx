@@ -16,7 +16,7 @@ const COLUMNS = [
   { id: 'done', title: 'Done', color: 'bg-green-500' },
 ]
 
-export default function Board() {
+export default function Board({ visible = true }) {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeId, setActiveId] = useState(null)
@@ -260,42 +260,39 @@ export default function Board() {
         </button>
       </div>
 
-      {/* Views */}
-      <div className="flex-1 min-h-0">
-        {view === 'pixelbot' ? (
-          <PixelBotView onAddTask={() => openNew('todo')} />
-        ) : (
-          <>
-            <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
-              <div className="flex gap-4 h-full overflow-x-auto pb-2">
-                {COLUMNS.map(col => (
-                  <Column
-                    key={col.id}
-                    column={col}
-                    tasks={getColumnTasks(col.id)}
-                    onAdd={() => openNew(col.id)}
-                    onQuickAdd={handleQuickAdd}
-                    onEdit={openEdit}
-                    onView={openView}
-                    onDelete={handleDelete}
-                    onRun={handleRun}
-                    onToggleSchedule={handleToggleSchedule}
-                    onBulkArchive={handleBulkArchive}
-                    capacity={col.id === 'in-progress' ? capacity : undefined}
-                  />
-                ))}
-              </div>
-              <DragOverlay>
-                {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
-              </DragOverlay>
-            </DndContext>
-            <TaskDetailDialog
-              open={!!viewTask}
-              onClose={() => setViewTask(null)}
-              task={viewTask}
-            />
-          </>
-        )}
+      {/* Views — both stay mounted, toggled via CSS to avoid remount/refetch */}
+      <div className={`flex-1 min-h-0 ${view === 'pixelbot' ? '' : 'hidden'}`}>
+        <PixelBotView onAddTask={() => openNew('todo')} visible={visible && view === 'pixelbot'} />
+      </div>
+      <div className={`flex-1 min-h-0 ${view === 'kanban' ? '' : 'hidden'}`}>
+        <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={e => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
+          <div className="flex gap-4 h-full overflow-x-auto pb-2">
+            {COLUMNS.map(col => (
+              <Column
+                key={col.id}
+                column={col}
+                tasks={getColumnTasks(col.id)}
+                onAdd={() => openNew(col.id)}
+                onQuickAdd={handleQuickAdd}
+                onEdit={openEdit}
+                onView={openView}
+                onDelete={handleDelete}
+                onRun={handleRun}
+                onToggleSchedule={handleToggleSchedule}
+                onBulkArchive={handleBulkArchive}
+                capacity={col.id === 'in-progress' ? capacity : undefined}
+              />
+            ))}
+          </div>
+          <DragOverlay>
+            {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
+          </DragOverlay>
+        </DndContext>
+        <TaskDetailDialog
+          open={!!viewTask}
+          onClose={() => setViewTask(null)}
+          task={viewTask}
+        />
       </div>
       <TaskDialog
         open={dialogOpen}
