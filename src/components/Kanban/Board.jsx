@@ -6,7 +6,7 @@ import TaskCard from './TaskCard'
 import TaskDialog from './TaskDialog'
 import TaskDetailDialog from './TaskDetailDialog'
 import PageSkeleton from '../PageSkeleton'
-import PixelBotView from './PixelBotView'
+import PixelBotView from '../PixelBot'
 import { useSocket } from '../../hooks/useSocket.jsx'
 
 const COLUMNS = [
