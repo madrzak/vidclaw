@@ -109,6 +109,10 @@ write_systemd_unit_file() {
     tailscale_line="ExecStartPre=-$(tailscale_serve_cmd)"
   fi
 
+  local run_user run_group
+  run_user="$(id -un)"
+  run_group="$(id -gn)"
+
   cat > "${tmp_file}" <<EOF
 [Unit]
 Description=VidClaw Dashboard
@@ -117,6 +121,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+User=${run_user}
+Group=${run_group}
 WorkingDirectory=${REPO_ROOT}
 ${tailscale_line:+${tailscale_line}
 }ExecStart=${escaped_node} ${escaped_entrypoint}
