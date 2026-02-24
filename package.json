@@ -41,6 +41,10 @@
     "react-dom": "^18.2.0",
     "react-markdown": "^9.0.1",
     "react-syntax-highlighter": "^16.1.0",
+    "rehype-highlight": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
+    "remark-gfm": "^4.0.0",
+    "@tailwindcss/typography": "^0.5.10",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "ws": "^8.19.0"

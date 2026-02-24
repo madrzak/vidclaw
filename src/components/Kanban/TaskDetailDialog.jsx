@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { extractFilePaths } from './TaskCard'
 import { useTimezone } from '../TimezoneContext'
 import { useNav } from '@/hooks/useNav'
+import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 
 function formatTime(iso, tz) {
   if (!iso) return ''
@@ -273,17 +274,13 @@ export default function TaskDetailDialog({ open, onClose, task }) {
 
             {/* Output */}
             {(task.result || task.error) && (
-              <div>
-                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                  {task.error ? 'Error Output' : 'Output'}
-                </h3>
-                <pre className={cn(
-                  'text-xs font-mono p-3 rounded-lg max-h-64 overflow-auto whitespace-pre-wrap break-words',
-                  task.error ? 'bg-red-500/10 text-red-300 border border-red-500/20' : 'bg-secondary/50 text-foreground/80 border border-border'
-                )}>
-                  {task.error || task.result}
-                </pre>
-              </div>
+              <MarkdownRenderer
+                content={task.error || task.result}
+                isError={!!task.error}
+                showToggle={true}
+                size="xs"
+                maxHeight="max-h-64"
+              />
             )}
 
             {/* Attachments */}
