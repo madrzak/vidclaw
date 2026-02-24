@@ -62,6 +62,17 @@
     <p class="subtitle">All notable updates to VidClaw, the <a href="/features">self-hosted AI dashboard</a> for <a href="/docs">OpenClaw agent management</a>.</p>
 
     <div class="release">
+      <h2>v1.2.2 <span class="tag tag-new">New</span></h2>
+      <div class="date">February 24, 2026</div>
+      <ul>
+        <li><strong>Markdown rendering for task outputs</strong> — task results and errors now render as proper markdown with headers, lists, links, and code blocks</li>
+        <li><strong>Syntax-highlighted code blocks</strong> — bundled GitHub Dark theme for code output, no CDN dependencies</li>
+        <li><strong>Raw/rendered toggle</strong> — switch between formatted markdown and raw text in the task detail dialog</li>
+        <li><strong>XSS protection</strong> — output sanitized via rehype-sanitize (no raw HTML passthrough)</li>
+      </ul>
+    </div>
+
+    <div class="release">
       <h2>v1.1.1 <span class="tag tag-new">New</span><span class="tag tag-improved">Improved</span><span class="tag tag-fix">Fix</span></h2>
       <div class="date">February 19, 2026</div>
       <ul>
