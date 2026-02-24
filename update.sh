@@ -73,16 +73,31 @@ done
 
 update_git() {
   run_cmd git fetch --all --prune
+
+  # Stash lockfile changes that may block a clean pull (e.g. after a
+  # pnpm install regenerated pnpm-lock.yaml on an older version).
+  local stashed=0
+  if git diff --name-only | grep -qE '(pnpm-lock\.yaml|package-lock\.json)$'; then
+    log_info "Stashing lockfile changes before pull..."
+    run_cmd git stash push -m "update.sh: stash lockfiles" -- pnpm-lock.yaml package-lock.json 2>/dev/null || true
+    stashed=1
+  fi
+
   if run_cmd git pull --ff-only; then
+    # Drop the stash — the pulled lockfile supersedes it
+    if [[ "$stashed" == "1" ]]; then run_cmd git stash drop 2>/dev/null || true; fi
     return 0
   fi
 
   if [[ "${ALLOW_MERGE_PULL}" == "1" ]]; then
     log_warn "Fast-forward pull failed; running non-ff pull because ALLOW_MERGE_PULL=1."
     run_cmd git pull --no-rebase
+    if [[ "$stashed" == "1" ]]; then run_cmd git stash drop 2>/dev/null || true; fi
     return 0
   fi
 
+  # Restore stash if pull failed
+  if [[ "$stashed" == "1" ]]; then run_cmd git stash pop 2>/dev/null || true; fi
   die "Fast-forward pull failed." "Resolve branch divergence manually or re-run with --allow-merge-pull."
 }
 

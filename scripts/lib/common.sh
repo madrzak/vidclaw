@@ -264,6 +264,21 @@ tailscale_serve_cmd() {
 }
 
 npm_install_dependencies() {
+  # Prefer pnpm when a pnpm lockfile exists
+  if [[ -f "${REPO_ROOT}/pnpm-lock.yaml" ]]; then
+    local pnpm_bin
+    if pnpm_bin="$(command -v pnpm 2>/dev/null)"; then
+      # Remove stale npm lockfile left over from pre-pnpm era
+      if [[ -f "${REPO_ROOT}/package-lock.json" ]]; then
+        log_info "Removing stale package-lock.json (migrated to pnpm)."
+        rm -f "${REPO_ROOT}/package-lock.json"
+      fi
+      run_cmd "$pnpm_bin" install
+      return
+    fi
+    log_warn "pnpm-lock.yaml found but pnpm not installed; falling back to npm."
+  fi
+
   if [[ -f "${REPO_ROOT}/package-lock.json" ]]; then
     run_cmd "${NPM_BIN}" ci
   else
@@ -272,6 +287,13 @@ npm_install_dependencies() {
 }
 
 npm_build() {
+  if [[ -f "${REPO_ROOT}/pnpm-lock.yaml" ]]; then
+    local pnpm_bin
+    if pnpm_bin="$(command -v pnpm 2>/dev/null)"; then
+      run_cmd "$pnpm_bin" run build
+      return
+    fi
+  fi
   run_cmd "${NPM_BIN}" run build
 }
 
