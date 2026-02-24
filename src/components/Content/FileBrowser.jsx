@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
-import { Folder, File, ChevronRight, ArrowLeft, Download, Eye, Pencil, Search, X, Trash2, ArrowUpDown, FileText, FileImage, FileVideo, FileAudio, FileCode, FileArchive, Loader2, RefreshCw } from 'lucide-react'
+import { Folder, File, ChevronRight, ArrowLeft, Download, Eye, Pencil, Search, X, Trash2, ArrowUpDown, FileText, FileImage, FileVideo, FileAudio, FileCode, FileArchive, Loader2, RefreshCw, Copy, Check } from 'lucide-react'
 import FilePreview from './FilePreview'
 import { cn } from '@/lib/utils'
 import { useNav } from '@/hooks/useNav'
@@ -95,6 +95,7 @@ export default function FileBrowser() {
   const [saveStatus, setSaveStatus] = useState('')
   const [ctxMenu, setCtxMenu] = useState(null)
   const [lastFetched, setLastFetched] = useState(null)
+  const [copied, setCopied] = useState(false)
   const saveTimerRef = useRef(null)
 
   useEffect(() => {
@@ -388,6 +389,27 @@ export default function FileBrowser() {
             <div className="flex items-center gap-2">
               {saveStatus === 'saving' && <span className="text-xs text-muted-foreground">Saving...</span>}
               {saveStatus === 'saved' && <span className="text-xs text-green-400">Saved</span>}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    const text = editing ? editContent : fileContent
+                    if (text == null) return
+                    navigator.clipboard.writeText(text).then(() => {
+                      setCopied(true)
+                      setTimeout(() => setCopied(false), 1500)
+                    })
+                  }}
+                  className="text-muted-foreground hover:text-foreground"
+                  title="Copy"
+                >
+                  {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                </button>
+                {copied && (
+                  <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-xs bg-popover border border-border text-foreground whitespace-nowrap shadow-lg">
+                    Copied
+                  </span>
+                )}
+              </div>
               <button
                 onClick={() => { setEditing(!editing); setSaveStatus('') }}
                 className="text-muted-foreground hover:text-foreground"
