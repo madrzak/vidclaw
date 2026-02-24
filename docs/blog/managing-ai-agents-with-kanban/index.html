@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Managing AI Agents with Kanban Boards: Why Visual Task Management Changes Everything</title>
+  <meta name="description" content="Learn how kanban boards transform AI agent task management. VidClaw's visual workflow turns chaotic agent operations into something you can see and control.">
+  <link rel="canonical" href="https://vidclaw.com/blog/managing-ai-agents-with-kanban/">
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Managing AI Agents with Kanban Boards: Why Visual Task Management Changes Everything">
+  <meta name="twitter:description" content="Learn how kanban boards transform AI agent task management. VidClaw's visual workflow turns chaotic agent operations into something you can see and control.">
+  <meta name="twitter:image" content="https://vidclaw.com/img/og-vidclaw-com.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://vidclaw.com/blog/managing-ai-agents-with-kanban/">
+  <meta property="og:title" content="Managing AI Agents with Kanban Boards: Why Visual Task Management Changes Everything">
+  <meta property="og:description" content="Learn how kanban boards transform AI agent task management. VidClaw's visual workflow turns chaotic agent operations into something you can see and control.">
+  <meta property="og:image" content="https://vidclaw.com/img/og-vidclaw-com.png">
+  <meta property="article:published_time" content="2026-02-24T00:00:00Z">
+  <meta property="article:author" content="woocassh">
+  <meta property="article:tag" content="kanban">
+  <meta property="article:tag" content="AI agents">
+  <meta property="article:tag" content="task-management">
+  <meta property="article:tag" content="workflow">
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Managing AI Agents with Kanban Boards: Why Visual Task Management Changes Everything",
+    "description": "Learn how kanban boards transform AI agent task management. VidClaw's visual workflow turns chaotic agent operations into something you can see and control.",
+    "image": "https://vidclaw.com/img/og-vidclaw-com.png",
+    "datePublished": "2026-02-24T00:00:00Z",
+    "author": {
+      "@type": "Person",
+      "name": "woocassh",
+      "url": "https://x.com/woocassh"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "VidClaw",
+      "url": "https://vidclaw.com"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://vidclaw.com/blog/managing-ai-agents-with-kanban/"
+    }
+  }
+  </script>
+
+  <script async src="https://plausible.io/js/pa-GKT997euCDfQROHoFG713.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e; --text: #e4e4e7; --muted: #71717a; --accent: #f97316; }
+    html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem; }
+    nav .brand { font-weight: 800; font-size: 1.2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    nav .brand:hover { text-decoration: none; color: var(--accent); }
+    nav .nav-links { display: flex; gap: 1.5rem; font-size: 0.95rem; }
+    nav .nav-links a { color: var(--muted); }
+    nav .nav-links a:hover, nav .nav-links a.active { color: var(--accent); text-decoration: none; }
+
+    .page { max-width: 800px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+    .page h1 { font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #f97316, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; padding-top: 1rem; }
+    .page h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+    .page p, .page li { color: var(--muted); font-size: 1rem; margin-bottom: 1rem; }
+    .page p strong { color: var(--text); }
+    .page ul, .page ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    .page li { margin-bottom: 0.5rem; }
+    .page code { background: var(--surface); border: 1px solid var(--border); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.9rem; }
+
+    .article-meta { display: flex; align-items: center; gap: 1rem; color: var(--muted); font-size: 0.9rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .article-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .post-tag { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.6rem; border-radius: 100px; background: rgba(249, 115, 22, 0.15); color: var(--accent); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
+
+    .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem 2rem; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.9rem; color: var(--text); overflow-x: auto; margin-bottom: 1.5rem; }
+    .code-block .comment { color: var(--muted); }
+    .code-block .cmd { color: var(--accent); }
+
+    .note { background: var(--surface); border-left: 3px solid var(--accent); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .note p { margin-bottom: 0; }
+
+    .cta-box { text-align: center; margin: 3rem 0 0; padding: 2.5rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .cta-box p { color: var(--muted); margin-bottom: 1rem; }
+    .cta-box .cta-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #ea580c; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(249, 115, 22, 0.3); text-decoration: none; }
+
+    footer { text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">⚡ VidClaw</a>
+    <div class="nav-links">
+      <a href="/openclaw">OpenClaw</a>
+      <a href="/features">Features</a>
+      <a href="/docs">Docs</a>
+      <a href="/blog" class="active">Blog</a>
+      <a href="/changelog">Changelog</a>
+      <a href="https://github.com/madrzak/vidclaw">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <a href="/blog" class="back-link">&larr; Back to Blog</a>
+
+    <h1>Managing AI Agents with Kanban Boards: Why Visual Task Management Changes Everything</h1>
+    <div class="article-meta">
+      <span>By <a href="https://x.com/woocassh">woocassh</a></span>
+      <span>February 24, 2026</span>
+      <span>8 min read</span>
+    </div>
+    <div class="article-tags">
+      <span class="post-tag">kanban</span>
+      <span class="post-tag">AI agents</span>
+      <span class="post-tag">task-management</span>
+      <span class="post-tag">workflow</span>
+    </div>
+
+    <p>Running an autonomous AI agent is exciting until it isn't. At first, you're amazed that your Claude-powered agent can write blog posts, review code, and manage files on its own. Then the novelty fades and you realize: you have no idea what it's working on, what's queued up, or what fell through the cracks.</p>
+    <p>Chat-based task management ("hey, can you also do X?") doesn't scale. You forget what you asked for. The agent forgets too — it wakes up fresh each session. Tasks get lost in conversation history.</p>
+    <p>This is the problem kanban boards solve for human teams. And it turns out <strong>they solve it for AI agents too</strong>.</p>
+
+    <h2>The Problem with Chat-Only Agent Management</h2>
+    <p>Most people manage their AI agents through conversation. The pattern looks like this:</p>
+    <ol>
+      <li>You tell the agent to do something</li>
+      <li>It does it (usually)</li>
+      <li>You think of three more things</li>
+      <li>You tell it those too</li>
+      <li>Some get done, some don't</li>
+      <li>You forget what you asked for</li>
+      <li>The agent's session restarts and it has no record of pending work</li>
+    </ol>
+    <p>Sound familiar? This is the same problem that plagued software teams before project management tools existed. The fix is the same too: <strong>make the work visible</strong>.</p>
+
+    <h2>Why Kanban Works for AI Agents</h2>
+    <p>Kanban's core principles map perfectly to AI agent workflows:</p>
+
+    <h3>Visualize the Work</h3>
+    <p>A kanban board shows you — at a glance — what's pending, what's in progress, and what's done. No digging through chat logs or memory files. You open the board and the full picture is right there.</p>
+
+    <h3>Limit Work in Progress</h3>
+    <p>AI agents can context-switch, but they still work on one task at a time. A kanban board makes the queue explicit. Your agent processes tasks in priority order instead of whatever was mentioned last in chat.</p>
+
+    <h3>Make Policies Explicit</h3>
+    <p>Each card in VidClaw can carry structured metadata that the agent reads and acts on:</p>
+    <ul>
+      <li><strong>Priority</strong> (low / medium / high / critical)</li>
+      <li><strong>Assigned skill</strong> (writer, coder, researcher, etc.)</li>
+      <li><strong>Description</strong> with full context and instructions</li>
+    </ul>
+    <p>A critical task gets picked up before a low-priority one. A task assigned to the "writer" skill uses a different approach than one assigned to "coder."</p>
+
+    <h3>Manage Flow</h3>
+    <p>The four-column layout creates a natural pipeline that both you and the agent understand:</p>
+    <ul>
+      <li><strong>Backlog</strong> — Ideas and future work. The agent ignores these.</li>
+      <li><strong>Todo</strong> — Ready to execute. The agent picks from this column.</li>
+      <li><strong>In Progress</strong> — Currently being worked on. Only one task at a time.</li>
+      <li><strong>Done</strong> — Completed. Review the output, archive, or reopen.</li>
+    </ul>
+
+    <h2>How VidClaw Implements This</h2>
+    <p>VidClaw's kanban board is purpose-built for AI agents, not adapted from a human project management tool. Here's what makes it different:</p>
+
+    <h3>Automatic Task Pickup</h3>
+    <p>Your OpenClaw agent checks the board on a schedule. When it finds a card in "Todo," it moves it to "In Progress" and starts working. No manual trigger needed — though a "Run Now" button exists for impatient humans.</p>
+    <div class="note">
+      <p><strong>How it works:</strong> The agent checks via cron every 2 minutes and runs a heartbeat every 30 minutes. Tasks are picked up automatically based on priority.</p>
+    </div>
+
+    <h3>Conversation-to-Task Pipeline</h3>
+    <p>You can tell your agent "add a task to review the PR on my-repo" in natural language. VidClaw's API creates a card automatically through the <code>POST /api/tasks/from-conversation</code> endpoint. You get the best of both worlds — natural language input with structured execution.</p>
+
+    <h3>Task Results</h3>
+    <p>When the agent finishes a task, it calls the completion API with a summary. The card moves to "Done" with the result attached. You can review output without reading through session transcripts.</p>
+
+    <h3>Priority Queue</h3>
+    <p>Multiple cards in "Todo"? The agent picks the highest-priority one first. Ties are broken by creation date (oldest first). Load up the board on Monday morning and trust the agent to work through it in the right order.</p>
+
+    <h2>A Real Workflow Example</h2>
+    <p>Here's how a typical day looks when you're managing an AI agent with VidClaw's kanban board:</p>
+
+    <h3>Morning (5 minutes)</h3>
+    <ol>
+      <li>Open VidClaw</li>
+      <li>Review the "Done" column — check yesterday's completed work</li>
+      <li>Archive or reopen cards as needed</li>
+      <li>Add 3-4 new cards to "Todo" with descriptions and priorities</li>
+    </ol>
+
+    <h3>Throughout the Day</h3>
+    <ul>
+      <li>Cards move from Todo to In Progress to Done automatically</li>
+      <li>Check in occasionally to see progress</li>
+      <li>If something urgent comes up, add a "critical" card — it jumps the queue</li>
+    </ul>
+
+    <h3>Evening (2 minutes)</h3>
+    <ul>
+      <li>Quick scan of the board</li>
+      <li>Move half-baked ideas to Backlog for later</li>
+      <li>Done</li>
+    </ul>
+
+    <p><strong>Total hands-on time: under 10 minutes.</strong> The agent works the other 23 hours and 50 minutes.</p>
+
+    <h2>Tips for Effective AI Kanban</h2>
+
+    <h3>Write Clear Descriptions</h3>
+    <p>Your agent reads the card description as its task brief. Vague instructions lead to vague results.</p>
+    <div class="code-block">
+      <span class="comment"># Bad</span><br>
+      Write blog post<br><br>
+      <span class="comment"># Good</span><br>
+      Write a 1500-word blog post about self-hosting AI agents,<br>
+      targeting r/selfhosted audience, casual tone, include code examples.
+    </div>
+
+    <h3>Use Skills Wisely</h3>
+    <p>If you've set up skills (writer, coder, researcher), assign them to tasks. The agent loads different tools and prompts depending on the skill, which leads to better results.</p>
+
+    <h3>Don't Over-Queue</h3>
+    <p>5-10 cards in Todo is a good range. 50 cards creates cognitive overhead for <em>you</em>, not the agent — but it makes the board hard to scan. Keep the active queue focused.</p>
+
+    <h3>Review Done Cards</h3>
+    <p>The agent marks work complete, but "complete" and "correct" aren't always the same thing. Spend 30 seconds reviewing each result before archiving.</p>
+
+    <h3>Use Backlog as a Parking Lot</h3>
+    <p>Every idea doesn't need to be actionable today. The Backlog column keeps ideas visible without cluttering the active queue.</p>
+
+    <h2>Beyond Task Management</h2>
+    <p>The kanban board is just one panel in VidClaw. Combined with <strong>usage tracking</strong> (are you burning through tokens too fast?), the <strong>activity calendar</strong> (is your agent actually working when you think it is?), and the <strong>soul editor</strong> (does your agent understand what you want?), you get a complete picture of your AI agent's operations.</p>
+    <p>It's the difference between hoping your agent is doing the right thing and <strong>knowing</strong> it is.</p>
+
+    <div class="cta-box">
+      <p class="cta-title">Ready to manage your AI agent visually?</p>
+      <p>VidClaw is free, open-source, and takes 60 seconds to install.</p>
+      <a href="https://github.com/madrzak/vidclaw" class="btn btn-primary">Get Started on GitHub &rarr;</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built by <a href="https://x.com/woocassh">woocassh</a> · <a href="https://github.com/madrzak/vidclaw">GitHub</a> · <a href="/features">Features</a> · <a href="/docs">Docs</a> · <a href="/blog">Blog</a> · <a href="/changelog">Changelog</a> · MIT License</p>
+  </footer>
+
+</body>
+</html>

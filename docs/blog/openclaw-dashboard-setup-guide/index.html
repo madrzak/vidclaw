@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw Dashboard Setup: Install VidClaw in 5 Minutes</title>
+  <meta name="description" content="Set up the OpenClaw dashboard in under 5 minutes. Install VidClaw, tour its features, create your first task, and customize your AI agent's personality.">
+  <link rel="canonical" href="https://vidclaw.com/blog/openclaw-dashboard-setup-guide/">
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OpenClaw Dashboard Setup: Install VidClaw in 5 Minutes">
+  <meta name="twitter:description" content="Set up the OpenClaw dashboard in under 5 minutes. Install VidClaw, tour its features, create your first task, and customize your AI agent's personality.">
+  <meta name="twitter:image" content="https://vidclaw.com/img/og-vidclaw-com.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://vidclaw.com/blog/openclaw-dashboard-setup-guide/">
+  <meta property="og:title" content="OpenClaw Dashboard Setup: Install VidClaw in 5 Minutes">
+  <meta property="og:description" content="Set up the OpenClaw dashboard in under 5 minutes. Install VidClaw, tour its features, create your first task, and customize your AI agent's personality.">
+  <meta property="og:image" content="https://vidclaw.com/img/og-vidclaw-com.png">
+  <meta property="article:published_time" content="2026-02-24T00:00:00Z">
+  <meta property="article:author" content="woocassh">
+  <meta property="article:tag" content="tutorial">
+  <meta property="article:tag" content="openclaw">
+  <meta property="article:tag" content="dashboard">
+  <meta property="article:tag" content="setup">
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "OpenClaw Dashboard Setup: Install VidClaw in 5 Minutes",
+    "description": "Set up the OpenClaw dashboard in under 5 minutes. Install VidClaw, tour its features, create your first task, and customize your AI agent's personality.",
+    "image": "https://vidclaw.com/img/og-vidclaw-com.png",
+    "datePublished": "2026-02-24T00:00:00Z",
+    "author": {
+      "@type": "Person",
+      "name": "woocassh",
+      "url": "https://x.com/woocassh"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "VidClaw",
+      "url": "https://vidclaw.com"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://vidclaw.com/blog/openclaw-dashboard-setup-guide/"
+    }
+  }
+  </script>
+
+  <script async src="https://plausible.io/js/pa-GKT997euCDfQROHoFG713.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e; --text: #e4e4e7; --muted: #71717a; --accent: #f97316; }
+    html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem; }
+    nav .brand { font-weight: 800; font-size: 1.2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    nav .brand:hover { text-decoration: none; color: var(--accent); }
+    nav .nav-links { display: flex; gap: 1.5rem; font-size: 0.95rem; }
+    nav .nav-links a { color: var(--muted); }
+    nav .nav-links a:hover, nav .nav-links a.active { color: var(--accent); text-decoration: none; }
+
+    .page { max-width: 800px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+    .page h1 { font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #f97316, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; padding-top: 1rem; }
+    .page h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+    .page p, .page li { color: var(--muted); font-size: 1rem; margin-bottom: 1rem; }
+    .page p strong { color: var(--text); }
+    .page ul, .page ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    .page li { margin-bottom: 0.5rem; }
+    .page code { background: var(--surface); border: 1px solid var(--border); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.9rem; }
+
+    .article-meta { display: flex; align-items: center; gap: 1rem; color: var(--muted); font-size: 0.9rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .article-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .post-tag { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.6rem; border-radius: 100px; background: rgba(249, 115, 22, 0.15); color: var(--accent); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
+
+    .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem 2rem; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.9rem; color: var(--text); overflow-x: auto; margin-bottom: 1.5rem; }
+    .code-block .comment { color: var(--muted); }
+    .code-block .cmd { color: var(--accent); }
+
+    .step { counter-increment: step; position: relative; padding-left: 3rem; margin-bottom: 2.5rem; }
+    .step::before { content: counter(step); position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .steps { counter-reset: step; }
+
+    .note { background: var(--surface); border-left: 3px solid var(--accent); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .note p { margin-bottom: 0; }
+
+    .cta-box { text-align: center; margin: 3rem 0 0; padding: 2.5rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .cta-box p { color: var(--muted); margin-bottom: 1rem; }
+    .cta-box .cta-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #ea580c; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(249, 115, 22, 0.3); text-decoration: none; }
+
+    footer { text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">⚡ VidClaw</a>
+    <div class="nav-links">
+      <a href="/openclaw">OpenClaw</a>
+      <a href="/features">Features</a>
+      <a href="/docs">Docs</a>
+      <a href="/blog" class="active">Blog</a>
+      <a href="/changelog">Changelog</a>
+      <a href="https://github.com/madrzak/vidclaw">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <a href="/blog" class="back-link">&larr; Back to Blog</a>
+
+    <h1>OpenClaw Dashboard Setup: Install VidClaw in 5 Minutes</h1>
+    <div class="article-meta">
+      <span>By <a href="https://x.com/woocassh">woocassh</a></span>
+      <span>February 24, 2026</span>
+      <span>7 min read</span>
+    </div>
+    <div class="article-tags">
+      <span class="post-tag">tutorial</span>
+      <span class="post-tag">openclaw</span>
+      <span class="post-tag">dashboard</span>
+      <span class="post-tag">setup</span>
+    </div>
+
+    <p>If you're running an <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener">OpenClaw</a> AI agent, you've probably hit the point where managing everything through chat feels like herding cats. Tasks pile up, you lose track of token usage, and editing your agent's personality means SSH-ing in and hand-editing markdown files.</p>
+    <p><strong>VidClaw</strong> fixes this. It's an open-source, self-hosted dashboard that gives you a visual command center for your OpenClaw agent &mdash; kanban boards, usage tracking, model switching, and more. Here's how to get it running in under five minutes.</p>
+
+    <h2>Why You Need a Dashboard for OpenClaw</h2>
+    <p>OpenClaw is the engine that powers your AI agent &mdash; it handles scheduling, memory, tool use, and model communication. But it runs headlessly. That means you're left juggling terminal sessions, config files, and chat interfaces to manage what your agent does.</p>
+    <p>A dashboard layer like VidClaw gives you:</p>
+    <ul>
+      <li><strong>Visual task management</strong> &mdash; drag-and-drop kanban instead of editing JSON</li>
+      <li><strong>Real-time usage tracking</strong> &mdash; token counts and cost estimates at a glance</li>
+      <li><strong>One-click model switching</strong> &mdash; swap between Claude models from a dropdown</li>
+      <li><strong>Personality editing</strong> &mdash; shape your agent's soul in a proper editor, not <code>vim</code></li>
+      <li><strong>Activity history</strong> &mdash; a calendar heatmap showing what your agent worked on and when</li>
+    </ul>
+    <p>All of this runs on your own server, bound to <code>localhost</code>. No accounts, no cloud, no tracking.</p>
+
+    <h2>Prerequisites</h2>
+    <p>Before installing VidClaw, you need OpenClaw already running on your server. If you haven't set that up yet, follow our <a href="/blog/how-to-setup-openclaw/">complete OpenClaw setup guide</a> first, then come back here.</p>
+    <p>You'll need:</p>
+    <ul>
+      <li><strong>A server</strong> (VPS, homelab box, or even a Raspberry Pi) running Linux</li>
+      <li><strong><a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener">OpenClaw</a> installed and running</strong></li>
+      <li><strong>Node.js 18+</strong> (the installer handles this if you don't have it)</li>
+      <li><strong>Git</strong></li>
+    </ul>
+
+    <h2>Installation &amp; Setup</h2>
+    <div class="steps">
+
+      <div class="step">
+        <h3>Install VidClaw</h3>
+        <p>One command does everything:</p>
+        <div class="code-block">
+          <span class="cmd">curl</span> -fsSL vidclaw.com/install.sh | <span class="cmd">bash</span>
+        </div>
+        <p>This installs Node.js and Git if missing, clones the VidClaw repo, installs dependencies, builds the frontend, and sets up a systemd service.</p>
+        <p>If you prefer to install manually:</p>
+        <div class="code-block">
+          <span class="cmd">cd</span> ~/.openclaw/workspace<br>
+          <span class="cmd">git clone</span> https://github.com/madrzak/vidclaw.git dashboard<br>
+          <span class="cmd">cd</span> dashboard<br>
+          <span class="cmd">./setup.sh</span>
+        </div>
+        <p>The setup script handles everything: npm dependencies, Vite build, and systemd service registration.</p>
+        <div class="note">
+          <p><strong>Tip:</strong> If you prefer localhost-only access (e.g., you'll use an SSH tunnel), pass the <code>--no-tailscale</code> flag:<br><code>curl -fsSL vidclaw.com/install.sh | bash -s -- --no-tailscale</code></p>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3>Access the dashboard</h3>
+        <p>VidClaw binds to <code>localhost:3333</code> for security. To access it from your local machine, create an SSH tunnel:</p>
+        <div class="code-block">
+          <span class="cmd">ssh</span> -L 3333:localhost:3333 user@your-server
+        </div>
+        <p>Now open <a href="http://localhost:3333">http://localhost:3333</a> in your browser. You should see the VidClaw dashboard with the Kanban board ready to go.</p>
+        <div class="note">
+          <p><strong>Tip:</strong> Add an alias to your shell config for quick access:<br><code>alias vc="ssh -L 3333:localhost:3333 user@your-server"</code></p>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3>Tour the dashboard</h3>
+        <p>Once you're in, you'll see six main panels:</p>
+        <p><strong>Kanban Task Board</strong> &mdash; Your agent's work queue. Create cards, set priorities (low/medium/high/critical), and assign specific skills. Cards flow through four columns: Backlog, Todo, In Progress, and Done. Your agent checks this board automatically and picks up tasks ordered by priority.</p>
+        <p><strong>Usage Tracking</strong> &mdash; Real-time token consumption and cost estimates. The progress bars match Anthropic's rate-limit windows, so you can plan heavy workloads without getting throttled.</p>
+        <p><strong>Model Switching</strong> &mdash; Switch between Claude models (Sonnet, Opus, Haiku) directly from the navbar dropdown. VidClaw hot-reloads the OpenClaw config &mdash; no restart required.</p>
+        <p><strong>Skills Manager</strong> &mdash; Browse all bundled and workspace skills. Toggle them on or off, or create custom skills. Changes take effect on the agent's next session.</p>
+        <p><strong>Soul Editor</strong> &mdash; Edit SOUL.md, IDENTITY.md, USER.md, and AGENTS.md with a proper editor. Version history lets you revert if a personality tweak goes sideways. Six starter persona templates are included.</p>
+        <p><strong>Activity Calendar</strong> &mdash; A monthly heatmap showing when your agent was active and what it worked on, parsed from memory files and task history.</p>
+      </div>
+
+      <div class="step">
+        <h3>Create your first task</h3>
+        <p>With the dashboard open, give your agent something to do:</p>
+        <ol>
+          <li>Click <strong>+ New Task</strong> on the Kanban board</li>
+          <li>Give it a title (e.g., "Write a README for my side project")</li>
+          <li>Set priority to <strong>Medium</strong></li>
+          <li>Optionally assign a skill (e.g., "writer")</li>
+          <li>Click <strong>Create</strong> &mdash; the card lands in Backlog</li>
+          <li>Drag it to <strong>Todo</strong></li>
+        </ol>
+        <p>Your agent will pick it up on the next cron cycle (within 2 minutes) or heartbeat (within 30 minutes). Watch it move to "In Progress" and eventually "Done."</p>
+        <p>You can also use the <strong>quick-add bar</strong> at the top of the Kanban board. Type your task, use <code>@skill</code> to attach a skill, and hit Enter.</p>
+      </div>
+
+      <div class="step">
+        <h3>Customize your agent's personality</h3>
+        <p>Head to the <strong>Soul Editor</strong> tab. Here you can shape how your agent thinks, writes, and behaves. The key files:</p>
+        <ul>
+          <li><strong>SOUL.md</strong> &mdash; Core personality and values</li>
+          <li><strong>IDENTITY.md</strong> &mdash; Name, voice, style</li>
+          <li><strong>USER.md</strong> &mdash; Information about you (so the agent understands context)</li>
+          <li><strong>AGENTS.md</strong> &mdash; Operating instructions and workspace rules</li>
+        </ul>
+        <p>Pick one of the six starter templates to get going fast, then customize from there. Edit, save, and your agent picks up changes on the next session.</p>
+        <div class="note">
+          <p><strong>Note:</strong> You can switch models at any time from VidClaw's navbar &mdash; no need to edit config files manually once the dashboard is running.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <h2>Keeping VidClaw Updated</h2>
+    <p>Updating is a single command:</p>
+    <div class="code-block">
+      <span class="cmd">cd</span> ~/vidclaw <span class="comment"># or wherever you installed it</span><br>
+      <span class="cmd">./update.sh</span>
+    </div>
+    <p>This pulls the latest changes, rebuilds the frontend, and restarts the systemd service.</p>
+
+    <h2>Troubleshooting</h2>
+    <p><strong>Dashboard won't load?</strong></p>
+    <ul>
+      <li>Check the service status: <code>./status.sh</code></li>
+      <li>View logs: <code>./logs.sh</code></li>
+      <li>Ensure port 3333 isn't occupied: <code>lsof -i :3333</code></li>
+    </ul>
+    <p><strong>Agent not picking up tasks?</strong></p>
+    <ul>
+      <li>Verify OpenClaw is running: <code>openclaw gateway status</code></li>
+      <li>Check that cron or heartbeat is configured in your agent's AGENTS.md</li>
+    </ul>
+
+    <h2>What's Next</h2>
+    <p>You now have a fully working OpenClaw dashboard with VidClaw as your command center. Here are some things to explore:</p>
+    <ul>
+      <li><strong><a href="/features">Explore all features</a></strong> &mdash; deep dive into usage tracking, skills manager, soul editor, and more</li>
+      <li><strong><a href="/docs">Read the full docs</a></strong> &mdash; configuration options, updating, and advanced setup</li>
+      <li><strong>Set up recurring tasks</strong> &mdash; use the schedule feature to automate repetitive work</li>
+      <li><strong><a href="https://github.com/madrzak/vidclaw" target="_blank" rel="noopener">Star the repo</a></strong> &mdash; if VidClaw is useful, a star helps others find it</li>
+    </ul>
+
+    <div class="cta-box">
+      <p class="cta-title">Ready to take control of your AI agent?</p>
+      <p>VidClaw is free, open-source, and takes 60 seconds to install.</p>
+      <a href="https://github.com/madrzak/vidclaw" class="btn btn-primary">Get Started on GitHub &rarr;</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built by <a href="https://x.com/woocassh">woocassh</a> · <a href="https://github.com/madrzak/vidclaw">GitHub</a> · <a href="/features">Features</a> · <a href="/docs">Docs</a> · <a href="/blog">Blog</a> · <a href="/changelog">Changelog</a> · MIT License</p>
+  </footer>
+
+</body>
+</html>

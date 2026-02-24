@@ -1,5 +1,25 @@
 [
   {
+    "slug": "openclaw-dashboard-setup-guide",
+    "title": "OpenClaw Dashboard Setup: Install VidClaw in 5 Minutes",
+    "date": "2026-02-24",
+    "author": "woocassh",
+    "excerpt": "A focused guide to installing VidClaw as your self-hosted OpenClaw dashboard — from install to your first task in under five minutes.",
+    "tags": ["tutorial", "openclaw", "dashboard", "setup"],
+    "readingTime": "7 min read",
+    "gradient": "linear-gradient(135deg, #f97316, #ea580c)"
+  },
+  {
+    "slug": "managing-ai-agents-with-kanban",
+    "title": "Managing AI Agents with Kanban Boards: Why Visual Task Management Changes Everything",
+    "date": "2026-02-24",
+    "author": "woocassh",
+    "excerpt": "How VidClaw's kanban system turns chaotic AI agent workflows into something you can actually see and control.",
+    "tags": ["kanban", "AI agents", "task-management", "workflow"],
+    "readingTime": "8 min read",
+    "gradient": "linear-gradient(135deg, #22c55e, #16a34a)"
+  },
+  {
     "slug": "how-to-edit-your-agents-soul",
     "title": "How to Edit Your Agent's Soul in VidClaw",
     "date": "2026-02-23",

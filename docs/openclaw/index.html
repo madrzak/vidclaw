@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What is OpenClaw? | Open-Source AI Agent Framework</title>
+  <meta name="description" content="OpenClaw is an open-source framework for running autonomous AI agents. Learn how it works and why VidClaw is the best self-hosted OpenClaw dashboard for managing your agents.">
+  <link rel="canonical" href="https://vidclaw.com/openclaw">
+  <meta property="og:title" content="What is OpenClaw? | Open-Source AI Agent Framework">
+  <meta property="og:description" content="OpenClaw is an open-source framework for running autonomous AI agents. Manage your OpenClaw agents with VidClaw, a self-hosted dashboard.">
+  <meta property="og:url" content="https://vidclaw.com/openclaw">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="VidClaw">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="What is OpenClaw? | Open-Source AI Agent Framework">
+  <meta name="twitter:description" content="OpenClaw is an open-source framework for running autonomous AI agents. Manage your OpenClaw agents with VidClaw, a self-hosted dashboard.">
+  <script async src="https://plausible.io/js/pa-GKT997euCDfQROHoFG713.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "OpenClaw",
+    "description": "Open-source framework for running autonomous AI agents with scheduling, memory, and tool use capabilities.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Linux",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "softwareRequirements": "Node.js",
+    "url": "https://vidclaw.com/openclaw"
+  }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e; --text: #e4e4e7; --muted: #71717a; --accent: #f97316; --accent-glow: rgba(249, 115, 22, 0.15); }
+    html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem; }
+    nav .brand { font-weight: 800; font-size: 1.2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    nav .brand:hover { text-decoration: none; color: var(--accent); }
+    nav .nav-links { display: flex; gap: 1.5rem; font-size: 0.95rem; }
+    nav .nav-links a { color: var(--muted); }
+    nav .nav-links a:hover, nav .nav-links a.active { color: var(--accent); text-decoration: none; }
+
+    .page { max-width: 800px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+    .page h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #f97316, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page .subtitle { color: var(--muted); font-size: 1.15rem; margin-bottom: 3rem; }
+    .page h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; padding-top: 1rem; }
+    .page h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+    .page p, .page li { color: var(--muted); font-size: 1rem; margin-bottom: 1rem; }
+    .page p strong { color: var(--text); }
+    .page ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    .page li { margin-bottom: 0.5rem; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.2s, transform 0.2s; }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+    .card h3 { margin-top: 0; }
+
+    .cta-box { text-align: center; margin: 4rem 0 0; padding: 3rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .cta-box p { color: var(--muted); margin-bottom: 1.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #ea580c; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(249, 115, 22, 0.3); text-decoration: none; }
+
+    footer { text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">⚡ VidClaw</a>
+    <div class="nav-links">
+      <a href="/openclaw" class="active">OpenClaw</a>
+      <a href="/features">Features</a>
+      <a href="/docs">Docs</a>
+      <a href="/blog">Blog</a>
+      <a href="/changelog">Changelog</a>
+      <a href="https://github.com/madrzak/vidclaw">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <h1>What is OpenClaw?</h1>
+    <p class="subtitle">OpenClaw is an open-source framework for running autonomous AI agents on your own infrastructure. It handles scheduling, memory, tool use, and more — so your AI agent can work independently around the clock.</p>
+
+    <h2>How OpenClaw Works</h2>
+    <p><strong>OpenClaw</strong> provides the runtime layer that turns a large language model into a persistent, autonomous AI agent. Instead of one-off prompts, OpenClaw gives your agent a workspace, a schedule, and the ability to use tools — creating a self-directed system that can plan, execute, and iterate on tasks without constant human input.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📂</div>
+        <h3>Workspace</h3>
+        <p>Every OpenClaw agent operates inside a dedicated workspace directory. Files, notes, and outputs are organized here, giving the agent persistent storage across sessions.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏰</div>
+        <h3>Scheduling</h3>
+        <p>OpenClaw runs your AI agent on a configurable schedule. It wakes up, checks for pending tasks, works through them, and goes back to sleep — fully automated.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>Memory</h3>
+        <p>Agents retain context between sessions through memory files. OpenClaw manages short-term and long-term memory so your agent can build on previous work.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔧</div>
+        <h3>Tool Use</h3>
+        <p>OpenClaw agents can call external tools, APIs, and scripts. Skills define what tools are available, making each agent customizable for different workflows.</p>
+      </div>
+    </div>
+
+    <p>At its core, OpenClaw turns an AI model into something closer to a team member: it reads tasks, plans its approach, executes using tools, writes results to the workspace, and logs what it did. All of this happens on your own server — no cloud platform required.</p>
+
+    <h2>Why Use an OpenClaw Dashboard?</h2>
+    <p>Running OpenClaw from the command line works, but as your agent takes on more tasks, managing everything through config files and terminal commands becomes tedious. An <strong>OpenClaw dashboard</strong> gives you a visual interface to see what your agent is doing, assign new work, track costs, and adjust its behavior — all without touching the terminal.</p>
+    <p>A good dashboard turns OpenClaw from a developer tool into a practical productivity system. Instead of reading log files to figure out what happened overnight, you open a browser tab and see a clear timeline. Instead of editing JSON to add a task, you drag a card on a Kanban board.</p>
+    <ul>
+      <li><strong>Visibility</strong> — see your agent's activity, status, and output at a glance</li>
+      <li><strong>Task management</strong> — create, prioritize, and track tasks visually instead of editing files</li>
+      <li><strong>Cost awareness</strong> — monitor token usage and spending across AI models in real time</li>
+      <li><strong>Configuration</strong> — edit your agent's soul, skills, and settings from the browser</li>
+      <li><strong>History</strong> — review what your agent worked on with calendar and activity views</li>
+    </ul>
+
+    <h2>VidClaw: The Self-Hosted OpenClaw Dashboard</h2>
+    <p><strong>VidClaw</strong> is a self-hosted dashboard purpose-built for OpenClaw. It connects directly to your OpenClaw workspace and gives you full control over your AI agent through a clean, real-time web interface. Because it is entirely self-hosted, your data never leaves your server.</p>
+    <ul>
+      <li><strong>Kanban task board</strong> — drag-and-drop task management with Backlog, Todo, In Progress, and Done columns. Your OpenClaw agent picks up tasks automatically.</li>
+      <li><strong>Soul editor</strong> — edit your agent's persona and operating instructions with version history and one-click revert.</li>
+      <li><strong>Skills manager</strong> — browse, enable, disable, or create custom skills. Changes are loaded on the next agent session.</li>
+      <li><strong>Content browser</strong> — view workspace files with markdown preview and syntax highlighting.</li>
+      <li><strong>AI cost tracking</strong> — per-model token usage, daily and monthly summaries, and rate limit progress bars.</li>
+      <li><strong>Activity calendar</strong> — monthly view of what your agent worked on each day.</li>
+      <li><strong>Real-time updates</strong> — WebSocket-powered UI that reflects changes instantly, no polling required.</li>
+      <li><strong>Privacy first</strong> — binds to localhost only, accessed via SSH tunnel. No accounts, no cloud, no tracking.</li>
+    </ul>
+
+    <h2>Getting Started with OpenClaw and VidClaw</h2>
+    <p>Setting up your self-hosted OpenClaw dashboard takes just a few minutes. Here is how to get VidClaw running alongside your OpenClaw agent:</p>
+    <ul>
+      <li><strong>Step 1:</strong> Install OpenClaw on your server and configure your AI agent workspace.</li>
+      <li><strong>Step 2:</strong> Clone the VidClaw repository and run the setup script: <code>./setup.sh</code></li>
+      <li><strong>Step 3:</strong> The setup installs dependencies, builds the frontend, and creates a systemd service.</li>
+      <li><strong>Step 4:</strong> Access your OpenClaw dashboard via SSH tunnel: <code>ssh -L 3333:localhost:3333 root@your-server</code></li>
+      <li><strong>Step 5:</strong> Open <code>localhost:3333</code> in your browser and start managing your AI agent.</li>
+    </ul>
+    <p>VidClaw reads directly from your OpenClaw workspace at <code>~/.openclaw/workspace/dashboard</code>. There is no database — all data is stored in simple JSON files on your server. Updates are as easy as running <code>./update.sh</code>.</p>
+
+    <div class="cta-box">
+      <p>Ready to manage your OpenClaw agent with a visual dashboard?</p>
+      <a href="/docs" class="btn btn-primary">Read the Docs →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built by <a href="https://x.com/woocassh">woocassh</a> · <a href="https://github.com/madrzak/vidclaw">GitHub</a> · <a href="/openclaw">OpenClaw</a> · <a href="/features">Features</a> · <a href="/docs">Docs</a> · <a href="/blog">Blog</a> · <a href="/changelog">Changelog</a> · MIT License</p>
+  </footer>
+
+</body>
+</html>
