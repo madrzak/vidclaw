@@ -1,5 +1,15 @@
 [
   {
+    "slug": "what-is-openclaw",
+    "title": "What is OpenClaw? Open-Source AI Agent Framework Explained",
+    "date": "2026-02-24",
+    "author": "woocassh",
+    "excerpt": "Everything you need to know about OpenClaw — the open-source AI agent framework — and how VidClaw gives you a self-hosted dashboard to manage it.",
+    "tags": ["openclaw", "AI agents", "framework", "self-hosted"],
+    "readingTime": "5 min read",
+    "gradient": "linear-gradient(135deg, #3b82f6, #6366f1)"
+  },
+  {
     "slug": "openclaw-dashboard-setup-guide",
     "title": "OpenClaw Dashboard Setup: Install VidClaw in 5 Minutes",
     "date": "2026-02-24",

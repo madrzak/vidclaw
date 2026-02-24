@@ -3,40 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>What is OpenClaw? | Open-Source AI Agent Framework</title>
-  <meta name="description" content="OpenClaw is an open-source framework for running autonomous AI agents. Learn how it works and why VidClaw is the best self-hosted OpenClaw dashboard for managing your agents.">
-  <link rel="canonical" href="https://vidclaw.com/openclaw">
-  <meta property="og:title" content="What is OpenClaw? | Open-Source AI Agent Framework">
-  <meta property="og:description" content="OpenClaw is an open-source framework for running autonomous AI agents. Manage your OpenClaw agents with VidClaw, a self-hosted dashboard.">
-  <meta property="og:url" content="https://vidclaw.com/openclaw">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="VidClaw">
+  <title>What is OpenClaw? Open-Source AI Agent Framework Explained</title>
+  <meta name="description" content="OpenClaw is an open-source framework for running autonomous AI agents. Learn how it works, what it does, and why VidClaw is the best self-hosted OpenClaw dashboard for managing your agents.">
+  <link rel="canonical" href="https://vidclaw.com/blog/what-is-openclaw/">
+
+  <!-- Twitter / X card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="What is OpenClaw? | Open-Source AI Agent Framework">
-  <meta name="twitter:description" content="OpenClaw is an open-source framework for running autonomous AI agents. Manage your OpenClaw agents with VidClaw, a self-hosted dashboard.">
-  <script async src="https://plausible.io/js/pa-GKT997euCDfQROHoFG713.js"></script>
-  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <meta name="twitter:title" content="What is OpenClaw? Open-Source AI Agent Framework Explained">
+  <meta name="twitter:description" content="OpenClaw is an open-source framework for running autonomous AI agents. Learn how it works and why VidClaw is the best self-hosted OpenClaw dashboard.">
+  <meta name="twitter:image" content="https://vidclaw.com/img/og-vidclaw-com.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://vidclaw.com/blog/what-is-openclaw/">
+  <meta property="og:title" content="What is OpenClaw? Open-Source AI Agent Framework Explained">
+  <meta property="og:description" content="OpenClaw is an open-source framework for running autonomous AI agents. Learn how it works and why VidClaw is the best self-hosted OpenClaw dashboard.">
+  <meta property="og:image" content="https://vidclaw.com/img/og-vidclaw-com.png">
+  <meta property="article:published_time" content="2026-02-24T00:00:00Z">
+  <meta property="article:author" content="woocassh">
+  <meta property="article:tag" content="openclaw">
+  <meta property="article:tag" content="AI agents">
+  <meta property="article:tag" content="framework">
+  <meta property="article:tag" content="self-hosted">
+
+  <!-- JSON-LD structured data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "OpenClaw",
-    "description": "Open-source framework for running autonomous AI agents with scheduling, memory, and tool use capabilities.",
-    "applicationCategory": "DeveloperApplication",
-    "operatingSystem": "Linux",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
+    "@type": "Article",
+    "headline": "What is OpenClaw? Open-Source AI Agent Framework Explained",
+    "description": "OpenClaw is an open-source framework for running autonomous AI agents. Learn how it works, what it does, and why VidClaw is the best self-hosted OpenClaw dashboard for managing your agents.",
+    "image": "https://vidclaw.com/img/og-vidclaw-com.png",
+    "datePublished": "2026-02-24T00:00:00Z",
+    "author": {
+      "@type": "Person",
+      "name": "woocassh",
+      "url": "https://x.com/woocassh"
     },
-    "softwareRequirements": "Node.js",
-    "url": "https://vidclaw.com/openclaw"
+    "publisher": {
+      "@type": "Organization",
+      "name": "VidClaw",
+      "url": "https://vidclaw.com"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://vidclaw.com/blog/what-is-openclaw/"
+    }
   }
   </script>
+
+  <script async src="https://plausible.io/js/pa-GKT997euCDfQROHoFG713.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x26A1;</text></svg>">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e; --text: #e4e4e7; --muted: #71717a; --accent: #f97316; --accent-glow: rgba(249, 115, 22, 0.15); }
+    :root { --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e; --text: #e4e4e7; --muted: #71717a; --accent: #f97316; }
     html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -54,23 +75,29 @@
     nav .nav-links a:hover, nav .nav-links a.active { color: var(--accent); text-decoration: none; }
 
     .page { max-width: 800px; margin: 0 auto; padding: 2rem 2rem 6rem; }
-    .page h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #f97316, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .page .subtitle { color: var(--muted); font-size: 1.15rem; margin-bottom: 3rem; }
+    .page h1 { font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #f97316, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .page h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; padding-top: 1rem; }
     .page h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
     .page p, .page li { color: var(--muted); font-size: 1rem; margin-bottom: 1rem; }
     .page p strong { color: var(--text); }
-    .page ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    .page ul, .page ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
     .page li { margin-bottom: 0.5rem; }
+    .page code { background: var(--surface); border: 1px solid var(--border); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.9rem; }
 
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.2s, transform 0.2s; }
-    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .card-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
-    .card h3 { margin-top: 0; }
+    .article-meta { display: flex; align-items: center; gap: 1rem; color: var(--muted); font-size: 0.9rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .article-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .post-tag { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.6rem; border-radius: 100px; background: rgba(249, 115, 22, 0.15); color: var(--accent); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
 
-    .cta-box { text-align: center; margin: 4rem 0 0; padding: 3rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
-    .cta-box p { color: var(--muted); margin-bottom: 1.5rem; }
+    .feature-list { list-style: none; padding-left: 0; margin: 2rem 0; }
+    .feature-list li { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; transition: border-color 0.2s; }
+    .feature-list li:hover { border-color: var(--accent); }
+    .feature-list li strong { display: block; color: var(--text); font-size: 1.05rem; margin-bottom: 0.25rem; }
+
+    .cta-box { text-align: center; margin: 3rem 0 0; padding: 2.5rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .cta-box p { color: var(--muted); margin-bottom: 1rem; }
+    .cta-box .cta-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
     .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: #ea580c; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(249, 115, 22, 0.3); text-decoration: none; }
@@ -83,12 +110,11 @@
 <body>
 
   <nav>
-    <a href="/" class="brand">⚡ VidClaw</a>
+    <a href="/" class="brand">&#x26A1; VidClaw</a>
     <div class="nav-links">
-      <a href="/openclaw" class="active">OpenClaw</a>
       <a href="/features">Features</a>
       <a href="/docs">Docs</a>
-      <a href="/blog">Blog</a>
+      <a href="/blog" class="active">Blog</a>
       <a href="/changelog">Changelog</a>
     </div>
     <div class="nav-icons">
@@ -100,34 +126,44 @@
   </nav>
 
   <div class="page">
+    <a href="/blog" class="back-link">&larr; Back to Blog</a>
+
     <h1>What is OpenClaw?</h1>
-    <p class="subtitle">OpenClaw is an open-source framework for running autonomous AI agents on your own infrastructure. It handles scheduling, memory, tool use, and more — so your AI agent can work independently around the clock.</p>
+    <div class="article-meta">
+      <span>By <a href="https://x.com/woocassh">woocassh</a></span>
+      <span>February 24, 2026</span>
+      <span>5 min read</span>
+    </div>
+    <div class="article-tags">
+      <span class="post-tag">openclaw</span>
+      <span class="post-tag">AI agents</span>
+      <span class="post-tag">framework</span>
+      <span class="post-tag">self-hosted</span>
+    </div>
+
+    <p>OpenClaw is an open-source framework for running autonomous AI agents on your own infrastructure. It handles scheduling, memory, tool use, and more — so your AI agent can work independently around the clock.</p>
 
     <h2>How OpenClaw Works</h2>
     <p><strong>OpenClaw</strong> provides the runtime layer that turns a large language model into a persistent, autonomous AI agent. Instead of one-off prompts, OpenClaw gives your agent a workspace, a schedule, and the ability to use tools — creating a self-directed system that can plan, execute, and iterate on tasks without constant human input.</p>
 
-    <div class="card-grid">
-      <div class="card">
-        <div class="card-icon">📂</div>
-        <h3>Workspace</h3>
-        <p>Every OpenClaw agent operates inside a dedicated workspace directory. Files, notes, and outputs are organized here, giving the agent persistent storage across sessions.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">⏰</div>
-        <h3>Scheduling</h3>
-        <p>OpenClaw runs your AI agent on a configurable schedule. It wakes up, checks for pending tasks, works through them, and goes back to sleep — fully automated.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🧠</div>
-        <h3>Memory</h3>
-        <p>Agents retain context between sessions through memory files. OpenClaw manages short-term and long-term memory so your agent can build on previous work.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🔧</div>
-        <h3>Tool Use</h3>
-        <p>OpenClaw agents can call external tools, APIs, and scripts. Skills define what tools are available, making each agent customizable for different workflows.</p>
-      </div>
-    </div>
+    <ul class="feature-list">
+      <li>
+        <strong>Workspace</strong>
+        Every OpenClaw agent operates inside a dedicated workspace directory. Files, notes, and outputs are organized here, giving the agent persistent storage across sessions.
+      </li>
+      <li>
+        <strong>Scheduling</strong>
+        OpenClaw runs your AI agent on a configurable schedule. It wakes up, checks for pending tasks, works through them, and goes back to sleep — fully automated.
+      </li>
+      <li>
+        <strong>Memory</strong>
+        Agents retain context between sessions through memory files. OpenClaw manages short-term and long-term memory so your agent can build on previous work.
+      </li>
+      <li>
+        <strong>Tool Use</strong>
+        OpenClaw agents can call external tools, APIs, and scripts. Skills define what tools are available, making each agent customizable for different workflows.
+      </li>
+    </ul>
 
     <p>At its core, OpenClaw turns an AI model into something closer to a team member: it reads tasks, plans its approach, executes using tools, writes results to the workspace, and logs what it did. All of this happens on your own server — no cloud platform required.</p>
 
@@ -167,13 +203,14 @@
     <p>VidClaw reads directly from your OpenClaw workspace at <code>~/.openclaw/workspace/dashboard</code>. There is no database — all data is stored in simple JSON files on your server. Updates are as easy as running <code>./update.sh</code>.</p>
 
     <div class="cta-box">
-      <p>Ready to manage your OpenClaw agent with a visual dashboard?</p>
-      <a href="/docs" class="btn btn-primary">Read the Docs →</a>
+      <p class="cta-title">Ready to manage your OpenClaw agent with a visual dashboard?</p>
+      <p>VidClaw is free, open-source, and takes 60 seconds to install.</p>
+      <a href="https://github.com/madrzak/vidclaw" class="btn btn-primary">Get Started on GitHub &rarr;</a>
     </div>
   </div>
 
   <footer>
-    <p>Built by <a href="https://x.com/woocassh">woocassh</a> · <a href="https://github.com/madrzak/vidclaw">GitHub</a> · <a href="/openclaw">OpenClaw</a> · <a href="/features">Features</a> · <a href="/docs">Docs</a> · <a href="/blog">Blog</a> · <a href="/changelog">Changelog</a> · MIT License</p>
+    <p>Built by <a href="https://x.com/woocassh">woocassh</a> · <a href="https://github.com/madrzak/vidclaw">GitHub</a> · <a href="/features">Features</a> · <a href="/docs">Docs</a> · <a href="/blog">Blog</a> · <a href="/changelog">Changelog</a> · MIT License</p>
   </footer>
 
 </body>
