@@ -102,7 +102,8 @@ ensure_heartbeat_block
 echo
 log_ok "Setup complete."
 log_info "Dashboard URL: http://localhost:${VIDCLAW_PORT}"
-log_info "SSH tunnel example: ssh -L ${VIDCLAW_PORT}:localhost:${VIDCLAW_PORT} <user>@<server-host>"
+SERVER_IP="$(hostname -I 2>/dev/null | awk '{print $1}')" || SERVER_IP=""
+log_info "SSH tunnel example: ssh -L ${VIDCLAW_PORT}:localhost:${VIDCLAW_PORT} root@${SERVER_IP:-<server-ip>}"
 log_info "Service helpers: ./start.sh ./stop.sh ./status.sh ./logs.sh ./uninstall.sh"
 
 if is_macos && [[ "${EFFECTIVE_MODE}" == "launchd" ]]; then
