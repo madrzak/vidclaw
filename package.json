@@ -1,7 +1,7 @@
 {
   "name": "vidclaw",
   "private": true,
-  "version": "1.2.6",
+  "version": "1.2.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -30,7 +30,7 @@
     "clsx": "^2.1.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "lucide-react": "^0.344.0",
+    "lucide-react": "^0.576.0",
     "multer": "^2.0.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
