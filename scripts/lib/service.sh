@@ -588,7 +588,7 @@ uninstall_service() {
       run_sudo systemctl disable --now "${VIDCLAW_SERVICE_NAME}" || true
       run_sudo rm -f "${SYSTEMD_UNIT_PATH}"
       run_sudo systemctl daemon-reload
-      run_sudo systemctl reset-failed "${VIDCLAW_SERVICE_NAME}" || true
+      run_sudo systemctl reset-failed "${VIDCLAW_SERVICE_NAME}" 2>/dev/null || true
       log_ok "systemd service removed: ${VIDCLAW_SERVICE_NAME}"
       ;;
     launchd)
