@@ -118,7 +118,7 @@ fi
 step "Running setup..."
 echo
 chmod +x setup.sh
-./setup.sh "${SETUP_ARGS[@]}"
+./setup.sh "${SETUP_ARGS[@]+"${SETUP_ARGS[@]}"}"
 
 # ---------- done ----------
 echo
