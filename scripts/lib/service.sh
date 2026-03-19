@@ -95,7 +95,52 @@ systemd_escape_exec_arg() {
 }
 
 systemd_default_path() {
-  printf '%s\n' '/usr/local/bin:/usr/bin:/bin'
+  printf '%s\n' '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin'
+}
+
+service_env_var_names() {
+  printf '%s\n' \
+    NODE_ENV \
+    PORT \
+    HOST \
+    PATH \
+    OPENCLAW_DIR \
+    OPENCLAW_BUNDLED_SKILLS_DIR
+}
+
+service_env_var_value() {
+  case "$1" in
+    NODE_ENV) printf '%s\n' 'production' ;;
+    PORT) printf '%s\n' "${VIDCLAW_PORT}" ;;
+    HOST) printf '%s\n' "${HOST:-127.0.0.1}" ;;
+    PATH) printf '%s\n' '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin' ;;
+    OPENCLAW_DIR) printf '%s\n' "${OPENCLAW_DIR:-${HOME}/.openclaw}" ;;
+    OPENCLAW_BUNDLED_SKILLS_DIR)
+      if [[ -n "${OPENCLAW_BUNDLED_SKILLS_DIR:-}" ]]; then
+        printf '%s\n' "${OPENCLAW_BUNDLED_SKILLS_DIR}"
+      fi
+      ;;
+  esac
+}
+
+service_environment_lines() {
+  local format="$1"
+  local key value
+  while IFS= read -r key; do
+    [[ -n "${key}" ]] || continue
+    value="$(service_env_var_value "${key}")"
+    [[ -n "${value}" ]] || continue
+    case "${format}" in
+      systemd)
+        printf 'Environment=%s=%s\n' "${key}" "${value}"
+        ;;
+      launchd)
+        printf '      <key>%s</key>\n      <string>%s</string>\n' "${key}" "${value}"
+        ;;
+      *)
+        die "Unsupported service environment format: ${format}" ;;
+    esac
+  done < <(service_env_var_names)
 }
 
 write_systemd_unit_file() {
@@ -109,9 +154,10 @@ write_systemd_unit_file() {
     tailscale_line="ExecStartPre=-$(tailscale_serve_cmd)"
   fi
 
-  local run_user run_group
+  local run_user run_group env_lines
   run_user="$(id -un)"
   run_group="$(id -gn)"
+  env_lines="$(service_environment_lines systemd)"
 
   cat > "${tmp_file}" <<EOF
 [Unit]
@@ -125,12 +171,10 @@ User=${run_user}
 Group=${run_group}
 WorkingDirectory=${REPO_ROOT}
 ${tailscale_line:+${tailscale_line}
-}ExecStart=${escaped_node} ${escaped_entrypoint}
+}${env_lines}
+ExecStart=${escaped_node} ${escaped_entrypoint}
 Restart=always
 RestartSec=3
-Environment=NODE_ENV=production
-Environment=PORT=${VIDCLAW_PORT}
-Environment=PATH=$(systemd_default_path)
 
 [Install]
 WantedBy=multi-user.target
@@ -172,6 +216,7 @@ WRAPPER
 write_launchd_plist() {
   local plist_path="$1"
   local program_args
+  local env_block
 
   if is_tailscale_enabled && [[ -n "${TAILSCALE_BIN:-}" ]]; then
     write_launchd_wrapper_script
@@ -184,6 +229,8 @@ write_launchd_plist() {
       <string>${REPO_ROOT}/server.js</string>
     </array>"
   fi
+
+  env_block="$(service_environment_lines launchd)"
 
   cat > "${plist_path}" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -201,12 +248,7 @@ ${program_args}
 
     <key>EnvironmentVariables</key>
     <dict>
-      <key>NODE_ENV</key>
-      <string>production</string>
-      <key>PORT</key>
-      <string>${VIDCLAW_PORT}</string>
-      <key>PATH</key>
-      <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+${env_block}
     </dict>
 
     <key>RunAtLoad</key>
