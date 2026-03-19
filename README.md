@@ -37,6 +37,33 @@ curl -fsSL vidclaw.com/install.sh | bash
 
 Installs Node.js, git, Tailscale, and VidClaw in one command. Localhost only: add `--no-tailscale`.
 
+### macOS / non-root OpenClaw installs
+
+VidClaw auto-detects `~/.openclaw` and common Homebrew OpenClaw install paths on macOS. If your OpenClaw install lives somewhere unusual, set environment variables before setup/start:
+
+```bash
+export OPENCLAW_DIR="$HOME/.openclaw"
+export OPENCLAW_BUNDLED_SKILLS_DIR="/opt/homebrew/lib/node_modules/openclaw/skills"
+./setup.sh
+```
+
+### Tailscale or custom bind host
+
+Recommended: keep VidClaw bound to localhost and publish it over Tailscale Serve:
+
+```bash
+./setup.sh --tailscale
+```
+
+If you explicitly want the managed service to bind to another interface instead, set `HOST` before running `./setup.sh`:
+
+```bash
+export HOST="100.70.53.60"
+./setup.sh
+```
+
+`./setup.sh` writes the launchd/systemd service definition. `./start.sh` and `./status.sh` do **not** rewrite that service config, so changing `HOST` or `OPENCLAW_*` variables later only takes effect after running `./setup.sh` again.
+
 ## Update
 
 ```bash
