@@ -8,11 +8,15 @@ export const exec = (cmd) => new Promise((resolve, reject) => {
 });
 
 export function compareSemver(a, b) {
-  const pa = a.split('.').map(Number);
-  const pb = b.split('.').map(Number);
-  for (let i = 0; i < 3; i++) {
-    if ((pa[i] || 0) < (pb[i] || 0)) return -1;
-    if ((pa[i] || 0) > (pb[i] || 0)) return 1;
+  // Split on '.' and '-' to handle versions like "2026.3.23-2"
+  const pa = a.split(/[.\-]/).map(Number);
+  const pb = b.split(/[.\-]/).map(Number);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const na = pa[i] || 0;
+    const nb = pb[i] || 0;
+    if (na < nb) return -1;
+    if (na > nb) return 1;
   }
   return 0;
 }
